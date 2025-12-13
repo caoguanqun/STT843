@@ -1,0 +1,11 @@
+---
+title: "STT843_multivariate-data-analysis"
+---
+
+This is a Quarto website.
+
+To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+
+```{r}
+1 + 1
+```
