@@ -1,11 +1,43 @@
 ---
-title: "STT843_multivariate-data-analysis"
+title: "STT843: Multivariate Data Analysis"
+subtitle: "Course Website - Spring 2026"
 ---
 
-This is a Quarto website.
+::: {.lead}
+Welcome to the course website for **STT843** This course provides an introduction to the statistical analysis of multivariate data, focusing on both theoretical foundations and practical applications in R.
+:::
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+------------------------------------------------------------------------
 
-```{r}
-1 + 1
-```
+## 📋 Course Information
+
+-   🎓 **Instructor:** [Dr. Guanqun Cao]{style="color: #18453B; font-family: 'Arial Black', sans-serif;"}
+-   🎓 **TA:** TBA
+-   ⏰ **Office Hours:** [Monday, 10am – 11am]{style="color: #007bff;"} \| C426 Wells Hall
+-   📄 **Syllabus:** [Click here to download]{.badge .bg-primary} (syllabus.pdf)
+
+## 🗓️ Weekly Schedule
+
+::: {.callout-note}
+## Important Note
+Lecture slides are updated every Sunday evening. Please ensure you have the latest version before Monday's class.
+:::
+
+| Week | Topic | Slides | Lab | Assignment |
+|:-------------:|:--------------|:-------------:|:-------------:|:-------------:|
+| 1 | [Introduction]{style="color: blue; font-weight: bold;"} | [🔗](week01/slides.html) | [💻](week01/lab.qmd) | -- |
+| 2 | [PCA]{style="color: green; font-weight: bold;"} | [🔗](week02/lec02-pca.html) | [💻](week02/lab02.qmd) | [HW 1]{style="color: red;"} |
+| 3 | [Factor Analysis]{style="color: darkcyan; font-weight: bold;"} | [🔗](week03/slides.html) | [💻](week03/lab.qmd) | -- |
+
+---
+---
+
+## 🛠️ Software Requirements
+
+We will be using **R** and **RStudio** for all computations. Please ensure you have the following installed:
+
+[1.]{.underline} \[R (version 4.3+)\](<https://cran.r-project.org/>)
+
+[2.]{.underline} \[RStudio Desktop\](<https://posit.co/download/rstudio-desktop>/)
+
+[3.]{.underline} \[Quarto CLI\](<https://quarto.org/docs/get-started/>)
