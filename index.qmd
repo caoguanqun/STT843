@@ -3,7 +3,7 @@ title: "STT843: Multivariate Data Analysis"
 subtitle: "Course Website - Spring 2026"
 ---
 
-::: {.lead}
+::: lead
 Welcome to the course website for **STT843** This course provides an introduction to the statistical analysis of multivariate data, focusing on both theoretical foundations and practical applications in R.
 :::
 
@@ -18,19 +18,17 @@ Welcome to the course website for **STT843** This course provides an introductio
 
 ## 🗓️ Weekly Schedule
 
-::: {.callout-note}
+::: callout-note
 ## Important Note
+
 Lecture slides are updated every Sunday evening. Please ensure you have the latest version before Monday's class.
 :::
 
 | Week | Topic | Slides | Lab | Assignment |
-|:-------------:|:--------------|:-------------:|:-------------:|:-------------:|
+|:--:|:---|:--:|:--:|:--:|
 | 1 | [Introduction]{style="color: blue; font-weight: bold;"} | [🔗](week01/slides.html) | [💻](week01/lab.qmd) | -- |
 | 2 | [PCA]{style="color: green; font-weight: bold;"} | [🔗](week02/lec02-pca.html) | [💻](week02/lab02.qmd) | [HW 1]{style="color: red;"} |
 | 3 | [Factor Analysis]{style="color: darkcyan; font-weight: bold;"} | [🔗](week03/slides.html) | [💻](week03/lab.qmd) | -- |
-
----
----
 
 ## 🛠️ Software Requirements
 

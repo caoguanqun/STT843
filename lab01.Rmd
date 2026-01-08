@@ -1,0 +1,88 @@
+---
+title: "Lab 01"
+subtitle: "STT843 Multivariate Analysis"
+author: "Dr. Guanqun Cao"
+format: 
+  html:
+    toc: true
+    code-copy: true
+---
+
+## Getting Started
+
+If you haven’t done so already, please download and install **R** and **RStudio**. R is the programming language, and RStudio is an integrated development environment that makes using R much more pleasurable. My advice is to always use RStudio and never run code in R itself.
+
+**For complete beginners:** For those who are completely new to R (or those who want a refresher), I recommend working through an [online tutorial](https://rstudio-education.github.io/hopr/).
+
+------------------------------------------------------------------------
+
+## Warm-up: The Iris Dataset
+
+The most important aspects of R to focus on for this module are **Basic plotting** and **Manipulation of matrices and data frames.** Let’s look at the built-in `iris` dataset.
+
+### Exercise 1
+
+Can you plot the sepal length against the sepal width?
+
+```{r}
+#| label: iris-plot
+library(ggplot2)
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_point() +
+  theme_minimal()
+```
+
+**Data Manipulation**
+
+Tasks: Select the column of the iris data that contains sepal length.
+
+1.  Select only the rows for species **setosa**.
+
+2.  There are several ways to do basic data manipulation in **R**. You can use base **R** commands or the `dplyr` commands (part of `tidyverse`).
+
+``` r
+ library(dplyr)
+# Selecting and Filtering
+iris |> 
+  filter(Species == 'setosa') |> 
+  summarise(mean_petal = mean(Petal.Length))
+```
+
+## Matrix Operations
+
+Let's extract the four numerical columns and store them as a matrix $X$.
+
+``` r
+X <- as.matrix(iris[,1:4])
+D <- diag(1:4) # Diagonal matrix
+X_weighted <- X %*% D
+head(X_weighted)
+```
+
+## Sample Statistics
+
+Calculate the sample mean, covariance, and correlation for the following student data.
+
+``` r
+Ex1 <- data.frame(
+  Student = LETTERS[1:5],
+  P = c(41, 72, 46, 77, 59),
+  S = c(63, 82, 38, 57, 85)
+)
+
+colMeans(Ex1[, 2:3])
+cov(Ex1[, 2:3])
+```
+
+## Multivariate Normal Distribution
+
+Generate 100 samples from the multivariate normal distribution with $\mu = (1, 0)^T$ and $\Sigma = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$.
+
+``` r
+library(mvtnorm)
+mu <- c(1, 0)
+Sigma <- matrix(c(2, 1, 1, 2), nr=2)
+set.seed(843)
+X_mvn <- rmvnorm(n=100, mean=mu, sigma=Sigma)
+plot(X_mvn, main="Synthetic MVN Samples")
+```
