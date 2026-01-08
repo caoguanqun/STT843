@@ -1,9 +1,13 @@
 project:
   type: website
-
+  output-dir: docs
+  resources: 
+    - "lectures/*.pdf"
+    
 website:
   title: "STT843 Multivariate Data Analysis"
   navbar:
+    background: primary
     left:
       - href: index.qmd
         text: Home
@@ -18,21 +22,6 @@ format:
   html:
     theme: cosmo
     toc: true
+    css: styles.css
 
 editor: visual
-
-.
-├── lectures/
-│   ├── lec01-intro.qmd
-│   ├── lec02-pca.qmd
-│   └── lec03-lda.qmd
-├── labs/
-│   ├── lab01-r-review.qmd
-│   ├── lab02-pca.qmd
-│   └── lab03-clustering.qmd
-├── data/
-│   └── iris.csv
-├── index.qmd
-├── lectures.qmd
-├── labs.qmd
-└── assignments.qmd

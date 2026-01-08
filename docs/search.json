@@ -1,0 +1,100 @@
+[
+  {
+    "objectID": "lec02-pca.html",
+    "href": "lec02-pca.html",
+    "title": "Lectures",
+    "section": "",
+    "text": "```{r} data(iris)\nX &lt;- scale(iris[, 1:4])\npca &lt;- prcomp(X) summary(pca)\nplot(pca, type = “l”)\nbiplot(pca)"
+  },
+  {
+    "objectID": "lec02-pca.html#pca-example",
+    "href": "lec02-pca.html#pca-example",
+    "title": "Lectures",
+    "section": "",
+    "text": "```{r} data(iris)\nX &lt;- scale(iris[, 1:4])\npca &lt;- prcomp(X) summary(pca)\nplot(pca, type = “l”)\nbiplot(pca)"
+  },
+  {
+    "objectID": "lec02-pca.html#create-a-file-lectures.qmd-in-the-root-folder-not-in-lectures",
+    "href": "lec02-pca.html#create-a-file-lectures.qmd-in-the-root-folder-not-in-lectures",
+    "title": "Lectures",
+    "section": "Create a file lectures.qmd (in the root folder, not in lectures/):",
+    "text": "Create a file lectures.qmd (in the root folder, not in lectures/):\n```markdown\n\nLecture 1: Introduction\nLecture 2: PCA"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "STT843: Multivariate Data Analysis",
+    "section": "",
+    "text": "Welcome to the course website for STT843 This course provides an introduction to the statistical analysis of multivariate data, focusing on both theoretical foundations and practical applications in R."
+  },
+  {
+    "objectID": "index.html#course-information",
+    "href": "index.html#course-information",
+    "title": "STT843: Multivariate Data Analysis",
+    "section": "📋 Course Information",
+    "text": "📋 Course Information\n\n🎓 Instructor: Dr. Guanqun Cao\n🎓 TA: TBA\n⏰ Office Hours: Monday, 10am – 11am | C426 Wells Hall\n📄 Syllabus: Click here to download (syllabus.pdf)"
+  },
+  {
+    "objectID": "index.html#weekly-schedule",
+    "href": "index.html#weekly-schedule",
+    "title": "STT843: Multivariate Data Analysis",
+    "section": "🗓️ Weekly Schedule",
+    "text": "🗓️ Weekly Schedule\n\n\n\n\n\n\nImportant Note\n\n\n\nLecture slides are updated every Sunday evening. Please ensure you have the latest version before Monday’s class.\n\n\n\n\n\nWeek\nTopic\nSlides\nLab\nAssignment\n\n\n\n\n1\nIntroduction\nPDF 🔗\n💻\n–\n\n\n2\nPCA\nPDF 🔗\n💻\nHW 1\n\n\n3\nFactor Analysis\nPDF 🔗\n💻\n–"
+  },
+  {
+    "objectID": "index.html#software-requirements",
+    "href": "index.html#software-requirements",
+    "title": "STT843: Multivariate Data Analysis",
+    "section": "🛠️ Software Requirements",
+    "text": "🛠️ Software Requirements\nWe will be using R and RStudio for all computations. Please ensure you have the following installed:\n1. [R (version 4.3+)](https://cran.r-project.org/)\n2. [RStudio Desktop](https://posit.co/download/rstudio-desktop/)\n3. [Quarto CLI](https://quarto.org/docs/get-started/)"
+  },
+  {
+    "objectID": "labs/lab01.html",
+    "href": "labs/lab01.html",
+    "title": "Lab 01",
+    "section": "",
+    "text": "If you haven’t done so already, please download and install R and RStudio. R is the programming language, and RStudio is an integrated development environment that makes using R much more pleasurable. My advice is to always use RStudio and never run code in R itself.\nFor complete beginners: For those who are completely new to R (or those who want a refresher), I recommend working through an online tutorial."
+  },
+  {
+    "objectID": "labs/lab01.html#getting-started",
+    "href": "labs/lab01.html#getting-started",
+    "title": "Lab 01",
+    "section": "",
+    "text": "If you haven’t done so already, please download and install R and RStudio. R is the programming language, and RStudio is an integrated development environment that makes using R much more pleasurable. My advice is to always use RStudio and never run code in R itself.\nFor complete beginners: For those who are completely new to R (or those who want a refresher), I recommend working through an online tutorial."
+  },
+  {
+    "objectID": "labs/lab01.html#warm-up-the-iris-dataset",
+    "href": "labs/lab01.html#warm-up-the-iris-dataset",
+    "title": "Lab 01",
+    "section": "Warm-up: The Iris Dataset",
+    "text": "Warm-up: The Iris Dataset\nThe most important aspects of R to focus on for this module are Basic plotting and Manipulation of matrices and data frames. Let’s look at the built-in iris dataset.\n\nExercise 1\nCan you plot the sepal length against the sepal width?\n\nlibrary(ggplot2)\n\nWarning: package 'ggplot2' was built under R version 4.4.3\n\nggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +\n  geom_point() +\n  theme_minimal()\n\n\n\n\n\n\n\n\nData Manipulation\nTasks: Select the column of the iris data that contains sepal length.\n\nSelect only the rows for species setosa.\nThere are several ways to do basic data manipulation in R. You can use base R commands or the dplyr commands (part of tidyverse).\n\n library(dplyr)\n# Selecting and Filtering\niris |&gt; \n  filter(Species == 'setosa') |&gt; \n  summarise(mean_petal = mean(Petal.Length))"
+  },
+  {
+    "objectID": "labs/lab01.html#matrix-operations",
+    "href": "labs/lab01.html#matrix-operations",
+    "title": "Lab 01",
+    "section": "Matrix Operations",
+    "text": "Matrix Operations\nLet’s extract the four numerical columns and store them as a matrix \\(X\\).\nX &lt;- as.matrix(iris[,1:4])\nD &lt;- diag(1:4) # Diagonal matrix\nX_weighted &lt;- X %*% D\nhead(X_weighted)"
+  },
+  {
+    "objectID": "labs/lab01.html#sample-statistics",
+    "href": "labs/lab01.html#sample-statistics",
+    "title": "Lab 01",
+    "section": "Sample Statistics",
+    "text": "Sample Statistics\nCalculate the sample mean, covariance, and correlation for the following student data.\nEx1 &lt;- data.frame(\n  Student = LETTERS[1:5],\n  P = c(41, 72, 46, 77, 59),\n  S = c(63, 82, 38, 57, 85)\n)\n\ncolMeans(Ex1[, 2:3])\ncov(Ex1[, 2:3])"
+  },
+  {
+    "objectID": "labs/lab01.html#multivariate-normal-distribution",
+    "href": "labs/lab01.html#multivariate-normal-distribution",
+    "title": "Lab 01",
+    "section": "Multivariate Normal Distribution",
+    "text": "Multivariate Normal Distribution\nGenerate 100 samples from the multivariate normal distribution with \\(\\mu = (1, 0)^T\\) and \\(\\Sigma = \\begin{pmatrix} 2 & 1 \\\\ 1 & 2 \\end{pmatrix}\\).\nlibrary(mvtnorm)\nmu &lt;- c(1, 0)\nSigma &lt;- matrix(c(2, 1, 1, 2), nr=2)\nset.seed(843)\nX_mvn &lt;- rmvnorm(n=100, mean=mu, sigma=Sigma)\nplot(X_mvn, main=\"Synthetic MVN Samples\")"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
+  }
+]

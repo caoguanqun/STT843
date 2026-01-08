@@ -25,10 +25,10 @@ Lecture slides are updated every Sunday evening. Please ensure you have the late
 :::
 
 | Week | Topic | Slides | Lab | Assignment |
-|:--:|:---|:--:|:--:|:--:|
-| 1 | [Introduction]{style="color: blue; font-weight: bold;"} | [🔗](week01/slides.html) | [💻](week01/lab.qmd) | -- |
-| 2 | [PCA]{style="color: green; font-weight: bold;"} | [🔗](week02/lec02-pca.html) | [💻](week02/lab02.qmd) | [HW 1]{style="color: red;"} |
-| 3 | [Factor Analysis]{style="color: darkcyan; font-weight: bold;"} | [🔗](week03/slides.html) | [💻](week03/lab.qmd) | -- |
+|:-------------:|:--------------|:-------------:|:-------------:|:-------------:|
+| 1 | [Introduction]{style="color: blue; font-weight: bold;"} | [PDF 🔗](lectures/lec01-intro.pdf) | [💻](labs/lab01.Rmd) | -- |
+| 2 | [PCA]{style="color: green; font-weight: bold;"} | [PDF 🔗](lectures/lec02-pca.pdf) | [💻](labs/lab02-pca.qmd) | [HW 1]{style="color: red;"} |
+| 3 | [Factor Analysis]{style="color: darkcyan; font-weight: bold;"} | [PDF 🔗](lectures/lec03-lda.pdf) | [💻](labs/lab03-clustering.qmd) | -- |
 
 ## 🛠️ Software Requirements
 
