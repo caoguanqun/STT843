@@ -14,7 +14,7 @@ Welcome to the course website for **STT843** This course provides an introductio
 -   🎓 **Instructor:** [Dr. Guanqun Cao]{style="color: #18453B; font-family: 'Arial Black', sans-serif;"}
 -   🎓 **TA:** TBA
 -   ⏰ **Office Hours:** [Monday, 10am – 11am]{style="color: #007bff;"} \| C426 Wells Hall
--   📄 **Syllabus:** [Click here to download]{.badge .bg-primary} (lectures/syllabus_843.pdf)
+-   📄 **Syllabus:** [click here 🔗](lectures/syllabus.pdf)  
 
 ## 🗓️ Weekly Schedule
 
@@ -25,7 +25,7 @@ Lecture slides are updated every Sunday evening. Please ensure you have the late
 :::
 
 | Week | Topic | Slides (PDF) | Labs (Rmd/Qmd) | Assignment |
-|:-------------:|:--------------|:-----------------:|:-------------------:|:-------------:|
+|:-------------:|:--------------|:-------------:|:-------------:|:-------------:|
 | 1 | [Introduction]{style="color: blue; font-weight: bold;"} | [Lec 1.1 🔗](lectures/lec01-into.pdf)<br>[Lec 1.2 🔗](lectures/lec02-matrix.pdf) | [💻 Lab 1a](labs/lab01a.Rmd)<br>[💻 Lab 1b](labs/lab01b.Rmd) | -- |
 | 2 | [Linear Algebra]{style="color: green; font-weight: bold;"} | [Lec 2.1 🔗](lectures/lec02-linear.pdf)<br>[Lec 2.2 🔗](lectures/lec02-2.pdf) | [💻 Lab 2a](labs/lab02a.qmd)<br>[💻 Lab 2b](labs/lab02b.qmd) | [HW 1]{style="color: red;"} |
 
