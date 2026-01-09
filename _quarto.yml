@@ -11,13 +11,7 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href: lectures.qmd
-        text: Lectures
-      - href: labs.qmd
-        text: Labs
-      - href: assignments.qmd
-        text: Assignments
-
+   
 format:
   html:
     theme: cosmo
