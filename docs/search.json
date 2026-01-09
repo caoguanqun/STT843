@@ -7,43 +7,43 @@
     "text": "About this site\n\n1 + 1\n\n[1] 2"
   },
   {
-    "objectID": "labs/lab01.html",
-    "href": "labs/lab01.html",
+    "objectID": "labs/lab01a.html",
+    "href": "labs/lab01a.html",
     "title": "Lab 01",
     "section": "",
     "text": "If you haven’t done so already, please download and install R and RStudio. R is the programming language, and RStudio is an integrated development environment that makes using R much more pleasurable. My advice is to always use RStudio and never run code in R itself.\nFor complete beginners: For those who are completely new to R (or those who want a refresher), I recommend working through an online tutorial."
   },
   {
-    "objectID": "labs/lab01.html#getting-started",
-    "href": "labs/lab01.html#getting-started",
+    "objectID": "labs/lab01a.html#getting-started",
+    "href": "labs/lab01a.html#getting-started",
     "title": "Lab 01",
     "section": "",
     "text": "If you haven’t done so already, please download and install R and RStudio. R is the programming language, and RStudio is an integrated development environment that makes using R much more pleasurable. My advice is to always use RStudio and never run code in R itself.\nFor complete beginners: For those who are completely new to R (or those who want a refresher), I recommend working through an online tutorial."
   },
   {
-    "objectID": "labs/lab01.html#warm-up-the-iris-dataset",
-    "href": "labs/lab01.html#warm-up-the-iris-dataset",
+    "objectID": "labs/lab01a.html#warm-up-the-iris-dataset",
+    "href": "labs/lab01a.html#warm-up-the-iris-dataset",
     "title": "Lab 01",
     "section": "Warm-up: The Iris Dataset",
     "text": "Warm-up: The Iris Dataset\nThe most important aspects of R to focus on for this module are Basic plotting and Manipulation of matrices and data frames. Let’s look at the built-in iris dataset.\n\nExercise 1\nCan you plot the sepal length against the sepal width?\n\nlibrary(ggplot2)\n\nWarning: package 'ggplot2' was built under R version 4.4.3\n\nggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +\n  geom_point() +\n  theme_minimal()\n\n\n\n\n\n\n\n\nData Manipulation\nTasks: Select the column of the iris data that contains sepal length.\n\nSelect only the rows for species setosa.\nThere are several ways to do basic data manipulation in R. You can use base R commands or the dplyr commands (part of tidyverse).\n\n library(dplyr)\n# Selecting and Filtering\niris |&gt; \n  filter(Species == 'setosa') |&gt; \n  summarise(mean_petal = mean(Petal.Length))"
   },
   {
-    "objectID": "labs/lab01.html#matrix-operations",
-    "href": "labs/lab01.html#matrix-operations",
+    "objectID": "labs/lab01a.html#matrix-operations",
+    "href": "labs/lab01a.html#matrix-operations",
     "title": "Lab 01",
     "section": "Matrix Operations",
     "text": "Matrix Operations\nLet’s extract the four numerical columns and store them as a matrix \\(X\\).\nX &lt;- as.matrix(iris[,1:4])\nD &lt;- diag(1:4) # Diagonal matrix\nX_weighted &lt;- X %*% D\nhead(X_weighted)"
   },
   {
-    "objectID": "labs/lab01.html#sample-statistics",
-    "href": "labs/lab01.html#sample-statistics",
+    "objectID": "labs/lab01a.html#sample-statistics",
+    "href": "labs/lab01a.html#sample-statistics",
     "title": "Lab 01",
     "section": "Sample Statistics",
     "text": "Sample Statistics\nCalculate the sample mean, covariance, and correlation for the following student data.\nEx1 &lt;- data.frame(\n  Student = LETTERS[1:5],\n  P = c(41, 72, 46, 77, 59),\n  S = c(63, 82, 38, 57, 85)\n)\n\ncolMeans(Ex1[, 2:3])\ncov(Ex1[, 2:3])"
   },
   {
-    "objectID": "labs/lab01.html#multivariate-normal-distribution",
-    "href": "labs/lab01.html#multivariate-normal-distribution",
+    "objectID": "labs/lab01a.html#multivariate-normal-distribution",
+    "href": "labs/lab01a.html#multivariate-normal-distribution",
     "title": "Lab 01",
     "section": "Multivariate Normal Distribution",
     "text": "Multivariate Normal Distribution\nGenerate 100 samples from the multivariate normal distribution with \\(\\mu = (1, 0)^T\\) and \\(\\Sigma = \\begin{pmatrix} 2 & 1 \\\\ 1 & 2 \\end{pmatrix}\\).\nlibrary(mvtnorm)\nmu &lt;- c(1, 0)\nSigma &lt;- matrix(c(2, 1, 1, 2), nr=2)\nset.seed(843)\nX_mvn &lt;- rmvnorm(n=100, mean=mu, sigma=Sigma)\nplot(X_mvn, main=\"Synthetic MVN Samples\")"
