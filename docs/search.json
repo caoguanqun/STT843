@@ -1,52 +1,10 @@
 [
   {
-    "objectID": "lec02-pca.html",
-    "href": "lec02-pca.html",
-    "title": "Lectures",
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
     "section": "",
-    "text": "```{r} data(iris)\nX &lt;- scale(iris[, 1:4])\npca &lt;- prcomp(X) summary(pca)\nplot(pca, type = “l”)\nbiplot(pca)"
-  },
-  {
-    "objectID": "lec02-pca.html#pca-example",
-    "href": "lec02-pca.html#pca-example",
-    "title": "Lectures",
-    "section": "",
-    "text": "```{r} data(iris)\nX &lt;- scale(iris[, 1:4])\npca &lt;- prcomp(X) summary(pca)\nplot(pca, type = “l”)\nbiplot(pca)"
-  },
-  {
-    "objectID": "lec02-pca.html#create-a-file-lectures.qmd-in-the-root-folder-not-in-lectures",
-    "href": "lec02-pca.html#create-a-file-lectures.qmd-in-the-root-folder-not-in-lectures",
-    "title": "Lectures",
-    "section": "Create a file lectures.qmd (in the root folder, not in lectures/):",
-    "text": "Create a file lectures.qmd (in the root folder, not in lectures/):\n```markdown\n\nLecture 1: Introduction\nLecture 2: PCA"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "STT843: Multivariate Data Analysis",
-    "section": "",
-    "text": "Welcome to the course website for STT843 This course provides an introduction to the statistical analysis of multivariate data, focusing on both theoretical foundations and practical applications in R."
-  },
-  {
-    "objectID": "index.html#course-information",
-    "href": "index.html#course-information",
-    "title": "STT843: Multivariate Data Analysis",
-    "section": "📋 Course Information",
-    "text": "📋 Course Information\n\n🎓 Instructor: Dr. Guanqun Cao\n🎓 TA: TBA\n⏰ Office Hours: Monday, 10am – 11am | C426 Wells Hall\n📄 Syllabus: Click here to download (syllabus.pdf)"
-  },
-  {
-    "objectID": "index.html#weekly-schedule",
-    "href": "index.html#weekly-schedule",
-    "title": "STT843: Multivariate Data Analysis",
-    "section": "🗓️ Weekly Schedule",
-    "text": "🗓️ Weekly Schedule\n\n\n\n\n\n\nImportant Note\n\n\n\nLecture slides are updated every Sunday evening. Please ensure you have the latest version before Monday’s class.\n\n\n\n\n\nWeek\nTopic\nSlides\nLab\nAssignment\n\n\n\n\n1\nIntroduction\nPDF 🔗\n💻\n–\n\n\n2\nPCA\nPDF 🔗\n💻\nHW 1\n\n\n3\nFactor Analysis\nPDF 🔗\n💻\n–"
-  },
-  {
-    "objectID": "index.html#software-requirements",
-    "href": "index.html#software-requirements",
-    "title": "STT843: Multivariate Data Analysis",
-    "section": "🛠️ Software Requirements",
-    "text": "🛠️ Software Requirements\nWe will be using R and RStudio for all computations. Please ensure you have the following installed:\n1. [R (version 4.3+)](https://cran.r-project.org/)\n2. [RStudio Desktop](https://posit.co/download/rstudio-desktop/)\n3. [Quarto CLI](https://quarto.org/docs/get-started/)"
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
   },
   {
     "objectID": "labs/lab01.html",
@@ -91,10 +49,31 @@
     "text": "Multivariate Normal Distribution\nGenerate 100 samples from the multivariate normal distribution with \\(\\mu = (1, 0)^T\\) and \\(\\Sigma = \\begin{pmatrix} 2 & 1 \\\\ 1 & 2 \\end{pmatrix}\\).\nlibrary(mvtnorm)\nmu &lt;- c(1, 0)\nSigma &lt;- matrix(c(2, 1, 1, 2), nr=2)\nset.seed(843)\nX_mvn &lt;- rmvnorm(n=100, mean=mu, sigma=Sigma)\nplot(X_mvn, main=\"Synthetic MVN Samples\")"
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "STT843: Multivariate Data Analysis",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "Welcome to the course website for STT843 This course provides an introduction to the statistical analysis of multivariate data, focusing on both theoretical foundations and practical applications in R."
+  },
+  {
+    "objectID": "index.html#course-information",
+    "href": "index.html#course-information",
+    "title": "STT843: Multivariate Data Analysis",
+    "section": "📋 Course Information",
+    "text": "📋 Course Information\n\n🎓 Instructor: Dr. Guanqun Cao\n🎓 TA: TBA\n⏰ Office Hours: Monday, 10am – 11am | C426 Wells Hall\n📄 Syllabus: Click here to download (lectures/syllabus_843.pdf)"
+  },
+  {
+    "objectID": "index.html#weekly-schedule",
+    "href": "index.html#weekly-schedule",
+    "title": "STT843: Multivariate Data Analysis",
+    "section": "🗓️ Weekly Schedule",
+    "text": "🗓️ Weekly Schedule\n\n\n\n\n\n\nImportant Note\n\n\n\nLecture slides are updated every Sunday evening. Please ensure you have the latest version before Monday’s class.\n\n\n\n\n\nWeek\nTopic\nSlides (PDF)\nLabs (Rmd/Qmd)\nAssignment\n\n\n\n\n1\nIntroduction\nLec 1.1 🔗Lec 1.2 🔗\n💻 Lab 1a💻 Lab 1b\n–\n\n\n2\nLinear Algebra\nLec 2.1 🔗Lec 2.2 🔗\n💻 Lab 2a💻 Lab 2b\nHW 1"
+  },
+  {
+    "objectID": "index.html#software-requirements",
+    "href": "index.html#software-requirements",
+    "title": "STT843: Multivariate Data Analysis",
+    "section": "🛠️ Software Requirements",
+    "text": "🛠️ Software Requirements\nWe will be using R and RStudio for all computations. Please ensure you have the following installed:\n1. [R (version 4.3+)](https://cran.r-project.org/)\n2. [RStudio Desktop](https://posit.co/download/rstudio-desktop/)\n3. [Quarto CLI](https://quarto.org/docs/get-started/)"
   }
 ]
