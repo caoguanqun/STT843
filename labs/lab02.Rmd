@@ -1,0 +1,163 @@
+---
+title: "Lab02a: Matrix Algebra"
+subtitle: "STT 843: Multivariate Analysis"
+author: "Dr. Guanqun Cao"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(matrixcalc) # For matrix property checks
+```
+
+## 1. Euclidean vs. Statistical Distance
+
+The Euclidean distance between a point $P = (x_1, x_2)$ and the origin
+$O = (0,0)$ is $d(O, P) = \sqrt{x_1^2 + x_2^2}$. However, in statistics,
+we must account for different variances.
+
+### Exercise: Comparing Distances
+
+Suppose we have a point $P = (3, 3)$.
+
+1.  Calculate the Euclidean distance.
+
+2.  Calculate the Statistical distance assuming $s_{11} = 9$ and
+    $s_{22} = 1$.
+
+```         
+# Point P
+x <- c(3, 3)
+
+# 1. Euclidean Distance
+d_euc <- sqrt(sum(x^2))
+print(paste("Euclidean Distance:", round(d_euc, 4)))
+
+# 2. Statistical Distance (Standardized)
+s11 <- 9
+s22 <- 1
+d_stat <- sqrt(x[1]^2/s11 + x[2]^2/s22)
+print(paste("Statistical Distance:", round(d_stat, 4)))
+```
+
+**Observation:** Notice how the statistical distance penalizes the
+dimension with lower variability ($x_2$) more heavily.
+
+## 2. The Square-Root Matrix
+
+For a positive definite matrix $\mathbf{A}$, the square-root matrix
+$\mathbf{A}^{1/2}$ is defined via spectral decomposition:
+$\mathbf{A}^{1/2} = \mathbf{P} \Lambda^{1/2} \mathbf{P}^T$.
+
+### Exercise: Compute $A^{1/2}$
+
+Given $\mathbf{A} = \begin{bmatrix} 4 & 1 \\ 1 & 9 \end{bmatrix}$:
+
+```         
+A <- matrix(c(4, 1, 1, 9), nrow = 2)
+
+# Spectral Decomposition
+decomp <- eigen(A)
+P <- decomp$vectors
+Lambda <- diag(decomp$values)
+
+# Compute Square Root Matrix
+A_sqrt <- P %*% diag(sqrt(decomp$values)) %*% t(P)
+
+print("Square Root Matrix A^(1/2):")
+print(A_sqrt)
+
+# Verification: A_sqrt * A_sqrt should equal A
+print("Verification (A_sqrt %*% A_sqrt):")
+print(round(A_sqrt %*% A_sqrt, 10))
+```
+
+## 3. Random Vectors and Covariance
+
+The population correlation matrix $\rho$ is derived from the covariance
+matrix $\Sigma$ by
+$\rho_{ik} = \frac{\sigma_{ik}}{\sqrt{\sigma_{ii}}\sqrt{\sigma_{kk}}}$.
+
+### Exercise: Example 2.13
+
+Given
+$\Sigma = \begin{bmatrix} 4 & 1 & 2 \\ 1 & 9 & -3 \\ 2 & -3 & 25 \end{bmatrix}$,
+find the correlation matrix.
+
+```         
+Sigma <- matrix(c(4, 1, 2, 
+                  1, 9, -3, 
+                  2, -3, 25), nrow = 3, byrow = TRUE)
+
+# Method 1: Manual Calculation using diagonals
+D_inv_sqrt <- diag(1/sqrt(diag(Sigma)))
+rho_manual <- D_inv_sqrt %*% Sigma %*% D_inv_sqrt
+
+# Method 2: Using R's cov2cor function
+rho_r <- cov2cor(Sigma)
+
+print("Correlation Matrix:")
+print(rho_r)
+```
+
+## 4. Maximization Lemma
+
+The lecture notes state that for a positive definite matrix
+$\mathbf{B}$, the maximum value of
+$\frac{(\mathbf{x}^T \mathbf{d})^2}{\mathbf{x}^T \mathbf{B} \mathbf{x}}$
+is $\mathbf{d}^T \mathbf{B}^{-1} \mathbf{d}$.
+
+### Exercise: Verify Maximization
+
+Let $\mathbf{B} = \begin{bmatrix} 2 & 1 \\ 1 & 4 \end{bmatrix}$ and
+$\mathbf{d} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}$.
+
+```         
+B <- matrix(c(2, 1, 1, 4), nrow = 2)
+d <- c(1, 1)
+
+# Theoretical Maximum
+theo_max <- t(d) %*% solve(B) %*% d
+
+# Attained at x = c * B^-1 * d
+x_opt <- solve(B) %*% d
+
+# Verify
+empirical_max <- (t(x_opt) %*% d)^2 / (t(x_opt) %*% B %*% x_opt)
+
+print(paste("Theoretical Max:", theo_max))
+print(paste("Value at optimal x:", empirical_max))
+```
+
+## 5. Visualizing Constant Distance (Ellipses)
+
+Points of constant statistical distance
+$\mathbf{x}^T \mathbf{A} \mathbf{x} = c^2$ form an ellipse.
+
+```         
+# Define a covariance matrix
+Sigma_plot <- matrix(c(5, 2, 2, 2), nrow = 2)
+A_mat <- solve(Sigma_plot) # Inverse for distance calculation
+
+# Generate points for an ellipse
+theta <- seq(0, 2*pi, length.out = 100)
+z <- cbind(cos(theta), sin(theta))
+
+# Decompose A to transform the circle into an ellipse
+ed <- eigen(Sigma_plot)
+# Points = Eigenvectors * sqrt(Eigenvalues) * unit_circle
+ellipse_pts <- z %*% diag(sqrt(ed$values)) %*% t(ed$vectors)
+ellipse_df <- as.data.frame(ellipse_pts)
+
+ggplot(ellipse_df, aes(V1, V2)) +
+  geom_path(color = "blue") +
+  coord_fixed() +
+  labs(title = "Constant Statistical Distance Ellipse",
+       x = "x1", y = "x2") +
+  theme_minimal()
+```
