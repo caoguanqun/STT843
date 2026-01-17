@@ -65,42 +65,42 @@
   {
     "objectID": "labs/lab02.html",
     "href": "labs/lab02.html",
-    "title": "Lab02a: Matrix Algebra",
+    "title": "Lab02a: Random Vectors and Matrices",
     "section": "",
     "text": "The Euclidean distance between a point \\(P = (x_1, x_2)\\) and the origin \\(O = (0,0)\\) is \\(d(O, P) = \\sqrt{x_1^2 + x_2^2}\\). However, in statistics, we must account for different variances.\n\n\nSuppose we have a point \\(P = (3, 3)\\).\n\nCalculate the Euclidean distance.\nCalculate the Statistical distance assuming \\(s_{11} = 9\\) and \\(s_{22} = 1\\).\n\n# Point P\nx &lt;- c(3, 3)\n\n# 1. Euclidean Distance\nd_euc &lt;- sqrt(sum(x^2))\nprint(paste(\"Euclidean Distance:\", round(d_euc, 4)))\n\n# 2. Statistical Distance (Standardized)\ns11 &lt;- 9\ns22 &lt;- 1\nd_stat &lt;- sqrt(x[1]^2/s11 + x[2]^2/s22)\nprint(paste(\"Statistical Distance:\", round(d_stat, 4)))\nObservation: Notice how the statistical distance penalizes the dimension with lower variability (\\(x_2\\)) more heavily."
   },
   {
     "objectID": "labs/lab02.html#euclidean-vs.-statistical-distance",
     "href": "labs/lab02.html#euclidean-vs.-statistical-distance",
-    "title": "Lab02a: Matrix Algebra",
+    "title": "Lab02a: Random Vectors and Matrices",
     "section": "",
     "text": "The Euclidean distance between a point \\(P = (x_1, x_2)\\) and the origin \\(O = (0,0)\\) is \\(d(O, P) = \\sqrt{x_1^2 + x_2^2}\\). However, in statistics, we must account for different variances.\n\n\nSuppose we have a point \\(P = (3, 3)\\).\n\nCalculate the Euclidean distance.\nCalculate the Statistical distance assuming \\(s_{11} = 9\\) and \\(s_{22} = 1\\).\n\n# Point P\nx &lt;- c(3, 3)\n\n# 1. Euclidean Distance\nd_euc &lt;- sqrt(sum(x^2))\nprint(paste(\"Euclidean Distance:\", round(d_euc, 4)))\n\n# 2. Statistical Distance (Standardized)\ns11 &lt;- 9\ns22 &lt;- 1\nd_stat &lt;- sqrt(x[1]^2/s11 + x[2]^2/s22)\nprint(paste(\"Statistical Distance:\", round(d_stat, 4)))\nObservation: Notice how the statistical distance penalizes the dimension with lower variability (\\(x_2\\)) more heavily."
   },
   {
     "objectID": "labs/lab02.html#the-square-root-matrix",
     "href": "labs/lab02.html#the-square-root-matrix",
-    "title": "Lab02a: Matrix Algebra",
+    "title": "Lab02a: Random Vectors and Matrices",
     "section": "2. The Square-Root Matrix",
     "text": "2. The Square-Root Matrix\nFor a positive definite matrix \\(\\mathbf{A}\\), the square-root matrix \\(\\mathbf{A}^{1/2}\\) is defined via spectral decomposition: \\(\\mathbf{A}^{1/2} = \\mathbf{P} \\Lambda^{1/2} \\mathbf{P}^T\\).\n\nExercise: Compute \\(A^{1/2}\\)\nGiven \\(\\mathbf{A} = \\begin{bmatrix} 4 & 1 \\\\ 1 & 9 \\end{bmatrix}\\):\nA &lt;- matrix(c(4, 1, 1, 9), nrow = 2)\n\n# Spectral Decomposition\ndecomp &lt;- eigen(A)\nP &lt;- decomp$vectors\nLambda &lt;- diag(decomp$values)\n\n# Compute Square Root Matrix\nA_sqrt &lt;- P %*% diag(sqrt(decomp$values)) %*% t(P)\n\nprint(\"Square Root Matrix A^(1/2):\")\nprint(A_sqrt)\n\n# Verification: A_sqrt * A_sqrt should equal A\nprint(\"Verification (A_sqrt %*% A_sqrt):\")\nprint(round(A_sqrt %*% A_sqrt, 10))"
   },
   {
     "objectID": "labs/lab02.html#random-vectors-and-covariance",
     "href": "labs/lab02.html#random-vectors-and-covariance",
-    "title": "Lab02a: Matrix Algebra",
+    "title": "Lab02a: Random Vectors and Matrices",
     "section": "3. Random Vectors and Covariance",
     "text": "3. Random Vectors and Covariance\nThe population correlation matrix \\(\\rho\\) is derived from the covariance matrix \\(\\Sigma\\) by \\(\\rho_{ik} = \\frac{\\sigma_{ik}}{\\sqrt{\\sigma_{ii}}\\sqrt{\\sigma_{kk}}}\\).\n\nExercise: Example 2.13\nGiven \\(\\Sigma = \\begin{bmatrix} 4 & 1 & 2 \\\\ 1 & 9 & -3 \\\\ 2 & -3 & 25 \\end{bmatrix}\\), find the correlation matrix.\nSigma &lt;- matrix(c(4, 1, 2, \n                  1, 9, -3, \n                  2, -3, 25), nrow = 3, byrow = TRUE)\n\n# Method 1: Manual Calculation using diagonals\nD_inv_sqrt &lt;- diag(1/sqrt(diag(Sigma)))\nrho_manual &lt;- D_inv_sqrt %*% Sigma %*% D_inv_sqrt\n\n# Method 2: Using R's cov2cor function\nrho_r &lt;- cov2cor(Sigma)\n\nprint(\"Correlation Matrix:\")\nprint(rho_r)"
   },
   {
     "objectID": "labs/lab02.html#maximization-lemma",
     "href": "labs/lab02.html#maximization-lemma",
-    "title": "Lab02a: Matrix Algebra",
+    "title": "Lab02a: Random Vectors and Matrices",
     "section": "4. Maximization Lemma",
     "text": "4. Maximization Lemma\nThe lecture notes state that for a positive definite matrix \\(\\mathbf{B}\\), the maximum value of \\(\\frac{(\\mathbf{x}^T \\mathbf{d})^2}{\\mathbf{x}^T \\mathbf{B} \\mathbf{x}}\\) is \\(\\mathbf{d}^T \\mathbf{B}^{-1} \\mathbf{d}\\).\n\nExercise: Verify Maximization\nLet \\(\\mathbf{B} = \\begin{bmatrix} 2 & 1 \\\\ 1 & 4 \\end{bmatrix}\\) and \\(\\mathbf{d} = \\begin{bmatrix} 1 \\\\ 1 \\end{bmatrix}\\).\nB &lt;- matrix(c(2, 1, 1, 4), nrow = 2)\nd &lt;- c(1, 1)\n\n# Theoretical Maximum\ntheo_max &lt;- t(d) %*% solve(B) %*% d\n\n# Attained at x = c * B^-1 * d\nx_opt &lt;- solve(B) %*% d\n\n# Verify\nempirical_max &lt;- (t(x_opt) %*% d)^2 / (t(x_opt) %*% B %*% x_opt)\n\nprint(paste(\"Theoretical Max:\", theo_max))\nprint(paste(\"Value at optimal x:\", empirical_max))"
   },
   {
     "objectID": "labs/lab02.html#visualizing-constant-distance-ellipses",
     "href": "labs/lab02.html#visualizing-constant-distance-ellipses",
-    "title": "Lab02a: Matrix Algebra",
+    "title": "Lab02a: Random Vectors and Matrices",
     "section": "5. Visualizing Constant Distance (Ellipses)",
     "text": "5. Visualizing Constant Distance (Ellipses)\nPoints of constant statistical distance \\(\\mathbf{x}^T \\mathbf{A} \\mathbf{x} = c^2\\) form an ellipse.\n# Define a covariance matrix\nSigma_plot &lt;- matrix(c(5, 2, 2, 2), nrow = 2)\nA_mat &lt;- solve(Sigma_plot) # Inverse for distance calculation\n\n# Generate points for an ellipse\ntheta &lt;- seq(0, 2*pi, length.out = 100)\nz &lt;- cbind(cos(theta), sin(theta))\n\n# Decompose A to transform the circle into an ellipse\ned &lt;- eigen(Sigma_plot)\n# Points = Eigenvectors * sqrt(Eigenvalues) * unit_circle\nellipse_pts &lt;- z %*% diag(sqrt(ed$values)) %*% t(ed$vectors)\nellipse_df &lt;- as.data.frame(ellipse_pts)\n\nggplot(ellipse_df, aes(V1, V2)) +\n  geom_path(color = \"blue\") +\n  coord_fixed() +\n  labs(title = \"Constant Statistical Distance Ellipse\",\n       x = \"x1\", y = \"x2\") +\n  theme_minimal()"
   },

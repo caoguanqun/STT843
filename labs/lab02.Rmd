@@ -1,5 +1,5 @@
 ---
-title: "Lab02a: Matrix Algebra"
+title: "Lab02a: Random Vectors and Matrices"
 subtitle: "STT 843: Multivariate Analysis"
 author: "Dr. Guanqun Cao"
 date: "`r Sys.Date()`"
@@ -30,7 +30,7 @@ Suppose we have a point $P = (3, 3)$.
 2.  Calculate the Statistical distance assuming $s_{11} = 9$ and
     $s_{22} = 1$.
 
-```         
+``` R
 # Point P
 x <- c(3, 3)
 
@@ -58,7 +58,7 @@ $\mathbf{A}^{1/2} = \mathbf{P} \Lambda^{1/2} \mathbf{P}^T$.
 
 Given $\mathbf{A} = \begin{bmatrix} 4 & 1 \\ 1 & 9 \end{bmatrix}$:
 
-```         
+``` R
 A <- matrix(c(4, 1, 1, 9), nrow = 2)
 
 # Spectral Decomposition
@@ -89,7 +89,7 @@ Given
 $\Sigma = \begin{bmatrix} 4 & 1 & 2 \\ 1 & 9 & -3 \\ 2 & -3 & 25 \end{bmatrix}$,
 find the correlation matrix.
 
-```         
+``` R
 Sigma <- matrix(c(4, 1, 2, 
                   1, 9, -3, 
                   2, -3, 25), nrow = 3, byrow = TRUE)
@@ -117,7 +117,7 @@ is $\mathbf{d}^T \mathbf{B}^{-1} \mathbf{d}$.
 Let $\mathbf{B} = \begin{bmatrix} 2 & 1 \\ 1 & 4 \end{bmatrix}$ and
 $\mathbf{d} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}$.
 
-```         
+``` R
 B <- matrix(c(2, 1, 1, 4), nrow = 2)
 d <- c(1, 1)
 
@@ -139,7 +139,7 @@ print(paste("Value at optimal x:", empirical_max))
 Points of constant statistical distance
 $\mathbf{x}^T \mathbf{A} \mathbf{x} = c^2$ form an ellipse.
 
-```         
+``` R
 # Define a covariance matrix
 Sigma_plot <- matrix(c(5, 2, 2, 2), nrow = 2)
 A_mat <- solve(Sigma_plot) # Inverse for distance calculation

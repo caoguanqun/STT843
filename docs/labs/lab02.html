@@ -9,7 +9,7 @@
 <meta name="author" content="Dr.&nbsp;Guanqun Cao">
 <meta name="dcterms.date" content="2026-01-16">
 
-<title>Lab02a: Matrix Algebra – STT843 Multivariate Data Analysis</title>
+<title>Lab02a: Random Vectors and Matrices – STT843 Multivariate Data Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -165,7 +200,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lab02a: Matrix Algebra</h1>
+<h1 class="title">Lab02a: Random Vectors and Matrices</h1>
 <p class="subtitle lead">STT 843: Multivariate Analysis</p>
 </div>
 
@@ -205,18 +240,18 @@ window.Quarto = {
 <li><p>Calculate the Euclidean distance.</p></li>
 <li><p>Calculate the Statistical distance assuming <span class="math inline">\(s_{11} = 9\)</span> and <span class="math inline">\(s_{22} = 1\)</span>.</p></li>
 </ol>
-<pre><code># Point P
-x &lt;- c(3, 3)
-
-# 1. Euclidean Distance
-d_euc &lt;- sqrt(sum(x^2))
-print(paste("Euclidean Distance:", round(d_euc, 4)))
-
-# 2. Statistical Distance (Standardized)
-s11 &lt;- 9
-s22 &lt;- 1
-d_stat &lt;- sqrt(x[1]^2/s11 + x[2]^2/s22)
-print(paste("Statistical Distance:", round(d_stat, 4)))</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Point P</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Euclidean Distance</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>d_euc <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(x<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Euclidean Distance:"</span>, <span class="fu">round</span>(d_euc, <span class="dv">4</span>)))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Statistical Distance (Standardized)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>s11 <span class="ot">&lt;-</span> <span class="dv">9</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>s22 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>d_stat <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(x[<span class="dv">1</span>]<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>s11 <span class="sc">+</span> x[<span class="dv">2</span>]<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>s22)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Statistical Distance:"</span>, <span class="fu">round</span>(d_stat, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Observation:</strong> Notice how the statistical distance penalizes the dimension with lower variability (<span class="math inline">\(x_2\)</span>) more heavily.</p>
 </section>
 </section>
@@ -226,22 +261,22 @@ print(paste("Statistical Distance:", round(d_stat, 4)))</code></pre>
 <section id="exercise-compute-a12" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-compute-a12">Exercise: Compute <span class="math inline">\(A^{1/2}\)</span></h3>
 <p>Given <span class="math inline">\(\mathbf{A} = \begin{bmatrix} 4 &amp; 1 \\ 1 &amp; 9 \end{bmatrix}\)</span>:</p>
-<pre><code>A &lt;- matrix(c(4, 1, 1, 9), nrow = 2)
-
-# Spectral Decomposition
-decomp &lt;- eigen(A)
-P &lt;- decomp$vectors
-Lambda &lt;- diag(decomp$values)
-
-# Compute Square Root Matrix
-A_sqrt &lt;- P %*% diag(sqrt(decomp$values)) %*% t(P)
-
-print("Square Root Matrix A^(1/2):")
-print(A_sqrt)
-
-# Verification: A_sqrt * A_sqrt should equal A
-print("Verification (A_sqrt %*% A_sqrt):")
-print(round(A_sqrt %*% A_sqrt, 10))</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">9</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Spectral Decomposition</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>decomp <span class="ot">&lt;-</span> <span class="fu">eigen</span>(A)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>P <span class="ot">&lt;-</span> decomp<span class="sc">$</span>vectors</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>Lambda <span class="ot">&lt;-</span> <span class="fu">diag</span>(decomp<span class="sc">$</span>values)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute Square Root Matrix</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>A_sqrt <span class="ot">&lt;-</span> P <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="fu">sqrt</span>(decomp<span class="sc">$</span>values)) <span class="sc">%*%</span> <span class="fu">t</span>(P)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Square Root Matrix A^(1/2):"</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(A_sqrt)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Verification: A_sqrt * A_sqrt should equal A</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Verification (A_sqrt %*% A_sqrt):"</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(A_sqrt <span class="sc">%*%</span> A_sqrt, <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="random-vectors-and-covariance" class="level2">
@@ -250,19 +285,19 @@ print(round(A_sqrt %*% A_sqrt, 10))</code></pre>
 <section id="exercise-example-2.13" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-example-2.13">Exercise: Example 2.13</h3>
 <p>Given <span class="math inline">\(\Sigma = \begin{bmatrix} 4 &amp; 1 &amp; 2 \\ 1 &amp; 9 &amp; -3 \\ 2 &amp; -3 &amp; 25 \end{bmatrix}\)</span>, find the correlation matrix.</p>
-<pre><code>Sigma &lt;- matrix(c(4, 1, 2, 
-                  1, 9, -3, 
-                  2, -3, 25), nrow = 3, byrow = TRUE)
-
-# Method 1: Manual Calculation using diagonals
-D_inv_sqrt &lt;- diag(1/sqrt(diag(Sigma)))
-rho_manual &lt;- D_inv_sqrt %*% Sigma %*% D_inv_sqrt
-
-# Method 2: Using R's cov2cor function
-rho_r &lt;- cov2cor(Sigma)
-
-print("Correlation Matrix:")
-print(rho_r)</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>, </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">1</span>, <span class="dv">9</span>, <span class="sc">-</span><span class="dv">3</span>, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">25</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 1: Manual Calculation using diagonals</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>D_inv_sqrt <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">diag</span>(Sigma)))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>rho_manual <span class="ot">&lt;-</span> D_inv_sqrt <span class="sc">%*%</span> Sigma <span class="sc">%*%</span> D_inv_sqrt</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 2: Using R's cov2cor function</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>rho_r <span class="ot">&lt;-</span> <span class="fu">cov2cor</span>(Sigma)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Correlation Matrix:"</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(rho_r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="maximization-lemma" class="level2">
@@ -271,45 +306,45 @@ print(rho_r)</code></pre>
 <section id="exercise-verify-maximization" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-verify-maximization">Exercise: Verify Maximization</h3>
 <p>Let <span class="math inline">\(\mathbf{B} = \begin{bmatrix} 2 &amp; 1 \\ 1 &amp; 4 \end{bmatrix}\)</span> and <span class="math inline">\(\mathbf{d} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\)</span>.</p>
-<pre><code>B &lt;- matrix(c(2, 1, 1, 4), nrow = 2)
-d &lt;- c(1, 1)
-
-# Theoretical Maximum
-theo_max &lt;- t(d) %*% solve(B) %*% d
-
-# Attained at x = c * B^-1 * d
-x_opt &lt;- solve(B) %*% d
-
-# Verify
-empirical_max &lt;- (t(x_opt) %*% d)^2 / (t(x_opt) %*% B %*% x_opt)
-
-print(paste("Theoretical Max:", theo_max))
-print(paste("Value at optimal x:", empirical_max))</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">4</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Theoretical Maximum</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>theo_max <span class="ot">&lt;-</span> <span class="fu">t</span>(d) <span class="sc">%*%</span> <span class="fu">solve</span>(B) <span class="sc">%*%</span> d</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Attained at x = c * B^-1 * d</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>x_opt <span class="ot">&lt;-</span> <span class="fu">solve</span>(B) <span class="sc">%*%</span> d</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>empirical_max <span class="ot">&lt;-</span> (<span class="fu">t</span>(x_opt) <span class="sc">%*%</span> d)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (<span class="fu">t</span>(x_opt) <span class="sc">%*%</span> B <span class="sc">%*%</span> x_opt)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Theoretical Max:"</span>, theo_max))</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Value at optimal x:"</span>, empirical_max))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="visualizing-constant-distance-ellipses" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-constant-distance-ellipses">5. Visualizing Constant Distance (Ellipses)</h2>
 <p>Points of constant statistical distance <span class="math inline">\(\mathbf{x}^T \mathbf{A} \mathbf{x} = c^2\)</span> form an ellipse.</p>
-<pre><code># Define a covariance matrix
-Sigma_plot &lt;- matrix(c(5, 2, 2, 2), nrow = 2)
-A_mat &lt;- solve(Sigma_plot) # Inverse for distance calculation
-
-# Generate points for an ellipse
-theta &lt;- seq(0, 2*pi, length.out = 100)
-z &lt;- cbind(cos(theta), sin(theta))
-
-# Decompose A to transform the circle into an ellipse
-ed &lt;- eigen(Sigma_plot)
-# Points = Eigenvectors * sqrt(Eigenvalues) * unit_circle
-ellipse_pts &lt;- z %*% diag(sqrt(ed$values)) %*% t(ed$vectors)
-ellipse_df &lt;- as.data.frame(ellipse_pts)
-
-ggplot(ellipse_df, aes(V1, V2)) +
-  geom_path(color = "blue") +
-  coord_fixed() +
-  labs(title = "Constant Statistical Distance Ellipse",
-       x = "x1", y = "x2") +
-  theme_minimal()</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a covariance matrix</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>Sigma_plot <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>A_mat <span class="ot">&lt;-</span> <span class="fu">solve</span>(Sigma_plot) <span class="co"># Inverse for distance calculation</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate points for an ellipse</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2</span><span class="sc">*</span>pi, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">cos</span>(theta), <span class="fu">sin</span>(theta))</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Decompose A to transform the circle into an ellipse</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>ed <span class="ot">&lt;-</span> <span class="fu">eigen</span>(Sigma_plot)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Points = Eigenvectors * sqrt(Eigenvalues) * unit_circle</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>ellipse_pts <span class="ot">&lt;-</span> z <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="fu">sqrt</span>(ed<span class="sc">$</span>values)) <span class="sc">%*%</span> <span class="fu">t</span>(ed<span class="sc">$</span>vectors)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>ellipse_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ellipse_pts)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ellipse_df, <span class="fu">aes</span>(V1, V2)) <span class="sc">+</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Constant Statistical Distance Ellipse"</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"x1"</span>, <span class="at">y =</span> <span class="st">"x2"</span>) <span class="sc">+</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>

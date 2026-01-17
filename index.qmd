@@ -27,7 +27,7 @@ Lecture slides are updated every Sunday evening. Please ensure you have the late
 | Week | Topic | Slides (PDF) | Labs (Rmd/Qmd) | Assignment |
 |:-------------:|:--------------|:-------------:|:-------------:|:-------------:|
 | 1 | [Introduction]{style="color: blue; font-weight: bold;"} | [Lec 1.1 🔗](lectures/lec01-intro.pdf)<br>[Lec 1.2 🔗](lectures/lec02-matrix.pdf) | [💻 Lab 1a](labs/lab01a.Rmd)<br>[💻 Lab 1b](labs/lab01b.Rmd) | -- |
-| 2 | [Random Vectors and Matrices]{style="color: green; font-weight: bold;"} | [Lec 2.1 🔗](lectures/lec02_2.pdf)<br> | [💻 Lab 2a](labs/lab02.qmd)<br>  | [HW 1]{style="color: red;"} |
+| 2 | [Random Vectors and Matrices]{style="color: green; font-weight: bold;"} | [Lec 2.1 🔗](lectures/lec02_2.pdf)<br> | [💻 Lab 2a](labs/lab02.Rmd)<br>  | [HW 1]{style="color: red;"} |
 
 ## 🛠️ Software Requirements
 
