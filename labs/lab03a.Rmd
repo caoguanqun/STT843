@@ -16,7 +16,7 @@ distribution, explore how the covariance matrix $\Sigma$ affects the
 shape of the density, and verify the Chi-square property for probability
 contours.
 
-``` R
+``` r
 {r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(mvtnorm) # For multivariate normal functions
@@ -28,7 +28,7 @@ library(ellipse) # For drawing contours
 From the lecture, we know a bivariate normal distribution is defined by
 a mean vector $\boldsymbol{\mu}$ and a covariance matrix $\Sigma$.
 
-``` R
+``` r
 # Define the mean vector mu
 mu <- c(1, 2)
 
@@ -51,7 +51,7 @@ print(Sigma)
 
 We can visualize the "bell shape" in 3D using the `dmvnorm` function.
 
-``` R
+``` r
 # Create a grid for X and Y
 x <- seq(-2, 4, length.out = 50)
 y <- seq(-1, 5, length.out = 50)
@@ -72,7 +72,7 @@ The lecture states that contours are ellipsoids centered at
 $\boldsymbol{\mu}$. Let's plot the $50\%$ and $95\%$ probability
 contours.
 
-``` R
+``` r
 plot(NULL, xlim = c(-2, 4), ylim = c(-1, 5), 
      xlab = "X1", ylab = "X2", main = "Probability Contours")
 
@@ -90,7 +90,7 @@ legend("topleft", legend = c("50%", "95%"), col = c("blue", "red"), lty = 1)
 The axes of the ellipses are determined by the eigenvectors of $\Sigma$,
 and the lengths are proportional to $\sqrt{\lambda_i}$.
 
-``` R
+``` r
 # Calculate eigenvalues and eigenvectors
 ev <- eigen(Sigma)
 
@@ -110,7 +110,7 @@ The squared Mahalanobis distance
 $(\mathbf{x}-\boldsymbol{\mu})^{\top} \Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu})$
 should follow a $\chi^2$ distribution with $p=2$ degrees of freedom.
 
-``` R
+``` r
 # Generate 1000 random samples from our MVN distribution
 set.seed(123)
 samples <- rmvnorm(1000, mean = mu, sigma = Sigma)
