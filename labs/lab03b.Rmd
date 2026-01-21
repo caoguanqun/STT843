@@ -1,0 +1,72 @@
+---
+title: "Untitled"
+output: html_document
+date: "2026-01-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(MASS)       # For mvrnorm
+library(matrixcalc) # For matrix properties
+```
+
+## 
+
+Here is a complete R Markdown lab based on your lecture notes. This lab is designed to help students practically explore the properties of the Multivariate Normal Distribution (MND) and Maximum Likelihood Estimation (MLE) using R.
+
+------------------------------------------------------------------------
+
+### R Markdown File Content
+
+Markdown
+
+```         
+---
+title: "Lab: Multivariate Normal Distribution and MLE"
+subtitle: "Multivariate Data Analysis"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    theme: united
+---
+
+```{r setup, include=T}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(MASS)       # For mvrnorm
+library(matrixcalc) # For matrix properties
+```
+
+## 1. Introduction to the Multivariate Normal Distribution (MND)
+
+In the lecture, we discussed that if $\boldsymbol{X} \sim N_p(\boldsymbol{\mu}, \Sigma)$, then any linear combination $\mathbf{A}\boldsymbol{X}$ is also normally distributed.
+
+### Exercise 1: Linear Combinations (Example 3.4)
+
+Let \$\\boldsymbol{X} \\sim N_3(\\boldsymbol{\\mu}, \\Sigma)\$ where:
+
+\$\$\\boldsymbol{\\mu} = \\begin{bmatrix} 1 \\\\ 2 \\\\ 3 \\end{bmatrix}, \\Sigma = \\begin{bmatrix} 4 & 1 & 0 \\\\ 1 & 3 & 0 \\\\ 0 & 0 & 2 \\end{bmatrix}\$\$
+
+We want to find the distribution of $\mathbf{A}\boldsymbol{X}$ where $\mathbf{A} = \begin{bmatrix} 1 & -1 & 0 \\ 0 & 1 & -1 \end{bmatrix}$.
+
+```{r setup, include=T}
+# Define parameters
+mu <- c(1, 2, 3)
+Sigma <- matrix(c(4, 1, 0, 
+                  1, 3, 0, 
+                  0, 0, 2), nrow = 3, byrow = TRUE)
+A <- matrix(c(1, -1, 0, 
+              0, 1, -1), nrow = 2, byrow = TRUE)
+
+# Theoretical New Mean: A * mu
+new_mu <- A %*% mu
+
+# Theoretical New Covariance: A * Sigma * A^T
+new_Sigma <- A %*% Sigma %*% t(A)
+
+print("New Mean Vector:")
+print(new_mu)
+print("New Covariance Matrix:")
+print(new_Sigma)
+```
