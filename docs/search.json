@@ -9,51 +9,37 @@
   {
     "objectID": "labs/lab03b.html",
     "href": "labs/lab03b.html",
-    "title": "Lab03a: The Multivariate Normal Distribution",
+    "title": "Lab03b: The Multivariate Normal Distribution",
     "section": "",
-    "text": "In this lab, we will visualize the Multivariate Normal (MVN) distribution, explore how the covariance matrix \\(\\Sigma\\) affects the shape of the density, and verify the Chi-square property for probability contours.\n{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\nlibrary(mvtnorm) # For multivariate normal functions\nlibrary(ellipse) # For drawing contours"
+    "text": "{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)\nlibrary(MASS)       # For mvrnorm\nlibrary(matrixcalc) # For matrix properties"
   },
   {
-    "objectID": "labs/lab03b.html#introduction",
-    "href": "labs/lab03b.html#introduction",
-    "title": "Lab03a: The Multivariate Normal Distribution",
-    "section": "",
-    "text": "In this lab, we will visualize the Multivariate Normal (MVN) distribution, explore how the covariance matrix \\(\\Sigma\\) affects the shape of the density, and verify the Chi-square property for probability contours.\n{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\nlibrary(mvtnorm) # For multivariate normal functions\nlibrary(ellipse) # For drawing contours"
+    "objectID": "labs/lab03b.html#introduction-to-the-multivariate-normal-distribution-mnd",
+    "href": "labs/lab03b.html#introduction-to-the-multivariate-normal-distribution-mnd",
+    "title": "Lab03b: The Multivariate Normal Distribution",
+    "section": "1. Introduction to the Multivariate Normal Distribution (MND)",
+    "text": "1. Introduction to the Multivariate Normal Distribution (MND)\nIf \\(\\boldsymbol{X} \\sim N_p(\\boldsymbol{\\mu}, \\Sigma)\\) , then any linear combination \\(\\mathbf{A}\\boldsymbol{X}\\) is also normally distributed.\n\nExercise 1: Linear Combinations (Example 3.4)\nLet \\(\\boldsymbol{X} \\sim N_3(\\boldsymbol{\\mu}, \\Sigma)\\) where:\n\\[\\boldsymbol{\\mu} = \\begin{bmatrix} 1 \\\\ 2 \\\\ 3 \\end{bmatrix}, \\Sigma = \\begin{bmatrix} 4 & 1 & 0 \\\\ 1 & 3 & 0 \\\\ 0 & 0 & 2 \\end{bmatrix}\\]\nWe want to find the distribution of \\(\\mathbf{A}\\boldsymbol{X}\\) where \\(\\mathbf{A} = \\begin{bmatrix} 1 & -1 & 0 \\\\ 0 & 1 & -1 \\end{bmatrix}\\).\n# Define parameters\nmu &lt;- c(1, 2, 3)\nSigma &lt;- matrix(c(4, 1, 0, \n                  1, 3, 0, \n                  0, 0, 2), nrow = 3, byrow = TRUE)\nA &lt;- matrix(c(1, -1, 0, \n              0, 1, -1), nrow = 2, byrow = TRUE)\n\n# Theoretical New Mean: A * mu\nnew_mu &lt;- A %*% mu\n\n# Theoretical New Covariance: A * Sigma * A^T\nnew_Sigma &lt;- A %*% Sigma %*% t(A)\n\nprint(\"New Mean Vector:\")\nprint(new_mu)\nprint(\"New Covariance Matrix:\")\nprint(new_Sigma)\nTask: Use mvrnorm to simulate 10,000 points from the original \\(N_3\\) distribution, transform them using matrix \\(A\\), and check if the sample mean and covariance match your theoretical results above."
   },
   {
-    "objectID": "labs/lab03b.html#defining-the-parameters",
-    "href": "labs/lab03b.html#defining-the-parameters",
-    "title": "Lab03a: The Multivariate Normal Distribution",
-    "section": "1. Defining the Parameters",
-    "text": "1. Defining the Parameters\nFrom the lecture, we know a bivariate normal distribution is defined by a mean vector \\(\\boldsymbol{\\mu}\\) and a covariance matrix \\(\\Sigma\\).\n# Define the mean vector mu\nmu &lt;- c(1, 2)\n\n# Define the covariance matrix Sigma (Example: sigma11=1, sigma22=1, rho=0.75)\nrho &lt;- 0.75\nsigma11 &lt;- 1\nsigma22 &lt;- 1\nsigma12 &lt;- rho * sqrt(sigma11) * sqrt(sigma22)\n\nSigma &lt;- matrix(c(sigma11, sigma12, \n                  sigma12, sigma22), nrow = 2)\n\nprint(\"Mean Vector:\")\nprint(mu)\nprint(\"Covariance Matrix:\")\nprint(Sigma)"
+    "objectID": "labs/lab03b.html#independence-and-subsets-example-3.6",
+    "href": "labs/lab03b.html#independence-and-subsets-example-3.6",
+    "title": "Lab03b: The Multivariate Normal Distribution",
+    "section": "2. Independence and Subsets (Example 3.6)",
+    "text": "2. Independence and Subsets (Example 3.6)\nA key property of the MND is that zero covariance implies independence.\nQuestion: Based on the \\(\\Sigma\\) matrix provided in Exercise 1:\n\nAre \\(X_1\\) and \\(X_2\\) independent?\nAre \\((X_1, X_2)\\) and \\(X_3\\) independent?\n\n# X1 and X2 covariance\ncov_12 &lt;- Sigma[1,2]\n\n# Covariance matrix between (X1, X2) and X3\nSigma_12_3 &lt;- Sigma[1:2, 3]\n\ncat(\"Cov(X1, X2) is:\", cov_12, \"\\n\")\ncat(\"Cov((X1, X2), X3) is:\", Sigma_12_3, \"\\n\")"
   },
   {
-    "objectID": "labs/lab03b.html#visualizing-the-bivariate-density",
-    "href": "labs/lab03b.html#visualizing-the-bivariate-density",
-    "title": "Lab03a: The Multivariate Normal Distribution",
-    "section": "2. Visualizing the Bivariate Density",
-    "text": "2. Visualizing the Bivariate Density\nWe can visualize the “bell shape” in 3D using the dmvnorm function.\n# Create a grid for X and Y\nx &lt;- seq(-2, 4, length.out = 50)\ny &lt;- seq(-1, 5, length.out = 50)\ngrid &lt;- expand.grid(x = x, y = y)\n\n# Calculate density values\nz &lt;- dmvnorm(as.matrix(grid), mean = mu, sigma = Sigma)\nz_matrix &lt;- matrix(z, nrow = 50)\n\n# Plot 3D surface\npersp(x, y, z_matrix, theta = 30, phi = 30, col = \"lightblue\", \n      shade = 0.75, main = \"3D Bivariate Normal Density\")"
+    "objectID": "labs/lab03b.html#conditional-distributions-example-3.7",
+    "href": "labs/lab03b.html#conditional-distributions-example-3.7",
+    "title": "Lab03b: The Multivariate Normal Distribution",
+    "section": "3. Conditional Distributions (Example 3.7)",
+    "text": "3. Conditional Distributions (Example 3.7)\nIf \\(\\boldsymbol{X}\\) is partitioned into \\(\\boldsymbol{X}_1\\) and \\(\\boldsymbol{X}_2\\), the conditional distribution of \\(\\boldsymbol{X}_1 | \\boldsymbol{X}_2 = \\mathbf{x}_2\\) is normal with:\n\\[\n\\text{Mean} = \\boldsymbol{\\mu}_1 + \\Sigma_{12} \\Sigma_{22}^{-1}(\\mathbf{x}_2 - \\boldsymbol{\\mu}_2)\n\\]\n\\[\\text{Cov} = \\Sigma_{11} - \\Sigma_{12} \\Sigma_{22}^{-1} \\Sigma_{21}\\]\n\nExercise 2: Calculate Conditional Mean\nGiven the same \\(\\boldsymbol{\\mu}\\) and \\(\\Sigma\\) as Exercise 1, find the conditional distribution of \\(X_1\\) given \\(X_2 = 5\\).\nmu1 &lt;- mu[1]\nmu2 &lt;- mu[2]\nsigma11 &lt;- Sigma[1,1]\nsigma12 &lt;- Sigma[1,2]\nsigma22 &lt;- Sigma[2,2]\nx2 &lt;- 5\n\n# Conditional Mean\ncond_mu &lt;- mu1 + sigma12 * solve(sigma22) * (x2 - mu2)\n\n# Conditional Variance\ncond_var &lt;- sigma11 - sigma12 * solve(sigma22) * sigma12\n\ncat(\"Conditional Mean of X1 | X2=5 is:\", cond_mu, \"\\n\")\ncat(\"Conditional Variance is:\", cond_var, \"\\n\")"
   },
   {
-    "objectID": "labs/lab03b.html#constant-probability-contours",
-    "href": "labs/lab03b.html#constant-probability-contours",
-    "title": "Lab03a: The Multivariate Normal Distribution",
-    "section": "3. Constant Probability Contours",
-    "text": "3. Constant Probability Contours\nThe lecture states that contours are ellipsoids centered at \\(\\boldsymbol{\\mu}\\). Let’s plot the \\(50\\%\\) and \\(95\\%\\) probability contours.\nplot(NULL, xlim = c(-2, 4), ylim = c(-1, 5), \n     xlab = \"X1\", ylab = \"X2\", main = \"Probability Contours\")\n\n# Plot 50% contour\nlines(ellipse(Sigma, centre = mu, level = 0.50), col = \"blue\", lwd = 2)\n# Plot 95% contour\nlines(ellipse(Sigma, centre = mu, level = 0.95), col = \"red\", lwd = 2)\n\npoints(mu[1], mu[2], pch = 19, col = \"black\") # Mean center\nlegend(\"topleft\", legend = c(\"50%\", \"95%\"), col = c(\"blue\", \"red\"), lty = 1)"
-  },
-  {
-    "objectID": "labs/lab03b.html#eigenvalues-and-the-shape-of-the-ellipse",
-    "href": "labs/lab03b.html#eigenvalues-and-the-shape-of-the-ellipse",
-    "title": "Lab03a: The Multivariate Normal Distribution",
-    "section": "4. Eigenvalues and the Shape of the Ellipse",
-    "text": "4. Eigenvalues and the Shape of the Ellipse\nThe axes of the ellipses are determined by the eigenvectors of \\(\\Sigma\\), and the lengths are proportional to \\(\\sqrt{\\lambda_i}\\).\n# Calculate eigenvalues and eigenvectors\nev &lt;- eigen(Sigma)\n\nprint(\"Eigenvalues (Lengths):\")\nprint(ev$values)\n\nprint(\"Eigenvectors (Directions):\")\nprint(ev$vectors)\nExercise: Notice that the first eigenvector points in the direction of the greatest spread (the major axis of the ellipse)."
-  },
-  {
-    "objectID": "labs/lab03b.html#the-chi-square-property",
-    "href": "labs/lab03b.html#the-chi-square-property",
-    "title": "Lab03a: The Multivariate Normal Distribution",
-    "section": "5. The Chi-Square Property",
-    "text": "5. The Chi-Square Property\nThe squared Mahalanobis distance \\((\\mathbf{x}-\\boldsymbol{\\mu})^{\\top} \\Sigma^{-1}(\\mathbf{x}-\\boldsymbol{\\mu})\\) should follow a \\(\\chi^2\\) distribution with \\(p=2\\) degrees of freedom.\n# Generate 1000 random samples from our MVN distribution\nset.seed(123)\nsamples &lt;- rmvnorm(1000, mean = mu, sigma = Sigma)\n\n# Calculate squared distance for each sample\ndist_sq &lt;- mahalanobis(samples, center = mu, cov = Sigma)\n\n# Compare sample distribution to Chi-square (df=2) using a Q-Q plot\nqqplot(qchisq(ppoints(1000), df = 2), dist_sq,\n       main = \"Chi-Square Q-Q Plot\",\n       xlab = \"Theoretical Chi-square Quantiles\",\n       ylab = \"Sample Squared Distances\")\nabline(0, 1, col = \"red\")"
+    "objectID": "labs/lab03b.html#maximum-likelihood-estimation-mle",
+    "href": "labs/lab03b.html#maximum-likelihood-estimation-mle",
+    "title": "Lab03b: The Multivariate Normal Distribution",
+    "section": "4. Maximum Likelihood Estimation (MLE)",
+    "text": "4. Maximum Likelihood Estimation (MLE)\nFor a random sample \\(\\boldsymbol{X}_1, \\dots, \\boldsymbol{X}_n \\sim N_p(\\boldsymbol{\\mu}, \\Sigma)\\), the MLEs are:\n\\[\n\\hat{\\boldsymbol{\\mu}} = \\bar{\\boldsymbol{X}}, \\quad \\hat{\\Sigma} = \\frac{n-1}{n}\\mathbf{S}\n\\]\n\nExercise 3: Implementation of MLE\n\nSimulate a sample of size \\(n=100\\) from a \\(N_2\\) distribution.\nCalculate the MLE of \\(\\boldsymbol{\\mu}\\) and \\(\\Sigma\\).\nVerify the Invariance Property: Calculate the MLE of the correlation coefficient \\(\\rho_{12}\\).\n\nset.seed(123)\nn &lt;- 100\ntrue_mu &lt;- c(5, 10)\ntrue_Sigma &lt;- matrix(c(1, 0.5, 0.5, 1), nrow = 2)\n\n# Simulate data\ndata_sample &lt;- mvrnorm(n, mu = true_mu, Sigma = true_Sigma)\n\n# MLE for mu\nmle_mu &lt;- colMeans(data_sample)\n\n# MLE for Sigma (Note: R's cov() uses n-1, MLE uses n)\nS &lt;- cov(data_sample)\nmle_Sigma &lt;- ((n - 1) / n) * S\n\n# Invariance Property: MLE of correlation\nmle_rho &lt;- mle_Sigma[1,2] / (sqrt(mle_Sigma[1,1]) * sqrt(mle_Sigma[2,2]))\n\nprint(mle_mu)\nprint(mle_Sigma)\nprint(paste(\"MLE of Correlation:\", round(mle_rho, 4)))"
   },
   {
     "objectID": "labs/lab01b.html",

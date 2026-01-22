@@ -9,7 +9,7 @@
 <meta name="author" content="Dr.&nbsp;Guanqun Cao">
 <meta name="dcterms.date" content="2026-01-21">
 
-<title>Lab03a: The Multivariate Normal Distribution – STT843 Multivariate Data Analysis</title>
+<title>Lab03b: The Multivariate Normal Distribution – STT843 Multivariate Data Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -175,12 +175,19 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#defining-the-parameters" id="toc-defining-the-parameters" class="nav-link" data-scroll-target="#defining-the-parameters">1. Defining the Parameters</a></li>
-  <li><a href="#visualizing-the-bivariate-density" id="toc-visualizing-the-bivariate-density" class="nav-link" data-scroll-target="#visualizing-the-bivariate-density">2. Visualizing the Bivariate Density</a></li>
-  <li><a href="#constant-probability-contours" id="toc-constant-probability-contours" class="nav-link" data-scroll-target="#constant-probability-contours">3. Constant Probability Contours</a></li>
-  <li><a href="#eigenvalues-and-the-shape-of-the-ellipse" id="toc-eigenvalues-and-the-shape-of-the-ellipse" class="nav-link" data-scroll-target="#eigenvalues-and-the-shape-of-the-ellipse">4. Eigenvalues and the Shape of the Ellipse</a></li>
-  <li><a href="#the-chi-square-property" id="toc-the-chi-square-property" class="nav-link" data-scroll-target="#the-chi-square-property">5. The Chi-Square Property</a></li>
+  <li><a href="#introduction-to-the-multivariate-normal-distribution-mnd" id="toc-introduction-to-the-multivariate-normal-distribution-mnd" class="nav-link active" data-scroll-target="#introduction-to-the-multivariate-normal-distribution-mnd">1. Introduction to the Multivariate Normal Distribution (MND)</a>
+  <ul class="collapse">
+  <li><a href="#exercise-1-linear-combinations-example-3.4" id="toc-exercise-1-linear-combinations-example-3.4" class="nav-link" data-scroll-target="#exercise-1-linear-combinations-example-3.4">Exercise 1: Linear Combinations (Example 3.4)</a></li>
+  </ul></li>
+  <li><a href="#independence-and-subsets-example-3.6" id="toc-independence-and-subsets-example-3.6" class="nav-link" data-scroll-target="#independence-and-subsets-example-3.6">2. Independence and Subsets (Example 3.6)</a></li>
+  <li><a href="#conditional-distributions-example-3.7" id="toc-conditional-distributions-example-3.7" class="nav-link" data-scroll-target="#conditional-distributions-example-3.7">3. Conditional Distributions (Example 3.7)</a>
+  <ul class="collapse">
+  <li><a href="#exercise-2-calculate-conditional-mean" id="toc-exercise-2-calculate-conditional-mean" class="nav-link" data-scroll-target="#exercise-2-calculate-conditional-mean">Exercise 2: Calculate Conditional Mean</a></li>
+  </ul></li>
+  <li><a href="#maximum-likelihood-estimation-mle" id="toc-maximum-likelihood-estimation-mle" class="nav-link" data-scroll-target="#maximum-likelihood-estimation-mle">4. Maximum Likelihood Estimation (MLE)</a>
+  <ul class="collapse">
+  <li><a href="#exercise-3-implementation-of-mle" id="toc-exercise-3-implementation-of-mle" class="nav-link" data-scroll-target="#exercise-3-implementation-of-mle">Exercise 3: Implementation of MLE</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -189,7 +196,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lab03a: The Multivariate Normal Distribution</h1>
+<h1 class="title">Lab03b: The Multivariate Normal Distribution</h1>
 <p class="subtitle lead">STT 843: Multivariate Analysis</p>
 </div>
 
@@ -219,95 +226,120 @@ window.Quarto = {
 </header>
 
 
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>In this lab, we will visualize the Multivariate Normal (MVN) distribution, explore how the covariance matrix <span class="math inline">\(\Sigma\)</span> affects the shape of the density, and verify the Chi-square property for probability contours.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{r setup, include<span class="ot">=</span><span class="cn">FALSE</span>}</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">echo =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mvtnorm) <span class="co"># For multivariate normal functions</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ellipse) <span class="co"># For drawing contours</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">echo =</span> <span class="cn">TRUE</span>, <span class="at">message =</span> <span class="cn">FALSE</span>, <span class="at">warning =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)       <span class="co"># For mvrnorm</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(matrixcalc) <span class="co"># For matrix properties</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="introduction-to-the-multivariate-normal-distribution-mnd" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-to-the-multivariate-normal-distribution-mnd">1. Introduction to the Multivariate Normal Distribution (MND)</h2>
+<p>If <span class="math inline">\(\boldsymbol{X} \sim N_p(\boldsymbol{\mu}, \Sigma)\)</span> , then any linear combination <span class="math inline">\(\mathbf{A}\boldsymbol{X}\)</span> is also normally distributed.</p>
+<section id="exercise-1-linear-combinations-example-3.4" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-1-linear-combinations-example-3.4">Exercise 1: Linear Combinations (Example 3.4)</h3>
+<p>Let <span class="math inline">\(\boldsymbol{X} \sim N_3(\boldsymbol{\mu}, \Sigma)\)</span> where:</p>
+<p><span class="math display">\[\boldsymbol{\mu} = \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}, \Sigma = \begin{bmatrix} 4 &amp; 1 &amp; 0 \\ 1 &amp; 3 &amp; 0 \\ 0 &amp; 0 &amp; 2 \end{bmatrix}\]</span></p>
+<p>We want to find the distribution of <span class="math inline">\(\mathbf{A}\boldsymbol{X}\)</span> where <span class="math inline">\(\mathbf{A} = \begin{bmatrix} 1 &amp; -1 &amp; 0 \\ 0 &amp; 1 &amp; -1 \end{bmatrix}\)</span>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define parameters</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mu <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">0</span>, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">0</span>, </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">2</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>              <span class="dv">0</span>, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Theoretical New Mean: A * mu</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>new_mu <span class="ot">&lt;-</span> A <span class="sc">%*%</span> mu</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Theoretical New Covariance: A * Sigma * A^T</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>new_Sigma <span class="ot">&lt;-</span> A <span class="sc">%*%</span> Sigma <span class="sc">%*%</span> <span class="fu">t</span>(A)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"New Mean Vector:"</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(new_mu)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"New Covariance Matrix:"</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(new_Sigma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Task:</strong> Use <code>mvrnorm</code> to simulate 10,000 points from the original <span class="math inline">\(N_3\)</span> distribution, transform them using matrix <span class="math inline">\(A\)</span>, and check if the sample mean and covariance match your theoretical results above.</p>
 </section>
-<section id="defining-the-parameters" class="level2">
-<h2 class="anchored" data-anchor-id="defining-the-parameters">1. Defining the Parameters</h2>
-<p>From the lecture, we know a bivariate normal distribution is defined by a mean vector <span class="math inline">\(\boldsymbol{\mu}\)</span> and a covariance matrix <span class="math inline">\(\Sigma\)</span>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the mean vector mu</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mu <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the covariance matrix Sigma (Example: sigma11=1, sigma22=1, rho=0.75)</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fl">0.75</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>sigma11 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>sigma22 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>sigma12 <span class="ot">&lt;-</span> rho <span class="sc">*</span> <span class="fu">sqrt</span>(sigma11) <span class="sc">*</span> <span class="fu">sqrt</span>(sigma22)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(sigma11, sigma12, </span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                  sigma12, sigma22), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Mean Vector:"</span>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mu)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Covariance Matrix:"</span>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(Sigma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="visualizing-the-bivariate-density" class="level2">
-<h2 class="anchored" data-anchor-id="visualizing-the-bivariate-density">2. Visualizing the Bivariate Density</h2>
-<p>We can visualize the “bell shape” in 3D using the <code>dmvnorm</code> function.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a grid for X and Y</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">4</span>, <span class="at">length.out =</span> <span class="dv">50</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">5</span>, <span class="at">length.out =</span> <span class="dv">50</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate density values</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">dmvnorm</span>(<span class="fu">as.matrix</span>(grid), <span class="at">mean =</span> mu, <span class="at">sigma =</span> Sigma)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>z_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(z, <span class="at">nrow =</span> <span class="dv">50</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 3D surface</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">persp</span>(x, y, z_matrix, <span class="at">theta =</span> <span class="dv">30</span>, <span class="at">phi =</span> <span class="dv">30</span>, <span class="at">col =</span> <span class="st">"lightblue"</span>, </span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">shade =</span> <span class="fl">0.75</span>, <span class="at">main =</span> <span class="st">"3D Bivariate Normal Density"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="independence-and-subsets-example-3.6" class="level2">
+<h2 class="anchored" data-anchor-id="independence-and-subsets-example-3.6">2. Independence and Subsets (Example 3.6)</h2>
+<p>A key property of the MND is that zero covariance implies independence.</p>
+<p><strong>Question:</strong> Based on the <span class="math inline">\(\Sigma\)</span> matrix provided in Exercise 1:</p>
+<ol type="1">
+<li><p>Are <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> independent?</p></li>
+<li><p>Are <span class="math inline">\((X_1, X_2)\)</span> and <span class="math inline">\(X_3\)</span> independent?</p></li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># X1 and X2 covariance</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>cov_12 <span class="ot">&lt;-</span> Sigma[<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Covariance matrix between (X1, X2) and X3</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>Sigma_12_3 <span class="ot">&lt;-</span> Sigma[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">3</span>]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cov(X1, X2) is:"</span>, cov_12, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Cov((X1, X2), X3) is:"</span>, Sigma_12_3, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="constant-probability-contours" class="level2">
-<h2 class="anchored" data-anchor-id="constant-probability-contours">3. Constant Probability Contours</h2>
-<p>The lecture states that contours are ellipsoids centered at <span class="math inline">\(\boldsymbol{\mu}\)</span>. Let’s plot the <span class="math inline">\(50\%\)</span> and <span class="math inline">\(95\%\)</span> probability contours.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cn">NULL</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">4</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">5</span>), </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"X1"</span>, <span class="at">ylab =</span> <span class="st">"X2"</span>, <span class="at">main =</span> <span class="st">"Probability Contours"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 50% contour</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">ellipse</span>(Sigma, <span class="at">centre =</span> mu, <span class="at">level =</span> <span class="fl">0.50</span>), <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 95% contour</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">ellipse</span>(Sigma, <span class="at">centre =</span> mu, <span class="at">level =</span> <span class="fl">0.95</span>), <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(mu[<span class="dv">1</span>], mu[<span class="dv">2</span>], <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"black"</span>) <span class="co"># Mean center</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"50%"</span>, <span class="st">"95%"</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"red"</span>), <span class="at">lty =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="conditional-distributions-example-3.7" class="level2">
+<h2 class="anchored" data-anchor-id="conditional-distributions-example-3.7">3. Conditional Distributions (Example 3.7)</h2>
+<p>If <span class="math inline">\(\boldsymbol{X}\)</span> is partitioned into <span class="math inline">\(\boldsymbol{X}_1\)</span> and <span class="math inline">\(\boldsymbol{X}_2\)</span>, the conditional distribution of <span class="math inline">\(\boldsymbol{X}_1 | \boldsymbol{X}_2 = \mathbf{x}_2\)</span> is normal with:</p>
+<p><span class="math display">\[
+\text{Mean} = \boldsymbol{\mu}_1 + \Sigma_{12} \Sigma_{22}^{-1}(\mathbf{x}_2 - \boldsymbol{\mu}_2)
+\]</span></p>
+<p><span class="math display">\[\text{Cov} = \Sigma_{11} - \Sigma_{12} \Sigma_{22}^{-1} \Sigma_{21}\]</span></p>
+<section id="exercise-2-calculate-conditional-mean" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-calculate-conditional-mean">Exercise 2: Calculate Conditional Mean</h3>
+<p>Given the same <span class="math inline">\(\boldsymbol{\mu}\)</span> and <span class="math inline">\(\Sigma\)</span> as Exercise 1, find the conditional distribution of <span class="math inline">\(X_1\)</span> given <span class="math inline">\(X_2 = 5\)</span>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mu1 <span class="ot">&lt;-</span> mu[<span class="dv">1</span>]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mu2 <span class="ot">&lt;-</span> mu[<span class="dv">2</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>sigma11 <span class="ot">&lt;-</span> Sigma[<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>sigma12 <span class="ot">&lt;-</span> Sigma[<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>sigma22 <span class="ot">&lt;-</span> Sigma[<span class="dv">2</span>,<span class="dv">2</span>]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Conditional Mean</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>cond_mu <span class="ot">&lt;-</span> mu1 <span class="sc">+</span> sigma12 <span class="sc">*</span> <span class="fu">solve</span>(sigma22) <span class="sc">*</span> (x2 <span class="sc">-</span> mu2)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Conditional Variance</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>cond_var <span class="ot">&lt;-</span> sigma11 <span class="sc">-</span> sigma12 <span class="sc">*</span> <span class="fu">solve</span>(sigma22) <span class="sc">*</span> sigma12</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Conditional Mean of X1 | X2=5 is:"</span>, cond_mu, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Conditional Variance is:"</span>, cond_var, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="eigenvalues-and-the-shape-of-the-ellipse" class="level2">
-<h2 class="anchored" data-anchor-id="eigenvalues-and-the-shape-of-the-ellipse">4. Eigenvalues and the Shape of the Ellipse</h2>
-<p>The axes of the ellipses are determined by the eigenvectors of <span class="math inline">\(\Sigma\)</span>, and the lengths are proportional to <span class="math inline">\(\sqrt{\lambda_i}\)</span>.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate eigenvalues and eigenvectors</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ev <span class="ot">&lt;-</span> <span class="fu">eigen</span>(Sigma)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Eigenvalues (Lengths):"</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ev<span class="sc">$</span>values)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Eigenvectors (Directions):"</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ev<span class="sc">$</span>vectors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Exercise:</strong> Notice that the first eigenvector points in the direction of the greatest spread (the major axis of the ellipse).</p>
 </section>
-<section id="the-chi-square-property" class="level2">
-<h2 class="anchored" data-anchor-id="the-chi-square-property">5. The Chi-Square Property</h2>
-<p>The squared Mahalanobis distance <span class="math inline">\((\mathbf{x}-\boldsymbol{\mu})^{\top} \Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu})\)</span> should follow a <span class="math inline">\(\chi^2\)</span> distribution with <span class="math inline">\(p=2\)</span> degrees of freedom.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate 1000 random samples from our MVN distribution</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> mu, <span class="at">sigma =</span> Sigma)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate squared distance for each sample</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>dist_sq <span class="ot">&lt;-</span> <span class="fu">mahalanobis</span>(samples, <span class="at">center =</span> mu, <span class="at">cov =</span> Sigma)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare sample distribution to Chi-square (df=2) using a Q-Q plot</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">qqplot</span>(<span class="fu">qchisq</span>(<span class="fu">ppoints</span>(<span class="dv">1000</span>), <span class="at">df =</span> <span class="dv">2</span>), dist_sq,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">main =</span> <span class="st">"Chi-Square Q-Q Plot"</span>,</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab =</span> <span class="st">"Theoretical Chi-square Quantiles"</span>,</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">ylab =</span> <span class="st">"Sample Squared Distances"</span>)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="maximum-likelihood-estimation-mle" class="level2">
+<h2 class="anchored" data-anchor-id="maximum-likelihood-estimation-mle">4. Maximum Likelihood Estimation (MLE)</h2>
+<p>For a random sample <span class="math inline">\(\boldsymbol{X}_1, \dots, \boldsymbol{X}_n \sim N_p(\boldsymbol{\mu}, \Sigma)\)</span>, the MLEs are:</p>
+<p><span class="math display">\[
+\hat{\boldsymbol{\mu}} = \bar{\boldsymbol{X}}, \quad \hat{\Sigma} = \frac{n-1}{n}\mathbf{S}
+\]</span></p>
+<section id="exercise-3-implementation-of-mle" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3-implementation-of-mle">Exercise 3: Implementation of MLE</h3>
+<ol type="1">
+<li><p>Simulate a sample of size <span class="math inline">\(n=100\)</span> from a <span class="math inline">\(N_2\)</span> distribution.</p></li>
+<li><p>Calculate the MLE of <span class="math inline">\(\boldsymbol{\mu}\)</span> and <span class="math inline">\(\Sigma\)</span>.</p></li>
+<li><p>Verify the <strong>Invariance Property</strong>: Calculate the MLE of the correlation coefficient <span class="math inline">\(\rho_{12}\)</span>.</p></li>
+</ol>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>true_mu <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>true_Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>data_sample <span class="ot">&lt;-</span> <span class="fu">mvrnorm</span>(n, <span class="at">mu =</span> true_mu, <span class="at">Sigma =</span> true_Sigma)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># MLE for mu</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>mle_mu <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(data_sample)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># MLE for Sigma (Note: R's cov() uses n-1, MLE uses n)</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">cov</span>(data_sample)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>mle_Sigma <span class="ot">&lt;-</span> ((n <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> n) <span class="sc">*</span> S</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Invariance Property: MLE of correlation</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>mle_rho <span class="ot">&lt;-</span> mle_Sigma[<span class="dv">1</span>,<span class="dv">2</span>] <span class="sc">/</span> (<span class="fu">sqrt</span>(mle_Sigma[<span class="dv">1</span>,<span class="dv">1</span>]) <span class="sc">*</span> <span class="fu">sqrt</span>(mle_Sigma[<span class="dv">2</span>,<span class="dv">2</span>]))</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mle_mu)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(mle_Sigma)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"MLE of Correlation:"</span>, <span class="fu">round</span>(mle_rho, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
