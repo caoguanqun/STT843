@@ -9,7 +9,7 @@ editor_options:
     wrap: 72
 ---
 
-``` R
+``` r
 {r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(MASS)       # For mvrnorm
@@ -30,7 +30,7 @@ $$\boldsymbol{\mu} = \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}, \Sigma = \begin{
 We want to find the distribution of $\mathbf{A}\boldsymbol{X}$ where
 $\mathbf{A} = \begin{bmatrix} 1 & -1 & 0 \\ 0 & 1 & -1 \end{bmatrix}$.
 
-``` R
+``` r
 # Define parameters
 mu <- c(1, 2, 3)
 Sigma <- matrix(c(4, 1, 0, 
@@ -65,7 +65,7 @@ A key property of the MND is that zero covariance implies independence.
 
 2.  Are $(X_1, X_2)$ and $X_3$ independent?
 
-``` R
+``` r
 # X1 and X2 covariance
 cov_12 <- Sigma[1,2]
 
@@ -93,7 +93,7 @@ $$\text{Cov} = \Sigma_{11} - \Sigma_{12} \Sigma_{22}^{-1} \Sigma_{21}$$
 Given the same $\boldsymbol{\mu}$ and $\Sigma$ as Exercise 1, find the
 conditional distribution of $X_1$ given $X_2 = 5$.
 
-``` R
+``` r
 mu1 <- mu[1]
 mu2 <- mu[2]
 sigma11 <- Sigma[1,1]
@@ -130,7 +130,7 @@ $$
 3.  Verify the **Invariance Property**: Calculate the MLE of the
     correlation coefficient $\rho_{12}$.
 
-``` R
+``` r
 set.seed(123)
 n <- 100
 true_mu <- c(5, 10)

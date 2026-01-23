@@ -9,7 +9,7 @@
 <meta name="author" content="Dr.&nbsp;Guanqun Cao">
 <meta name="dcterms.date" content="2026-01-22">
 
-<title>Lab02a: Random Vectors and Matrices – STT843 Multivariate Data Analysis</title>
+<title>Lab03c: Sampling Distributions and Normality Assessment – STT843 Multivariate Data Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -175,23 +175,23 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#euclidean-vs.-statistical-distance" id="toc-euclidean-vs.-statistical-distance" class="nav-link active" data-scroll-target="#euclidean-vs.-statistical-distance">1. Euclidean vs.&nbsp;Statistical Distance</a>
+  <li><a href="#sufficient-statistics-and-sampling-distributions" id="toc-sufficient-statistics-and-sampling-distributions" class="nav-link active" data-scroll-target="#sufficient-statistics-and-sampling-distributions">1. Sufficient Statistics and Sampling Distributions</a>
   <ul class="collapse">
-  <li><a href="#exercise-comparing-distances" id="toc-exercise-comparing-distances" class="nav-link" data-scroll-target="#exercise-comparing-distances">Exercise: Comparing Distances</a></li>
+  <li><a href="#simulating-the-wishart-distribution" id="toc-simulating-the-wishart-distribution" class="nav-link" data-scroll-target="#simulating-the-wishart-distribution">1.1 Simulating the Wishart Distribution</a></li>
   </ul></li>
-  <li><a href="#the-square-root-matrix" id="toc-the-square-root-matrix" class="nav-link" data-scroll-target="#the-square-root-matrix">2. The Square-Root Matrix</a>
+  <li><a href="#large-sample-behavior-clt" id="toc-large-sample-behavior-clt" class="nav-link" data-scroll-target="#large-sample-behavior-clt">2. Large-Sample Behavior (CLT)</a>
   <ul class="collapse">
-  <li><a href="#exercise-compute-a12" id="toc-exercise-compute-a12" class="nav-link" data-scroll-target="#exercise-compute-a12">Exercise: Compute <span class="math inline">\(A^{1/2}\)</span></a></li>
+  <li><a href="#the-squared-generalized-distance" id="toc-the-squared-generalized-distance" class="nav-link" data-scroll-target="#the-squared-generalized-distance">2.1 The Squared Generalized Distance</a></li>
   </ul></li>
-  <li><a href="#random-vectors-and-covariance" id="toc-random-vectors-and-covariance" class="nav-link" data-scroll-target="#random-vectors-and-covariance">3. Random Vectors and Covariance</a>
+  <li><a href="#assessing-normality-univariate" id="toc-assessing-normality-univariate" class="nav-link" data-scroll-target="#assessing-normality-univariate">3. Assessing Normality (Univariate)</a>
   <ul class="collapse">
-  <li><a href="#exercise-example-2.13" id="toc-exercise-example-2.13" class="nav-link" data-scroll-target="#exercise-example-2.13">Exercise: Example 2.13</a></li>
+  <li><a href="#q-q-plots-example-3.9" id="toc-q-q-plots-example-3.9" class="nav-link" data-scroll-target="#q-q-plots-example-3.9">3.1 Q-Q Plots (Example 3.9)</a></li>
+  <li><a href="#correlation-coefficient-test-r_q" id="toc-correlation-coefficient-test-r_q" class="nav-link" data-scroll-target="#correlation-coefficient-test-r_q">3.2 Correlation Coefficient Test (<span class="math inline">\(r_Q\)</span>)</a></li>
   </ul></li>
-  <li><a href="#maximization-lemma" id="toc-maximization-lemma" class="nav-link" data-scroll-target="#maximization-lemma">4. Maximization Lemma</a>
+  <li><a href="#multivariate-normality-assessment" id="toc-multivariate-normality-assessment" class="nav-link" data-scroll-target="#multivariate-normality-assessment">4. Multivariate Normality Assessment</a>
   <ul class="collapse">
-  <li><a href="#exercise-verify-maximization" id="toc-exercise-verify-maximization" class="nav-link" data-scroll-target="#exercise-verify-maximization">Exercise: Verify Maximization</a></li>
+  <li><a href="#principal-component-linear-combinations" id="toc-principal-component-linear-combinations" class="nav-link" data-scroll-target="#principal-component-linear-combinations">4.1 Principal Component Linear Combinations</a></li>
   </ul></li>
-  <li><a href="#visualizing-constant-distance-ellipses" id="toc-visualizing-constant-distance-ellipses" class="nav-link" data-scroll-target="#visualizing-constant-distance-ellipses">5. Visualizing Constant Distance (Ellipses)</a></li>
   </ul>
 </nav>
     </div>
@@ -200,7 +200,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lab02a: Random Vectors and Matrices</h1>
+<h1 class="title">Lab03c: Sampling Distributions and Normality Assessment</h1>
 <p class="subtitle lead">STT 843: Multivariate Analysis</p>
 </div>
 
@@ -230,123 +230,133 @@ window.Quarto = {
 </header>
 
 
-<section id="euclidean-vs.-statistical-distance" class="level2">
-<h2 class="anchored" data-anchor-id="euclidean-vs.-statistical-distance">1. Euclidean vs.&nbsp;Statistical Distance</h2>
-<p>The Euclidean distance between a point <span class="math inline">\(P = (x_1, x_2)\)</span> and the origin <span class="math inline">\(O = (0,0)\)</span> is <span class="math inline">\(d(O, P) = \sqrt{x_1^2 + x_2^2}\)</span>. However, in statistics, we must account for different variances.</p>
-<section id="exercise-comparing-distances" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-comparing-distances">Exercise: Comparing Distances</h3>
-<p>Suppose we have a point <span class="math inline">\(P = (3, 3)\)</span>.</p>
-<ol type="1">
-<li><p>Calculate the Euclidean distance.</p></li>
-<li><p>Calculate the Statistical distance assuming <span class="math inline">\(s_{11} = 9\)</span> and <span class="math inline">\(s_{22} = 1\)</span>.</p></li>
-</ol>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Point P</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Euclidean Distance</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>d_euc <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(x<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Euclidean Distance:"</span>, <span class="fu">round</span>(d_euc, <span class="dv">4</span>)))</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Statistical Distance (Standardized)</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>s11 <span class="ot">&lt;-</span> <span class="dv">9</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>s22 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>d_stat <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(x[<span class="dv">1</span>]<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>s11 <span class="sc">+</span> x[<span class="dv">2</span>]<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>s22)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Statistical Distance:"</span>, <span class="fu">round</span>(d_stat, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Observation:</strong> Notice how the statistical distance penalizes the dimension with lower variability (<span class="math inline">\(x_2\)</span>) more heavily.</p>
-</section>
-</section>
-<section id="the-square-root-matrix" class="level2">
-<h2 class="anchored" data-anchor-id="the-square-root-matrix">2. The Square-Root Matrix</h2>
-<p>For a positive definite matrix <span class="math inline">\(\mathbf{A}\)</span>, the square-root matrix <span class="math inline">\(\mathbf{A}^{1/2}\)</span> is defined via spectral decomposition: <span class="math inline">\(\mathbf{A}^{1/2} = \mathbf{P} \Lambda^{1/2} \mathbf{P}^T\)</span>.</p>
-<section id="exercise-compute-a12" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-compute-a12">Exercise: Compute <span class="math inline">\(A^{1/2}\)</span></h3>
-<p>Given <span class="math inline">\(\mathbf{A} = \begin{bmatrix} 4 &amp; 1 \\ 1 &amp; 9 \end{bmatrix}\)</span>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">9</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Spectral Decomposition</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>decomp <span class="ot">&lt;-</span> <span class="fu">eigen</span>(A)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>P <span class="ot">&lt;-</span> decomp<span class="sc">$</span>vectors</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>Lambda <span class="ot">&lt;-</span> <span class="fu">diag</span>(decomp<span class="sc">$</span>values)</span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{r setup, include<span class="ot">=</span><span class="cn">FALSE</span>} </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">echo =</span> <span class="cn">TRUE</span>, <span class="at">warning =</span> <span class="cn">FALSE</span>, <span class="at">message =</span> <span class="cn">FALSE</span>) </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS) <span class="co"># For mvrnorm </span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2) <span class="co"># For plotting</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="sufficient-statistics-and-sampling-distributions" class="level2">
+<h2 class="anchored" data-anchor-id="sufficient-statistics-and-sampling-distributions">1. Sufficient Statistics and Sampling Distributions</h2>
+<p>As noted in the lecture, for a Multivariate Normal population, the sample mean <span class="math inline">\(\bar{\boldsymbol{X}}\)</span> and the sample covariance <span class="math inline">\(\mathbf{S}\)</span> are <strong>sufficient statistics</strong>. This means they contain all the information available in the data regarding the parameters <span class="math inline">\(\boldsymbol{\mu}\)</span> and <span class="math inline">\(\Sigma\)</span>.</p>
+<section id="simulating-the-wishart-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="simulating-the-wishart-distribution">1.1 Simulating the Wishart Distribution</h3>
+<p>The Wishart distribution is the multivariate generalization of the Chi-square distribution. If <span class="math inline">\((n-1)\mathbf{S} \sim W_{n-1}(\Sigma)\)</span>, we can simulate this in R.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameters</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>, </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">1</span>, <span class="dv">3</span>, <span class="fl">0.5</span>, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">1</span>, <span class="fl">0.5</span>, <span class="dv">2</span>), <span class="at">nrow=</span><span class="dv">3</span>)</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute Square Root Matrix</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>A_sqrt <span class="ot">&lt;-</span> P <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="fu">sqrt</span>(decomp<span class="sc">$</span>values)) <span class="sc">%*%</span> <span class="fu">t</span>(P)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Square Root Matrix A^(1/2):"</span>)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(A_sqrt)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulating (n-1)S directly using the Wishart distribution</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># rWishart(n_simulations, df, Sigma)</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>wish_samples <span class="ot">&lt;-</span> <span class="fu">rWishart</span>(<span class="dv">1</span>, <span class="at">df =</span> n<span class="dv">-1</span>, <span class="at">Sigma =</span> Sigma)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>Wishart_Matrix <span class="ot">&lt;-</span> wish_samples[,,<span class="dv">1</span>]</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Verification: A_sqrt * A_sqrt should equal A</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Verification (A_sqrt %*% A_sqrt):"</span>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(A_sqrt <span class="sc">%*%</span> A_sqrt, <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"One realized Wishart Matrix (n-1)S:"</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(Wishart_Matrix)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Comparing with (n-1) * sample covariance from simulated normal data</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">mvrnorm</span>(n, <span class="at">mu =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">Sigma =</span> Sigma)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">cov</span>(data)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Calculated (n-1)S from simulated data:"</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>((n<span class="dv">-1</span>) <span class="sc">*</span> S)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="random-vectors-and-covariance" class="level2">
-<h2 class="anchored" data-anchor-id="random-vectors-and-covariance">3. Random Vectors and Covariance</h2>
-<p>The population correlation matrix <span class="math inline">\(\rho\)</span> is derived from the covariance matrix <span class="math inline">\(\Sigma\)</span> by <span class="math inline">\(\rho_{ik} = \frac{\sigma_{ik}}{\sqrt{\sigma_{ii}}\sqrt{\sigma_{kk}}}\)</span>.</p>
-<section id="exercise-example-2.13" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-example-2.13">Exercise: Example 2.13</h3>
-<p>Given <span class="math inline">\(\Sigma = \begin{bmatrix} 4 &amp; 1 &amp; 2 \\ 1 &amp; 9 &amp; -3 \\ 2 &amp; -3 &amp; 25 \end{bmatrix}\)</span>, find the correlation matrix.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>, </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">1</span>, <span class="dv">9</span>, <span class="sc">-</span><span class="dv">3</span>, </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">25</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 1: Manual Calculation using diagonals</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>D_inv_sqrt <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">diag</span>(Sigma)))</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>rho_manual <span class="ot">&lt;-</span> D_inv_sqrt <span class="sc">%*%</span> Sigma <span class="sc">%*%</span> D_inv_sqrt</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 2: Using R's cov2cor function</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>rho_r <span class="ot">&lt;-</span> <span class="fu">cov2cor</span>(Sigma)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Correlation Matrix:"</span>)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(rho_r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="large-sample-behavior-clt" class="level2">
+<h2 class="anchored" data-anchor-id="large-sample-behavior-clt">2. Large-Sample Behavior (CLT)</h2>
+<p>The Central Limit Theorem states that for large <span class="math inline">\(n\)</span>, <span class="math inline">\(\sqrt{n}(\overline{\boldsymbol{X}}-\boldsymbol{\mu})\)</span> is approximately <span class="math inline">\(N_p(0, \Sigma)\)</span>, even if the parent population is not normal.</p>
+<section id="the-squared-generalized-distance" class="level3">
+<h3 class="anchored" data-anchor-id="the-squared-generalized-distance">2.1 The Squared Generalized Distance</h3>
+<p>The lecture states that <span class="math inline">\(n(\overline{\boldsymbol{X}}-\boldsymbol{\mu})^{\T} \mathbf{S}^{-1}(\overline{\boldsymbol{X}}-\boldsymbol{\mu})\)</span> is approximately <span class="math inline">\(\chi_{p}^{2}\)</span></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n_sims <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>n_size <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>p_dim <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>true_mu <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>true_sigma <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="dv">2</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>d2_values <span class="ot">&lt;-</span> <span class="fu">replicate</span>(n_sims, {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simulate from a NON-NORMAL population (e.g., Exponential)</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  X_raw <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rexp</span>(n_size <span class="sc">*</span> p_dim), <span class="at">ncol =</span> p_dim)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  X_bar <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(X_raw)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  S_inv <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">cov</span>(X_raw))</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  mu_pop <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>) <span class="co"># Mean of Exp(1) is 1</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate distance</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  n_size <span class="sc">*</span> <span class="fu">t</span>(X_bar <span class="sc">-</span> mu_pop) <span class="sc">%*%</span> S_inv <span class="sc">%*%</span> (X_bar <span class="sc">-</span> mu_pop)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot against Chi-square distribution</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(d2_values, <span class="at">breaks =</span> <span class="dv">30</span>, <span class="at">probability =</span> <span class="cn">TRUE</span>, <span class="at">main =</span> <span class="st">"CLT: Distribution of Squared Distances"</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(<span class="fu">dchisq</span>(x, <span class="at">df =</span> p_dim), <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="maximization-lemma" class="level2">
-<h2 class="anchored" data-anchor-id="maximization-lemma">4. Maximization Lemma</h2>
-<p>The lecture notes state that for a positive definite matrix <span class="math inline">\(\mathbf{B}\)</span>, the maximum value of <span class="math inline">\(\frac{(\mathbf{x}^T \mathbf{d})^2}{\mathbf{x}^T \mathbf{B} \mathbf{x}}\)</span> is <span class="math inline">\(\mathbf{d}^T \mathbf{B}^{-1} \mathbf{d}\)</span>.</p>
-<section id="exercise-verify-maximization" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-verify-maximization">Exercise: Verify Maximization</h3>
-<p>Let <span class="math inline">\(\mathbf{B} = \begin{bmatrix} 2 &amp; 1 \\ 1 &amp; 4 \end{bmatrix}\)</span> and <span class="math inline">\(\mathbf{d} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\)</span>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">4</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</span>
+<section id="assessing-normality-univariate" class="level2">
+<h2 class="anchored" data-anchor-id="assessing-normality-univariate">3. Assessing Normality (Univariate)</h2>
+<section id="q-q-plots-example-3.9" class="level3">
+<h3 class="anchored" data-anchor-id="q-q-plots-example-3.9">3.1 Q-Q Plots (Example 3.9)</h3>
+<p>We construct a Q-Q plot to check if observations <span class="math inline">\(x_{(j)}\)</span> are linearly related to standard normal quantiles <span class="math inline">\(q_{(j)}\)</span>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data from Microwave Radiation Example (approximate)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>radiation <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">15</span>, .<span class="dv">09</span>, .<span class="dv">18</span>, .<span class="dv">10</span>, .<span class="dv">05</span>, .<span class="dv">12</span>, .<span class="dv">08</span>, .<span class="dv">05</span>, .<span class="dv">08</span>, .<span class="dv">10</span>, .<span class="dv">07</span>, .<span class="dv">02</span>, .<span class="dv">01</span>, .<span class="dv">10</span>, .<span class="dv">10</span>, .<span class="dv">10</span>, .<span class="dv">02</span>, .<span class="dv">10</span>, .<span class="dv">01</span>, .<span class="dv">40</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Theoretical Maximum</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>theo_max <span class="ot">&lt;-</span> <span class="fu">t</span>(d) <span class="sc">%*%</span> <span class="fu">solve</span>(B) <span class="sc">%*%</span> d</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Attained at x = c * B^-1 * d</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>x_opt <span class="ot">&lt;-</span> <span class="fu">solve</span>(B) <span class="sc">%*%</span> d</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>empirical_max <span class="ot">&lt;-</span> (<span class="fu">t</span>(x_opt) <span class="sc">%*%</span> d)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (<span class="fu">t</span>(x_opt) <span class="sc">%*%</span> B <span class="sc">%*%</span> x_opt)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Theoretical Max:"</span>, theo_max))</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Value at optimal x:"</span>, empirical_max))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Sort observations</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>x_sorted <span class="ot">&lt;-</span> <span class="fu">sort</span>(radiation)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(radiation)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Calculate probabilities (j - 0.5) / n</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>j <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>n</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>p_j <span class="ot">&lt;-</span> (j <span class="sc">-</span> <span class="fl">0.5</span>) <span class="sc">/</span> n</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calculate standard normal quantiles</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>q_j <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(p_j)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Plot</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(q_j, x_sorted, <span class="at">pch=</span><span class="dv">19</span>, <span class="at">col=</span><span class="st">"blue"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">"Q-Q Plot for Radiation Data"</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Theoretical Quantiles"</span>, <span class="at">ylab=</span><span class="st">"Sample Quantiles"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="fu">lm</span>(x_sorted <span class="sc">~</span> q_j), <span class="at">col=</span><span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="correlation-coefficient-test-r_q" class="level3">
+<h3 class="anchored" data-anchor-id="correlation-coefficient-test-r_q">3.2 Correlation Coefficient Test (<span class="math inline">\(r_Q\)</span>)</h3>
+<p>The lecture defines <span class="math inline">\(r_Q\)</span> as the correlation between <span class="math inline">\(x_{(j)}\)</span> and <span class="math inline">\(q_{(j)}\)</span>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>r_q <span class="ot">&lt;-</span> <span class="fu">cor</span>(x_sorted, q_j)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"The Q-Q plot correlation coefficient is:"</span>, r_q, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Decision logic based on Table 4.2</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># For n=20, alpha=0.05, critical value is 0.9508</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>critical_val <span class="ot">&lt;-</span> <span class="fl">0.9508</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(r_q <span class="sc">&lt;</span> critical_val) {</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">"Reject Normality Hypothesis"</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">"Fail to Reject Normality Hypothesis"</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="visualizing-constant-distance-ellipses" class="level2">
-<h2 class="anchored" data-anchor-id="visualizing-constant-distance-ellipses">5. Visualizing Constant Distance (Ellipses)</h2>
-<p>Points of constant statistical distance <span class="math inline">\(\mathbf{x}^T \mathbf{A} \mathbf{x} = c^2\)</span> form an ellipse.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a covariance matrix</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>Sigma_plot <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>A_mat <span class="ot">&lt;-</span> <span class="fu">solve</span>(Sigma_plot) <span class="co"># Inverse for distance calculation</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate points for an ellipse</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2</span><span class="sc">*</span>pi, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">cos</span>(theta), <span class="fu">sin</span>(theta))</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Decompose A to transform the circle into an ellipse</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>ed <span class="ot">&lt;-</span> <span class="fu">eigen</span>(Sigma_plot)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Points = Eigenvectors * sqrt(Eigenvalues) * unit_circle</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>ellipse_pts <span class="ot">&lt;-</span> z <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="fu">sqrt</span>(ed<span class="sc">$</span>values)) <span class="sc">%*%</span> <span class="fu">t</span>(ed<span class="sc">$</span>vectors)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>ellipse_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ellipse_pts)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ellipse_df, <span class="fu">aes</span>(V1, V2)) <span class="sc">+</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Constant Statistical Distance Ellipse"</span>,</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"x1"</span>, <span class="at">y =</span> <span class="st">"x2"</span>) <span class="sc">+</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="multivariate-normality-assessment" class="level2">
+<h2 class="anchored" data-anchor-id="multivariate-normality-assessment">4. Multivariate Normality Assessment</h2>
+<p>As suggested in the lecture, we should also check linear combinations using eigenvalues.</p>
+<section id="principal-component-linear-combinations" class="level3">
+<h3 class="anchored" data-anchor-id="principal-component-linear-combinations">4.1 Principal Component Linear Combinations</h3>
+<p>Plotting the data projected onto the first (<span class="math inline">\(\hat{\mathbf{e}}_1\)</span>) and last (<span class="math inline">\(\hat{\mathbf{e}}_p\)</span>) eigenvectors of <span class="math inline">\(\mathbf{S}\)</span>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using the 'iris' numeric data for demonstration</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>X_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(iris[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>])</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>S_iris <span class="ot">&lt;-</span> <span class="fu">cov</span>(X_mat)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>eigen_info <span class="ot">&lt;-</span> <span class="fu">eigen</span>(S_iris)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Largest eigenvalue combination (First Principal Component)</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>e1 <span class="ot">&lt;-</span> eigen_info<span class="sc">$</span>vectors[, <span class="dv">1</span>]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>proj_e1 <span class="ot">&lt;-</span> X_mat <span class="sc">%*%</span> e1</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Smallest eigenvalue combination</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>ep <span class="ot">&lt;-</span> eigen_info<span class="sc">$</span>vectors[, <span class="dv">4</span>]</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>proj_ep <span class="ot">&lt;-</span> X_mat <span class="sc">%*%</span> ep</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(proj_e1, <span class="at">main=</span><span class="st">"Q-Q Plot: Max Eigenvector"</span>); <span class="fu">qqline</span>(proj_e1)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(proj_ep, <span class="at">main=</span><span class="st">"Q-Q Plot: Min Eigenvector"</span>); <span class="fu">qqline</span>(proj_ep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

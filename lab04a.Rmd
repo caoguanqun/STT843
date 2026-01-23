@@ -1,0 +1,138 @@
+---
+title: "Lab: Multivariate Statistical Inference - Hotelling's T-squared"
+subtitle: "STT 843: Multivariate Analysis"
+author: "Dr. Guanqun Cao"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(ICSNP)    # For HotellingsT2 test
+library(ellipse)  # For plotting confidence ellipses
+```
+
+## 1. Introduction to Hotelling's $T^2$
+
+Hotelling's $T^2$ is the multivariate generalization of the squared
+Student's t-statistic. It is used to test if a mean vector
+$\boldsymbol{\mu}$ is equal to a specified vector $\boldsymbol{\mu}_0$.
+
+The formula is:
+
+\$\$T\^{2}=n(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu}\_{0})\^{T}
+\\mathbf{S}\^{-1}(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu}\_{0})\$\$
+
+## 2. Example 4.1: Manual $T^2$ Calculation
+
+We will manually calculate $T^2$ for the small dataset provided in the
+lecture.
+
+``` R
+# Data matrix
+X <- matrix(c(6, 9, 10, 6, 8, 3), ncol = 2, byrow = TRUE)
+mu0 <- c(9, 5)
+n <- nrow(X)
+p <- ncol(X)
+
+# Sample mean and covariance
+x_bar <- colMeans(X)
+S <- cov(X)
+
+# Hotelling's T2 calculation
+T2_obs <- n * t(x_bar - mu0) %*% solve(S) %*% (x_bar - mu0)
+
+# Critical value calculation
+alpha <- 0.05
+crit_val <- ((n - 1) * p / (n - p)) * qf(1 - alpha, p, n - p)
+
+cat("Observed T2:", T2_obs, "\n")
+cat("Critical Value (alpha=0.05):", crit_val, "\n")
+cat("Reject H0?", T2_obs > crit_val, "\n")
+```
+
+## 3. Example 4.2: Sweat Data Analysis
+
+We test $H_{0}: \boldsymbol{\mu}^{T}=[4, 50, 10]$ at $\alpha = 0.10$ for
+the perspiration components.
+
+``` R
+# Data entry (Example 5.1/4.2)
+sweat_data <- data.frame(
+  X1 = c(3.7, 5.7, 3.8, 3.2, 3.1, 4.6, 2.4, 7.2, 6.7, 5.4, 3.9, 4.5, 3.5, 4.5, 1.5, 8.5, 4.5, 6.5, 4.1, 5.5),
+  X2 = c(48.5, 65.1, 47.2, 53.2, 55.5, 36.1, 24.8, 33.1, 47.4, 54.1, 36.9, 58.8, 27.8, 40.2, 13.5, 56.4, 71.6, 52.8, 44.1, 40.9),
+  X3 = c(9.3, 8.0, 10.9, 12.0, 9.7, 7.9, 14.0, 7.6, 8.5, 11.3, 12.7, 12.3, 9.8, 8.4, 10.1, 7.1, 8.2, 10.9, 11.2, 9.4)
+)
+
+mu_null <- c(4, 50, 10)
+
+# Using HotellingsT2 function
+test_result <- HotellingsT2(sweat_data, mu = mu_null)
+print(test_result)
+```
+
+## 4. Confidence Regions and Ellipses
+
+The confidence region is an ellipsoid centered at
+$\overline{\mathbf{x}}$. The axes are determined by the eigenvalues and
+eigenvectors of $\mathbf{S}$.
+
+### Example 4.3: Radiation Data Ellipse
+
+We visualize the 95% confidence ellipse for the microwave radiation data
+(transformed by the 1/4th power).
+
+``` R
+# Note: Sample values provided in lecture image context
+# Center (x_bar) and S for transformed data
+x_bar_rad <- c(0.564, 0.603)
+S_rad <- matrix(c(0.0144, 0.0117, 0.0117, 0.0146), nrow = 2)
+n_rad <- 42
+p_rad <- 2
+
+# Critical constant c^2
+c2 <- (p_rad * (n_rad - 1) / (n_rad - p_rad)) * qf(0.95, p_rad, n_rad - p_rad)
+
+# Plotting the ellipse
+conf_ellipse <- ellipse(S_rad/n_rad, centre = x_bar_rad, t = sqrt(c2))
+plot(conf_ellipse, type = 'l', lwd = 2, col = "blue",
+     main = "95% Confidence Ellipse for Radiation Data",
+     xlab = "Door Closed (x1)", ylab = "Door Open (x2)")
+points(x_bar_rad[1], x_bar_rad[2], pch = 19, col = "red")
+```
+
+## 5. Simultaneous Confidence Intervals
+
+Simultaneous intervals allow us to make statements about all linear
+combinations $\mathbf{a}^{T} \boldsymbol{\mu}$ while maintaining a
+collective confidence level $1-\alpha$. These are wider than univariate
+t-intervals because they account for the "shadows" of the confidence
+ellipsoid.
+
+### Calculation for Component Means
+
+For each component \$i\$, the \$T\^2\$ interval is:
+
+\$\$\\bar{x}\_i \\pm \\sqrt{\\frac{p(n-1)}{n(n-p)} F\_{p, n-p}(\\alpha)}
+\\sqrt{\\frac{s\_{ii}}{n}}\$\$
+
+# Using Sweat Data from earlier
+
+n_s \<- nrow(sweat_data) p_s \<- ncol(sweat_data) x_bar_s \<-
+colMeans(sweat_data) diag_s \<- diag(cov(sweat_data))
+
+# Multiplier for T2 intervals
+
+multiplier \<- sqrt(((n_s - 1) \* p_s / (n_s - p_s)) \* qf(0.95, p_s,
+n_s - p_s))
+
+# Calculate intervals
+
+intervals \<- data.frame( Lower = x_bar_s - multiplier \* sqrt(diag_s /
+n_s), Mean = x_bar_s, Upper = x_bar_s + multiplier \* sqrt(diag_s / n_s)
+)
+
+print("95% Simultaneous T2 Intervals:") print(intervals)

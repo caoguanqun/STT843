@@ -9,7 +9,7 @@
 <meta name="author" content="Dr.&nbsp;Guanqun Cao">
 <meta name="dcterms.date" content="2026-01-22">
 
-<title>Lab02a: Random Vectors and Matrices – STT843 Multivariate Data Analysis</title>
+<title>Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations – STT843 Multivariate Data Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -175,23 +175,23 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#euclidean-vs.-statistical-distance" id="toc-euclidean-vs.-statistical-distance" class="nav-link active" data-scroll-target="#euclidean-vs.-statistical-distance">1. Euclidean vs.&nbsp;Statistical Distance</a>
+  <li><a href="#evaluating-bivariate-normality" id="toc-evaluating-bivariate-normality" class="nav-link active" data-scroll-target="#evaluating-bivariate-normality">1. Evaluating Bivariate Normality</a>
   <ul class="collapse">
-  <li><a href="#exercise-comparing-distances" id="toc-exercise-comparing-distances" class="nav-link" data-scroll-target="#exercise-comparing-distances">Exercise: Comparing Distances</a></li>
+  <li><a href="#exercise-1-company-sales-and-profits-example-3.12" id="toc-exercise-1-company-sales-and-profits-example-3.12" class="nav-link" data-scroll-target="#exercise-1-company-sales-and-profits-example-3.12">Exercise 1: Company Sales and Profits (Example 3.12)</a></li>
   </ul></li>
-  <li><a href="#the-square-root-matrix" id="toc-the-square-root-matrix" class="nav-link" data-scroll-target="#the-square-root-matrix">2. The Square-Root Matrix</a>
+  <li><a href="#the-chi-square-gamma-plot" id="toc-the-chi-square-gamma-plot" class="nav-link" data-scroll-target="#the-chi-square-gamma-plot">2. The Chi-Square (Gamma) Plot</a>
   <ul class="collapse">
-  <li><a href="#exercise-compute-a12" id="toc-exercise-compute-a12" class="nav-link" data-scroll-target="#exercise-compute-a12">Exercise: Compute <span class="math inline">\(A^{1/2}\)</span></a></li>
+  <li><a href="#exercise-2-constructing-the-plot-example-3.13" id="toc-exercise-2-constructing-the-plot-example-3.13" class="nav-link" data-scroll-target="#exercise-2-constructing-the-plot-example-3.13">Exercise 2: Constructing the Plot (Example 3.13)</a></li>
   </ul></li>
-  <li><a href="#random-vectors-and-covariance" id="toc-random-vectors-and-covariance" class="nav-link" data-scroll-target="#random-vectors-and-covariance">3. Random Vectors and Covariance</a>
+  <li><a href="#detecting-outliers" id="toc-detecting-outliers" class="nav-link" data-scroll-target="#detecting-outliers">3. Detecting Outliers</a>
   <ul class="collapse">
-  <li><a href="#exercise-example-2.13" id="toc-exercise-example-2.13" class="nav-link" data-scroll-target="#exercise-example-2.13">Exercise: Example 2.13</a></li>
+  <li><a href="#exercise-3-standardized-values-example-3.15" id="toc-exercise-3-standardized-values-example-3.15" class="nav-link" data-scroll-target="#exercise-3-standardized-values-example-3.15">Exercise 3: Standardized Values (Example 3.15)</a></li>
   </ul></li>
-  <li><a href="#maximization-lemma" id="toc-maximization-lemma" class="nav-link" data-scroll-target="#maximization-lemma">4. Maximization Lemma</a>
+  <li><a href="#transformations-to-near-normality" id="toc-transformations-to-near-normality" class="nav-link" data-scroll-target="#transformations-to-near-normality">4. Transformations to Near Normality</a>
   <ul class="collapse">
-  <li><a href="#exercise-verify-maximization" id="toc-exercise-verify-maximization" class="nav-link" data-scroll-target="#exercise-verify-maximization">Exercise: Verify Maximization</a></li>
+  <li><a href="#exercise-4-univariate-box-cox-example-3.16" id="toc-exercise-4-univariate-box-cox-example-3.16" class="nav-link" data-scroll-target="#exercise-4-univariate-box-cox-example-3.16">Exercise 4: Univariate Box-Cox (Example 3.16)</a></li>
+  <li><a href="#exercise-5-transforming-multivariate-data-example-3.17" id="toc-exercise-5-transforming-multivariate-data-example-3.17" class="nav-link" data-scroll-target="#exercise-5-transforming-multivariate-data-example-3.17">Exercise 5: Transforming Multivariate Data (Example 3.17)</a></li>
   </ul></li>
-  <li><a href="#visualizing-constant-distance-ellipses" id="toc-visualizing-constant-distance-ellipses" class="nav-link" data-scroll-target="#visualizing-constant-distance-ellipses">5. Visualizing Constant Distance (Ellipses)</a></li>
   </ul>
 </nav>
     </div>
@@ -200,7 +200,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lab02a: Random Vectors and Matrices</h1>
+<h1 class="title">Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations</h1>
 <p class="subtitle lead">STT 843: Multivariate Analysis</p>
 </div>
 
@@ -230,123 +230,109 @@ window.Quarto = {
 </header>
 
 
-<section id="euclidean-vs.-statistical-distance" class="level2">
-<h2 class="anchored" data-anchor-id="euclidean-vs.-statistical-distance">1. Euclidean vs.&nbsp;Statistical Distance</h2>
-<p>The Euclidean distance between a point <span class="math inline">\(P = (x_1, x_2)\)</span> and the origin <span class="math inline">\(O = (0,0)\)</span> is <span class="math inline">\(d(O, P) = \sqrt{x_1^2 + x_2^2}\)</span>. However, in statistics, we must account for different variances.</p>
-<section id="exercise-comparing-distances" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-comparing-distances">Exercise: Comparing Distances</h3>
-<p>Suppose we have a point <span class="math inline">\(P = (3, 3)\)</span>.</p>
-<ol type="1">
-<li><p>Calculate the Euclidean distance.</p></li>
-<li><p>Calculate the Statistical distance assuming <span class="math inline">\(s_{11} = 9\)</span> and <span class="math inline">\(s_{22} = 1\)</span>.</p></li>
-</ol>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Point P</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Euclidean Distance</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>d_euc <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(x<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Euclidean Distance:"</span>, <span class="fu">round</span>(d_euc, <span class="dv">4</span>)))</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Statistical Distance (Standardized)</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>s11 <span class="ot">&lt;-</span> <span class="dv">9</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>s22 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>d_stat <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(x[<span class="dv">1</span>]<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>s11 <span class="sc">+</span> x[<span class="dv">2</span>]<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>s22)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Statistical Distance:"</span>, <span class="fu">round</span>(d_stat, <span class="dv">4</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Observation:</strong> Notice how the statistical distance penalizes the dimension with lower variability (<span class="math inline">\(x_2\)</span>) more heavily.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{r setup, include<span class="ot">=</span><span class="cn">FALSE</span>}</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">echo =</span> <span class="cn">TRUE</span>, <span class="at">message =</span> <span class="cn">FALSE</span>, <span class="at">warning =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)       <span class="co"># For mvrnorm and boxcox</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)    <span class="co"># For visualization</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)        <span class="co"># For powerTransform</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="evaluating-bivariate-normality" class="level2">
+<h2 class="anchored" data-anchor-id="evaluating-bivariate-normality">1. Evaluating Bivariate Normality</h2>
+<p>A property of the Bivariate Normal distribution is that approximately 50% of the sample observations should lie within the contour ellipse defined by <span class="math inline">\((\mathbf{x}-\bar{\mathbf{x}})^{\T} \mathbf{S}^{-1}(\mathbf{x}-\bar{\mathbf{x}}) \leq \chi_{2}^{2}(0.5)\)</span>.</p>
+<section id="exercise-1-company-sales-and-profits-example-3.12" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-1-company-sales-and-profits-example-3.12">Exercise 1: Company Sales and Profits (Example 3.12)</h3>
+<p>Let’s input the Forbes 2005 data for the 10 largest companies.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>{r setup, include<span class="ot">=</span><span class="cn">FALSE</span>}</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Data from Example 3.12</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>companies <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="fu">c</span>(<span class="st">"Citigroup"</span>, <span class="st">"General Electric"</span>, <span class="st">"American Intl Group"</span>, <span class="st">"Bank of America"</span>, </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>           <span class="st">"HSBC Group"</span>, <span class="st">"ExxonMobil"</span>, <span class="st">"Royal Dutch/Shell"</span>, <span class="st">"BP"</span>, <span class="st">"ING Group"</span>, <span class="st">"Toyota Motor"</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sales =</span> <span class="fu">c</span>(<span class="fl">108.28</span>, <span class="fl">152.36</span>, <span class="fl">95.04</span>, <span class="fl">65.45</span>, <span class="fl">62.97</span>, <span class="fl">263.99</span>, <span class="fl">265.19</span>, <span class="fl">285.06</span>, <span class="fl">92.01</span>, <span class="fl">165.68</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">profits =</span> <span class="fu">c</span>(<span class="fl">17.05</span>, <span class="fl">16.59</span>, <span class="fl">10.91</span>, <span class="fl">14.14</span>, <span class="fl">9.52</span>, <span class="fl">25.33</span>, <span class="fl">18.54</span>, <span class="fl">15.73</span>, <span class="fl">8.10</span>, <span class="fl">11.13</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(companies[, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>])</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>x_bar <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(X)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">cov</span>(X)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>S_inv <span class="ot">&lt;-</span> <span class="fu">solve</span>(S)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate squared generalized distances d^2</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fu">apply</span>(X, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">t</span>(x <span class="sc">-</span> x_bar) <span class="sc">%*%</span> S_inv <span class="sc">%*%</span> (x <span class="sc">-</span> x_bar))</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>companies<span class="sc">$</span>d2 <span class="ot">&lt;-</span> d2</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Check 50% rule: Chi-square (df=2) at 0.5 probability is ~1.386</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>cutoff <span class="ot">&lt;-</span> <span class="fu">qchisq</span>(<span class="fl">0.5</span>, <span class="at">df =</span> <span class="dv">2</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>proportion_inside <span class="ot">&lt;-</span> <span class="fu">mean</span>(d2 <span class="sc">&lt;=</span> cutoff)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Proportion of observations inside the 50% ellipse:"</span>, proportion_inside, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="the-square-root-matrix" class="level2">
-<h2 class="anchored" data-anchor-id="the-square-root-matrix">2. The Square-Root Matrix</h2>
-<p>For a positive definite matrix <span class="math inline">\(\mathbf{A}\)</span>, the square-root matrix <span class="math inline">\(\mathbf{A}^{1/2}\)</span> is defined via spectral decomposition: <span class="math inline">\(\mathbf{A}^{1/2} = \mathbf{P} \Lambda^{1/2} \mathbf{P}^T\)</span>.</p>
-<section id="exercise-compute-a12" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-compute-a12">Exercise: Compute <span class="math inline">\(A^{1/2}\)</span></h3>
-<p>Given <span class="math inline">\(\mathbf{A} = \begin{bmatrix} 4 &amp; 1 \\ 1 &amp; 9 \end{bmatrix}\)</span>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">9</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Spectral Decomposition</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>decomp <span class="ot">&lt;-</span> <span class="fu">eigen</span>(A)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>P <span class="ot">&lt;-</span> decomp<span class="sc">$</span>vectors</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>Lambda <span class="ot">&lt;-</span> <span class="fu">diag</span>(decomp<span class="sc">$</span>values)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute Square Root Matrix</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>A_sqrt <span class="ot">&lt;-</span> P <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="fu">sqrt</span>(decomp<span class="sc">$</span>values)) <span class="sc">%*%</span> <span class="fu">t</span>(P)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Square Root Matrix A^(1/2):"</span>)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(A_sqrt)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Verification: A_sqrt * A_sqrt should equal A</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Verification (A_sqrt %*% A_sqrt):"</span>)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(A_sqrt <span class="sc">%*%</span> A_sqrt, <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="the-chi-square-gamma-plot" class="level2">
+<h2 class="anchored" data-anchor-id="the-chi-square-gamma-plot">2. The Chi-Square (Gamma) Plot</h2>
+<p>To check multivariate normality, we plot the ordered squared distances <span class="math inline">\(d_{(j)}^2\)</span> against the quantiles of a <span class="math inline">\(\chi^2_p\)</span> distribution.</p>
+<section id="exercise-2-constructing-the-plot-example-3.13" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-constructing-the-plot-example-3.13">Exercise 2: Constructing the Plot (Example 3.13)</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(companies)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>d2_ordered <span class="ot">&lt;-</span> <span class="fu">sort</span>(d2)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>prob_levels <span class="ot">&lt;-</span> (<span class="dv">1</span><span class="sc">:</span>n <span class="sc">-</span> <span class="fl">0.5</span>) <span class="sc">/</span> n</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>chi2_quantiles <span class="ot">&lt;-</span> <span class="fu">qchisq</span>(prob_levels, <span class="at">df =</span> p)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Plot</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chi2_quantiles, d2_ordered, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"blue"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Chi-Square Plot: Sales &amp; Profits"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Theoretical Chi-Square Quantiles"</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Ordered Squared Distances (d^2)"</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>) <span class="co"># Reference line y = x</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="random-vectors-and-covariance" class="level2">
-<h2 class="anchored" data-anchor-id="random-vectors-and-covariance">3. Random Vectors and Covariance</h2>
-<p>The population correlation matrix <span class="math inline">\(\rho\)</span> is derived from the covariance matrix <span class="math inline">\(\Sigma\)</span> by <span class="math inline">\(\rho_{ik} = \frac{\sigma_{ik}}{\sqrt{\sigma_{ii}}\sqrt{\sigma_{kk}}}\)</span>.</p>
-<section id="exercise-example-2.13" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-example-2.13">Exercise: Example 2.13</h3>
-<p>Given <span class="math inline">\(\Sigma = \begin{bmatrix} 4 &amp; 1 &amp; 2 \\ 1 &amp; 9 &amp; -3 \\ 2 &amp; -3 &amp; 25 \end{bmatrix}\)</span>, find the correlation matrix.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>, </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">1</span>, <span class="dv">9</span>, <span class="sc">-</span><span class="dv">3</span>, </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">25</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 1: Manual Calculation using diagonals</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>D_inv_sqrt <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">diag</span>(Sigma)))</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>rho_manual <span class="ot">&lt;-</span> D_inv_sqrt <span class="sc">%*%</span> Sigma <span class="sc">%*%</span> D_inv_sqrt</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 2: Using R's cov2cor function</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>rho_r <span class="ot">&lt;-</span> <span class="fu">cov2cor</span>(Sigma)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Correlation Matrix:"</span>)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(rho_r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="detecting-outliers" class="level2">
+<h2 class="anchored" data-anchor-id="detecting-outliers">3. Detecting Outliers</h2>
+<p>Outliers can be detected via standardized values (<span class="math inline">\(z\)</span>-scores) or generalized distances.</p>
+<section id="exercise-3-standardized-values-example-3.15" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3-standardized-values-example-3.15">Exercise 3: Standardized Values (Example 3.15)</h3>
+<p>Using the lumber stiffness data logic, we calculate <span class="math inline">\(z_{jk} = (x_{jk} - \bar{x}_k) / \sqrt{s_{kk}}\)</span>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize the sales and profits</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">scale</span>(X)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(Z) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"z_sales"</span>, <span class="st">"z_profits"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>outlier_check <span class="ot">&lt;-</span> <span class="fu">cbind</span>(companies, Z)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify observations with d2 &gt; 95th percentile of Chi-square</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>limit <span class="ot">&lt;-</span> <span class="fu">qchisq</span>(<span class="fl">0.95</span>, <span class="at">df =</span> p)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>outliers <span class="ot">&lt;-</span> outlier_check[outlier_check<span class="sc">$</span>d2 <span class="sc">&gt;</span> limit, ]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outliers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="maximization-lemma" class="level2">
-<h2 class="anchored" data-anchor-id="maximization-lemma">4. Maximization Lemma</h2>
-<p>The lecture notes state that for a positive definite matrix <span class="math inline">\(\mathbf{B}\)</span>, the maximum value of <span class="math inline">\(\frac{(\mathbf{x}^T \mathbf{d})^2}{\mathbf{x}^T \mathbf{B} \mathbf{x}}\)</span> is <span class="math inline">\(\mathbf{d}^T \mathbf{B}^{-1} \mathbf{d}\)</span>.</p>
-<section id="exercise-verify-maximization" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-verify-maximization">Exercise: Verify Maximization</h3>
-<p>Let <span class="math inline">\(\mathbf{B} = \begin{bmatrix} 2 &amp; 1 \\ 1 &amp; 4 \end{bmatrix}\)</span> and <span class="math inline">\(\mathbf{d} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\)</span>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">4</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Theoretical Maximum</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>theo_max <span class="ot">&lt;-</span> <span class="fu">t</span>(d) <span class="sc">%*%</span> <span class="fu">solve</span>(B) <span class="sc">%*%</span> d</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Attained at x = c * B^-1 * d</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>x_opt <span class="ot">&lt;-</span> <span class="fu">solve</span>(B) <span class="sc">%*%</span> d</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>empirical_max <span class="ot">&lt;-</span> (<span class="fu">t</span>(x_opt) <span class="sc">%*%</span> d)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (<span class="fu">t</span>(x_opt) <span class="sc">%*%</span> B <span class="sc">%*%</span> x_opt)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Theoretical Max:"</span>, theo_max))</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Value at optimal x:"</span>, empirical_max))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-</section>
-<section id="visualizing-constant-distance-ellipses" class="level2">
-<h2 class="anchored" data-anchor-id="visualizing-constant-distance-ellipses">5. Visualizing Constant Distance (Ellipses)</h2>
-<p>Points of constant statistical distance <span class="math inline">\(\mathbf{x}^T \mathbf{A} \mathbf{x} = c^2\)</span> form an ellipse.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a covariance matrix</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>Sigma_plot <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>A_mat <span class="ot">&lt;-</span> <span class="fu">solve</span>(Sigma_plot) <span class="co"># Inverse for distance calculation</span></span>
+<section id="transformations-to-near-normality" class="level2">
+<h2 class="anchored" data-anchor-id="transformations-to-near-normality">4. Transformations to Near Normality</h2>
+<p>If the data is not normal, we can use the <strong>Box-Cox transformation</strong>.</p>
+<section id="exercise-4-univariate-box-cox-example-3.16" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-4-univariate-box-cox-example-3.16">Exercise 4: Univariate Box-Cox (Example 3.16)</h3>
+<p>We use the likelihood function <span class="math inline">\(\ell(\lambda)\)</span> to find the optimal power transformation for the <code>sales</code> data.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using the car package to find optimal lambda</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>lambda_sales <span class="ot">&lt;-</span> <span class="fu">powerTransform</span>(companies<span class="sc">$</span>sales)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lambda_sales)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate points for an ellipse</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2</span><span class="sc">*</span>pi, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">cos</span>(theta), <span class="fu">sin</span>(theta))</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Decompose A to transform the circle into an ellipse</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>ed <span class="ot">&lt;-</span> <span class="fu">eigen</span>(Sigma_plot)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Points = Eigenvectors * sqrt(Eigenvalues) * unit_circle</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>ellipse_pts <span class="ot">&lt;-</span> z <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="fu">sqrt</span>(ed<span class="sc">$</span>values)) <span class="sc">%*%</span> <span class="fu">t</span>(ed<span class="sc">$</span>vectors)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>ellipse_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ellipse_pts)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ellipse_df, <span class="fu">aes</span>(V1, V2)) <span class="sc">+</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Constant Statistical Distance Ellipse"</span>,</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"x1"</span>, <span class="at">y =</span> <span class="st">"x2"</span>) <span class="sc">+</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizing Log-Likelihood profile</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>bc_profile <span class="ot">&lt;-</span> <span class="fu">boxcox</span>(sales <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> companies, <span class="at">lambda =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="fl">0.1</span>))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>optimal_lambda <span class="ot">&lt;-</span> bc_profile<span class="sc">$</span>x[<span class="fu">which.max</span>(bc_profile<span class="sc">$</span>y)]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Optimal Lambda for Sales:"</span>, optimal_lambda, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="exercise-5-transforming-multivariate-data-example-3.17" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-5-transforming-multivariate-data-example-3.17">Exercise 5: Transforming Multivariate Data (Example 3.17)</h3>
+<p>When working with multivariate data, we can apply the individual <span class="math inline">\(\hat{\lambda}\)</span> values to each column to achieve marginal normality.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform both Sales and Profits</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>trans_X <span class="ot">&lt;-</span> companies</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>trans_X<span class="sc">$</span>sales_bc <span class="ot">&lt;-</span> (companies<span class="sc">$</span>sales<span class="sc">^</span>optimal_lambda <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> optimal_lambda</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot comparison</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(companies<span class="sc">$</span>sales, <span class="at">main=</span><span class="st">"Original Sales"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(companies<span class="sc">$</span>sales)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(trans_X<span class="sc">$</span>sales_bc, <span class="at">main=</span><span class="st">"Transformed Sales"</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(trans_X<span class="sc">$</span>sales_bc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

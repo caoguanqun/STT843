@@ -1,0 +1,148 @@
+---
+title: "Lab03c: Sampling Distributions and Normality Assessment"
+subtitle: "STT 843: Multivariate Analysis"
+author: "Dr. Guanqun Cao"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+``` r
+{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) 
+library(MASS) # For mvrnorm 
+library(ggplot2) # For plotting
+```
+
+## 1. Sufficient Statistics and Sampling Distributions
+
+As noted in the lecture, for a Multivariate Normal population, the sample mean $\bar{\boldsymbol{X}}$ and the sample covariance $\mathbf{S}$ are **sufficient statistics**. This means they contain all the information available in the data regarding the parameters $\boldsymbol{\mu}$ and $\Sigma$.
+
+### 1.1 Simulating the Wishart Distribution
+
+The Wishart distribution is the multivariate generalization of the Chi-square distribution. If $(n-1)\mathbf{S} \sim W_{n-1}(\Sigma)$, we can simulate this in R.
+
+``` R
+# Parameters
+p <- 3
+n <- 20
+Sigma <- matrix(c(4, 1, 1, 
+                  1, 3, 0.5, 
+                  1, 0.5, 2), nrow=3)
+
+# Simulating (n-1)S directly using the Wishart distribution
+# rWishart(n_simulations, df, Sigma)
+set.seed(123)
+wish_samples <- rWishart(1, df = n-1, Sigma = Sigma)
+Wishart_Matrix <- wish_samples[,,1]
+
+print("One realized Wishart Matrix (n-1)S:")
+print(Wishart_Matrix)
+
+# Comparing with (n-1) * sample covariance from simulated normal data
+data <- mvrnorm(n, mu = c(0,0,0), Sigma = Sigma)
+S <- cov(data)
+print("Calculated (n-1)S from simulated data:")
+print((n-1) * S)
+```
+
+## 2. Large-Sample Behavior (CLT)
+
+The Central Limit Theorem states that for large $n$, $\sqrt{n}(\overline{\boldsymbol{X}}-\boldsymbol{\mu})$ is approximately $N_p(0, \Sigma)$, even if the parent population is not normal.
+
+### 2.1 The Squared Generalized Distance
+
+The lecture states that $n(\overline{\boldsymbol{X}}-\boldsymbol{\mu})^{\T} \mathbf{S}^{-1}(\overline{\boldsymbol{X}}-\boldsymbol{\mu})$ is approximately $\chi_{p}^{2}$
+
+```R
+n_sims <- 1000
+n_size <- 100
+p_dim <- 2
+true_mu <- c(0, 0)
+true_sigma <- diag(2)
+
+d2_values <- replicate(n_sims, {
+  # Simulate from a NON-NORMAL population (e.g., Exponential)
+  X_raw <- matrix(rexp(n_size * p_dim), ncol = p_dim)
+  X_bar <- colMeans(X_raw)
+  S_inv <- solve(cov(X_raw))
+  mu_pop <- c(1, 1) # Mean of Exp(1) is 1
+  
+  # Calculate distance
+  n_size * t(X_bar - mu_pop) %*% S_inv %*% (X_bar - mu_pop)
+})
+
+# Plot against Chi-square distribution
+hist(d2_values, breaks = 30, probability = TRUE, main = "CLT: Distribution of Squared Distances")
+curve(dchisq(x, df = p_dim), add = TRUE, col = "red", lwd = 2)
+```
+## 3. Assessing Normality (Univariate)
+
+### 3.1 Q-Q Plots (Example 3.9)
+We construct a Q-Q plot to check if observations $x_{(j)}$ are linearly related to standard normal quantiles $q_{(j)}$.
+
+```R
+# Data from Microwave Radiation Example (approximate)
+radiation <- c(.15, .09, .18, .10, .05, .12, .08, .05, .08, .10, .07, .02, .01, .10, .10, .10, .02, .10, .01, .40)
+
+# 1. Sort observations
+x_sorted <- sort(radiation)
+n <- length(radiation)
+
+# 2. Calculate probabilities (j - 0.5) / n
+j <- 1:n
+p_j <- (j - 0.5) / n
+
+# 3. Calculate standard normal quantiles
+q_j <- qnorm(p_j)
+
+# 4. Plot
+plot(q_j, x_sorted, pch=19, col="blue",
+     main="Q-Q Plot for Radiation Data",
+     xlab="Theoretical Quantiles", ylab="Sample Quantiles")
+abline(lm(x_sorted ~ q_j), col="red")
+```
+### 3.2 Correlation Coefficient Test ($r_Q$)
+The lecture defines $r_Q$ as the correlation between $x_{(j)}$ and $q_{(j)}$.
+
+```R
+r_q <- cor(x_sorted, q_j)
+cat("The Q-Q plot correlation coefficient is:", r_q, "\n")
+
+# Decision logic based on Table 4.2
+# For n=20, alpha=0.05, critical value is 0.9508
+critical_val <- 0.9508
+if(r_q < critical_val) {
+  print("Reject Normality Hypothesis")
+} else {
+  print("Fail to Reject Normality Hypothesis")
+}
+```
+## 4. Multivariate Normality Assessment
+
+As suggested in the lecture, we should also check linear combinations using eigenvalues.
+
+### 4.1 Principal Component Linear Combinations
+
+Plotting the data projected onto the first ($\hat{\mathbf{e}}_1$) and last ($\hat{\mathbf{e}}_p$) eigenvectors of $\mathbf{S}$.
+
+```R
+# Using the 'iris' numeric data for demonstration
+X_mat <- as.matrix(iris[, 1:4])
+S_iris <- cov(X_mat)
+eigen_info <- eigen(S_iris)
+
+# Largest eigenvalue combination (First Principal Component)
+e1 <- eigen_info$vectors[, 1]
+proj_e1 <- X_mat %*% e1
+
+# Smallest eigenvalue combination
+ep <- eigen_info$vectors[, 4]
+proj_ep <- X_mat %*% ep
+
+par(mfrow=c(1,2))
+qqnorm(proj_e1, main="Q-Q Plot: Max Eigenvector"); qqline(proj_e1)
+qqnorm(proj_ep, main="Q-Q Plot: Min Eigenvector"); qqline(proj_ep)
+```

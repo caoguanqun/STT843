@@ -1,0 +1,137 @@
+---
+title: "Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations"
+subtitle: "STT 843: Multivariate Analysis"
+author: "Dr. Guanqun Cao"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+``` R
+{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(MASS)       # For mvrnorm and boxcox
+library(ggplot2)    # For visualization
+library(car)        # For powerTransform
+```
+
+## 1. Evaluating Bivariate Normality
+
+A property of the Bivariate Normal distribution is that approximately
+50% of the sample observations should lie within the contour ellipse
+defined by
+$(\mathbf{x}-\bar{\mathbf{x}})^{\T} \mathbf{S}^{-1}(\mathbf{x}-\bar{\mathbf{x}}) \leq \chi_{2}^{2}(0.5)$.
+
+### Exercise 1: Company Sales and Profits (Example 3.12)
+
+Let's input the Forbes 2005 data for the 10 largest companies.
+
+``` R
+{r setup, include=FALSE}
+# Data from Example 3.12
+companies <- data.frame(
+  name = c("Citigroup", "General Electric", "American Intl Group", "Bank of America", 
+           "HSBC Group", "ExxonMobil", "Royal Dutch/Shell", "BP", "ING Group", "Toyota Motor"),
+  sales = c(108.28, 152.36, 95.04, 65.45, 62.97, 263.99, 265.19, 285.06, 92.01, 165.68),
+  profits = c(17.05, 16.59, 10.91, 14.14, 9.52, 25.33, 18.54, 15.73, 8.10, 11.13)
+)
+
+X <- as.matrix(companies[, 2:3])
+x_bar <- colMeans(X)
+S <- cov(X)
+S_inv <- solve(S)
+
+# Calculate squared generalized distances d^2
+d2 <- apply(X, 1, function(x) t(x - x_bar) %*% S_inv %*% (x - x_bar))
+companies$d2 <- d2
+
+# Check 50% rule: Chi-square (df=2) at 0.5 probability is ~1.386
+cutoff <- qchisq(0.5, df = 2)
+proportion_inside <- mean(d2 <= cutoff)
+
+cat("Proportion of observations inside the 50% ellipse:", proportion_inside, "\n")
+```
+
+## 2. The Chi-Square (Gamma) Plot
+
+To check multivariate normality, we plot the ordered squared distances
+$d_{(j)}^2$ against the quantiles of a $\chi^2_p$ distribution.
+
+### Exercise 2: Constructing the Plot (Example 3.13)
+
+``` R
+n <- nrow(companies)
+p <- 2
+d2_ordered <- sort(d2)
+prob_levels <- (1:n - 0.5) / n
+chi2_quantiles <- qchisq(prob_levels, df = p)
+
+# Create Plot
+plot(chi2_quantiles, d2_ordered, pch = 19, col = "blue",
+     main = "Chi-Square Plot: Sales & Profits",
+     xlab = "Theoretical Chi-Square Quantiles",
+     ylab = "Ordered Squared Distances (d^2)")
+abline(0, 1, col = "red", lwd = 2) # Reference line y = x
+```
+
+## 3. Detecting Outliers
+
+Outliers can be detected via standardized values ($z$-scores) or
+generalized distances.
+
+### Exercise 3: Standardized Values (Example 3.15)
+
+Using the lumber stiffness data logic, we calculate
+$z_{jk} = (x_{jk} - \bar{x}_k) / \sqrt{s_{kk}}$.
+
+``` R
+# Standardize the sales and profits
+Z <- scale(X)
+colnames(Z) <- c("z_sales", "z_profits")
+outlier_check <- cbind(companies, Z)
+
+# Identify observations with d2 > 95th percentile of Chi-square
+limit <- qchisq(0.95, df = p)
+outliers <- outlier_check[outlier_check$d2 > limit, ]
+print(outliers)
+```
+
+## 4. Transformations to Near Normality
+
+If the data is not normal, we can use the **Box-Cox transformation**.
+
+### Exercise 4: Univariate Box-Cox (Example 3.16)
+
+We use the likelihood function $\ell(\lambda)$ to find the optimal power
+transformation for the `sales` data.
+
+``` R
+# Using the car package to find optimal lambda
+lambda_sales <- powerTransform(companies$sales)
+summary(lambda_sales)
+
+# Visualizing Log-Likelihood profile
+bc_profile <- boxcox(sales ~ 1, data = companies, lambda = seq(-1, 2, 0.1))
+optimal_lambda <- bc_profile$x[which.max(bc_profile$y)]
+cat("Optimal Lambda for Sales:", optimal_lambda, "\n")
+```
+
+### Exercise 5: Transforming Multivariate Data (Example 3.17)
+
+When working with multivariate data, we can apply the individual
+$\hat{\lambda}$ values to each column to achieve marginal normality.
+
+``` R
+# Transform both Sales and Profits
+trans_X <- companies
+trans_X$sales_bc <- (companies$sales^optimal_lambda - 1) / optimal_lambda
+
+# Plot comparison
+par(mfrow=c(1,2))
+qqnorm(companies$sales, main="Original Sales")
+qqline(companies$sales)
+qqnorm(trans_X$sales_bc, main="Transformed Sales")
+qqline(trans_X$sales_bc)
+```
