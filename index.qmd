@@ -29,7 +29,7 @@ Lecture slides are updated every Sunday evening. Please ensure you have the late
 | 1 | [Introduction]{style="color: blue; font-weight: bold;"} | [Lec 1.1 🔗](lectures/lec01-intro.pdf)<br>[Lec 1.2 🔗](lectures/lec02-matrix.pdf) | [💻 Lab 1a](labs/lab01a.Rmd)<br>[💻 Lab 1b](labs/lab01b.Rmd) | -- |
 | 2 | [Random Vectors and Matrices]{style="color: green; font-weight: bold;"} | [Lec 2.1 🔗](lectures/lec02_2.pdf)<br> [Lec 2.1* 🔗](lectures/matrices.pdf)<br> | [💻 Lab 2a](labs/lab02.Rmd)<br>  | [HW 1]{style="color: red;"} |
 | 3 | [Multivariate Normal Distribution I]{style="color: blue; font-weight: bold;"} | [Lec 3.1 🔗](lectures/lec03a.pdf)<br>[Lec 3.2 🔗](lectures/lec03b.pdf) | [💻 Lab 3a](labs/lab03a.Rmd)<br>[💻 Lab 3b](labs/lab03b.Rmd)  | [Quiz 1]{style="color: purple;"} |
-| 4 | [Multivariate Normal Distribution II]{style="color: blue; font-weight: bold;"} | [Lec 3.1 🔗](lectures/lec03a.pdf)<br>[Lec 4.1 🔗](lectures/lec03c.pdf) | [💻 Lab 3c](labs/lab03c.Rmd)<br>[💻 Lab 3d](labs/lab03d.Rmd)  | [HW 2]{style="color: red;"} |
+| 4 | [Multivariate Normal Distribution II]{style="color: green; font-weight: bold;"} | [Lec 3.1 🔗](lectures/lec03a.pdf)<br>[Lec 4.1 🔗](lectures/lec03c.pdf) | [💻 Lab 3c](labs/lab03c.Rmd)<br>[💻 Lab 3d](labs/lab03d.Rmd)  | [HW 2]{style="color: red;"} |
 ## 🛠️ Software Requirements
 
 We will be using **R** and **RStudio** for all computations. Please ensure you have the following installed:
