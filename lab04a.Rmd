@@ -31,7 +31,7 @@ The formula is:
 We will manually calculate $T^2$ for the small dataset provided in the
 lecture.
 
-``` R
+``` r
 # Data matrix
 X <- matrix(c(6, 9, 10, 6, 8, 3), ncol = 2, byrow = TRUE)
 mu0 <- c(9, 5)
@@ -59,7 +59,7 @@ cat("Reject H0?", T2_obs > crit_val, "\n")
 We test $H_{0}: \boldsymbol{\mu}^{T}=[4, 50, 10]$ at $\alpha = 0.10$ for
 the perspiration components.
 
-``` R
+``` r
 # Data entry (Example 5.1/4.2)
 sweat_data <- data.frame(
   X1 = c(3.7, 5.7, 3.8, 3.2, 3.1, 4.6, 2.4, 7.2, 6.7, 5.4, 3.9, 4.5, 3.5, 4.5, 1.5, 8.5, 4.5, 6.5, 4.1, 5.5),
@@ -85,7 +85,7 @@ eigenvectors of $\mathbf{S}$.
 We visualize the 95% confidence ellipse for the microwave radiation data
 (transformed by the 1/4th power).
 
-``` R
+``` r
 # Note: Sample values provided in lecture image context
 # Center (x_bar) and S for transformed data
 x_bar_rad <- c(0.564, 0.603)

@@ -9,7 +9,7 @@ editor_options:
     wrap: 72
 ---
 
-``` R
+``` r
 {r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(MASS)       # For mvrnorm and boxcox
@@ -28,7 +28,7 @@ $(\mathbf{x}-\bar{\mathbf{x}})^{\T} \mathbf{S}^{-1}(\mathbf{x}-\bar{\mathbf{x}})
 
 Let's input the Forbes 2005 data for the 10 largest companies.
 
-``` R
+``` r
 {r setup, include=FALSE}
 # Data from Example 3.12
 companies <- data.frame(
@@ -61,7 +61,7 @@ $d_{(j)}^2$ against the quantiles of a $\chi^2_p$ distribution.
 
 ### Exercise 2: Constructing the Plot (Example 3.13)
 
-``` R
+``` r
 n <- nrow(companies)
 p <- 2
 d2_ordered <- sort(d2)
@@ -86,7 +86,7 @@ generalized distances.
 Using the lumber stiffness data logic, we calculate
 $z_{jk} = (x_{jk} - \bar{x}_k) / \sqrt{s_{kk}}$.
 
-``` R
+``` r
 # Standardize the sales and profits
 Z <- scale(X)
 colnames(Z) <- c("z_sales", "z_profits")
@@ -107,7 +107,7 @@ If the data is not normal, we can use the **Box-Cox transformation**.
 We use the likelihood function $\ell(\lambda)$ to find the optimal power
 transformation for the `sales` data.
 
-``` R
+``` r
 # Using the car package to find optimal lambda
 lambda_sales <- powerTransform(companies$sales)
 summary(lambda_sales)
@@ -123,7 +123,7 @@ cat("Optimal Lambda for Sales:", optimal_lambda, "\n")
 When working with multivariate data, we can apply the individual
 $\hat{\lambda}$ values to each column to achieve marginal normality.
 
-``` R
+``` r
 # Transform both Sales and Profits
 trans_X <- companies
 trans_X$sales_bc <- (companies$sales^optimal_lambda - 1) / optimal_lambda
