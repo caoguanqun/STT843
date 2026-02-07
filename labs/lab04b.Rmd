@@ -1,0 +1,214 @@
+---
+title: "Lab04b: Multivariate Statistical Inference Lab"
+subtitle: "Inference on Mean Vectors, Paired Comparisons, and Two-Sample Tests"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(ICSNP) # For Hotelling's T2 tests
+library(heplots) # For Box's M test
+```
+
+## 1. Large Sample Inference: Population Mean Vector
+
+## Theory
+
+Let $\boldsymbol{X}_{1}, \dots, \boldsymbol{X}_{n}$ be a random sample from a population with mean $\boldsymbol{\mu}$ and covariance $\Sigma$. For large $n-p$, we test $H_0: \boldsymbol{\mu} = \boldsymbol{\mu}_0$ using:
+
+\$\$n(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}\_{0})\^{\\top} \\mathbf{S}\^{-1}(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}\_{0}) \> \\chi\_{p}\^{2}(\\alpha)\$\$
+
+The simultaneous $100(1-\alpha)\%$ confidence intervals for linear combinations $\mathbf{a}^\top \boldsymbol{\mu}$ are:
+
+$$\mathbf{a}^{\top} \overline{\boldsymbol{X}} \pm \sqrt{\chi_{p}^{2}(\alpha)} \sqrt{\frac{\mathbf{a}^{\top} \mathbf{S a}}{n}}$\$
+
+## Example 4.6: Finnish Students Musical Ability
+
+Constructing 90% simultaneous confidence intervals for 7 musical ability components.
+
+``` r
+# Summary data from Table 5.5
+n <- 96
+p <- 7
+alpha <- 0.10
+
+means <- c(28.1, 26.6, 35.4, 34.2, 23.6, 22.0, 22.7)
+sds <- c(5.76, 5.85, 3.82, 5.12, 3.76, 3.93, 4.03)
+
+# Critical value (Chi-square with p degrees of freedom)
+crit_val <- sqrt(qchisq(1 - alpha, df = p))
+
+# Simultaneous CIs
+lower <- means - crit_val * (sds / sqrt(n))
+upper <- means + crit_val * (sds / sqrt(n))
+
+results <- data.frame(Variable = paste0("X", 1:7), Mean = means, 
+                      Lower_90_CI = lower, Upper_90_CI = upper)
+print(results)
+```
+
+# 2. Paired Comparisons
+
+## Theory
+
+For $p$ responses and 2 treatments, we calculate differences $\mathbf{D}_j = \mathbf{X}_{1j} - \mathbf{X}_{2j}$. We test $H_0: \boldsymbol{\delta} = \mathbf{0}$ using Hotelling's $T^2$:
+
+\$\$T\^2 = n\\overline{\\mathbf{D}}\^\\top \\mathbf{S}\_d\^{-1}\\overline{\\mathbf{D}} \\sim \\frac{(n-1)p}{n-p} F\_{p, n-p}\$\$
+
+## Example 4.7: Wastewater Effluent Data
+
+Do the Commercial Lab and State Lab agree?
+
+``` r
+# Data entry from Table 6.1
+comm_lab <- matrix(c(6,27, 6,23, 18,64, 8,44, 11,30, 34,75, 28,26, 71,124, 43,54, 33,30, 20,14), 
+                   ncol = 2, byrow = TRUE)
+state_lab <- matrix(c(25,15, 28,13, 36,22, 35,29, 15,31, 44,64, 42,30, 54,64, 34,56, 29,20, 39,21), 
+                    ncol = 2, byrow = TRUE)
+
+# Calculate differences
+diffs <- comm_lab - state_lab
+colnames(diffs) <- c("BOD", "SS")
+
+# Hotelling's T2 Test for paired samples
+# Using ICSNP package
+paired_test <- HotellingsT2(diffs)
+print(paired_test)
+
+# Simultaneous 95% Confidence Intervals for differences
+n_d <- nrow(diffs)
+p_d <- ncol(diffs)
+d_bar <- colMeans(diffs)
+S_d <- cov(diffs)
+alpha_d <- 0.05
+
+crit_T2 <- ((n_d - 1) * p_d / (n_d - p_d)) * qf(1 - alpha_d, p_d, n_d - p_d)
+
+# CI for BOD and SS
+se_d <- sqrt(diag(S_d)/n_d)
+lower_d <- d_bar - sqrt(crit_T2) * se_d
+upper_d <- d_bar + sqrt(crit_T2) * se_d
+
+data.frame(Mean_Diff = d_bar, Lower = lower_d, Upper = upper_d)
+```
+
+### Visualizing Paired Differences (Example 4.7)
+
+This plot shows the confidence region for the mean difference between labs. If the origin $(0,0)$ is outside the ellipse, we conclude the labs significantly differ.
+
+``` R
+library(car) # For dataEllipse
+
+# Difference data from Example 4.7
+diff_df <- as.data.frame(diffs)
+
+# Plotting the differences and the 95% confidence ellipse
+plot(diff_df$BOD, diff_df$SS, pch = 16, 
+     xlab = "Difference in BOD", ylab = "Difference in SS",
+     main = "95% Confidence Region for Lab Differences")
+abline(h = 0, v = 0, lty = 2, col = "red") # Origin
+
+# Add confidence ellipse for the MEAN
+# Note: we scale the ellipse to represent the confidence region of the mean
+confidenceEllipse(lm(cbind(BOD, SS) ~ 1, data = diff_df), 
+                  fill = TRUE, fill.alpha = 0.1, col = "blue")
+```
+
+# 3. Comparing Mean Vectors: Two Populations
+
+## Example 4.8: Soap Manufacturing Methods
+
+Comparing Method 1 and Method 2 ($n_1 = 50, n_2 = 50$).
+
+``` r
+n1 <- 50
+n2 <- 50
+p_soap <- 2
+x1_bar <- c(8.3, 4.1)
+x2_bar <- c(10.2, 3.9)
+S1 <- matrix(c(2, 1, 1, 6), 2)
+S2 <- matrix(c(2, 1, 1, 4), 2)
+
+# Pooled Covariance
+S_pooled <- ((n1 - 1)*S1 + (n2 - 1)*S2) / (n1 + n2 - 2)
+
+# T2 Statistic
+diff_mean <- x1_bar - x2_bar
+T2_soap <- t(diff_mean) %*% solve((1/n1 + 1/n2) * S_pooled) %*% diff_mean
+
+# Critical Value
+alpha_soap <- 0.05
+c_sq <- ((n1 + n2 - 2) * p_soap / (n1 + n2 - p_soap - 1)) * qf(1 - alpha_soap, p_soap, n1 + n2 - p_soap - 1)
+
+print(paste("T2 Statistic:", T2_soap))
+print(paste("Critical Value:", c_sq))
+print(paste("Reject H0:", T2_soap > c_sq))
+```
+
+### Visualizing Two-Sample Differences (Example 4.8)
+
+For the soap manufacturing methods, we visualize the difference vector $\boldsymbol{\mu}_1 - \boldsymbol{\mu}_2$.
+
+``` R
+# We simulate data based on the provided summary statistics for visualization
+library(MASS)
+set.seed(123)
+data1 <- mvrnorm(n1, mu = x1_bar, Sigma = S1)
+data2 <- mvrnorm(n2, mu = x2_bar, Sigma = S2)
+
+# Plotting the two groups
+plot(data1[,1], data1[,2], col = "blue", pch = 1, 
+     xlim = c(5, 13), ylim = c(0, 10),
+     xlab = "Lather (X1)", ylab = "Mildness (X2)",
+     main = "Soap Manufacturing Methods: Group Comparison")
+points(data2[,1], data2[,2], col = "darkgreen", pch = 2)
+
+# Add 95% concentration ellipses for each population
+dataEllipse(data1[,1], data1[,2], levels = 0.95, add = TRUE, plot.points = FALSE, col = "blue")
+dataEllipse(data2[,1], data2[,2], levels = 0.95, add = TRUE, plot.points = FALSE, col = "darkgreen")
+
+legend("topright", legend = c("Method 1", "Method 2"), col = c("blue", "darkgreen"), pch = c(1, 2))
+```
+
+# 4. Testing Equality of Covariance Matrices
+
+## Box's M Test
+
+$H_0: \Sigma_1 = \dots = \Sigma_g$
+
+## Example 4.9: Nursing Home Costs
+
+Testing if cost covariance matrices differ by ownership.
+
+``` r
+# Covariance matrices provided in notes
+S1 <- matrix(c(.291, -.001, .002, .010, -.001, .011, .000, .003, .002, .000, .001, .000, .010, .003, .000, .010), 4, 4)
+S2 <- matrix(c(.561, -.011, .001, .037, -.011, .025, .004, .007, .001, .004, .005, .002, .037, .007, .002, .019), 4, 4)
+S3 <- matrix(c(.261, -.030, .003, .018, -.030, .017, -.000, .006, .003, -.000, .004, .001, .018, .006, .001, .013), 4, 4)
+
+# Sample sizes (assuming roughly equal distribution of n=516 into 3 groups for demonstration)
+# In reality, use actual n per group.
+n_l <- c(172, 172, 172) 
+
+# Manual calculation of Box's M or use heplots::boxM if raw data is available.
+# Since we have only matrices, we follow the note's Chi-square approximation logic:
+p_cost <- 4
+g_groups <- 3
+
+S_pool_cost <- ((n_l[1]-1)*S1 + (n_l[2]-1)*S2 + (n_l[3]-1)*S3) / (sum(n_l) - g_groups)
+
+M <- (sum(n_l) - g_groups) * log(det(S_pool_cost)) - sum((n_l - 1) * log(sapply(list(S1, S2, S3), det)))
+
+u <- (sum(1/(n_l-1)) - 1/sum(n_l-1)) * ((2*p_cost^2 + 3*p_cost - 1) / (6*(p_cost+1)*(g_groups-1)))
+C <- (1 - u) * M
+df_box <- 0.5 * p_cost * (p_cost + 1) * (g_groups - 1)
+p_val_box <- 1 - pchisq(C, df_box)
+
+print(paste("Box's C Statistic:", C))
+print(paste("Degrees of Freedom:", df_box))
+print(paste("P-value:", p_val_box))
+```

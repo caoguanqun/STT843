@@ -1,227 +1,143 @@
 [
   {
-    "objectID": "lab04a.html",
-    "href": "lab04a.html",
-    "title": "Lab: Multivariate Statistical Inference - Hotelling’s T-squared",
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
     "section": "",
-    "text": "Hotelling’s \\(T^2\\) is the multivariate generalization of the squared Student’s t-statistic. It is used to test if a mean vector \\(\\boldsymbol{\\mu}\\) is equal to a specified vector \\(\\boldsymbol{\\mu}_0\\).\nThe formula is:\n$$T^{2}=n(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu}_{0})^{T} \\mathbf{S}^{-1}(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu}_{0})$$"
+    "text": "About this site\n\n1 + 1\n\n[1] 2"
   },
   {
-    "objectID": "lab04a.html#introduction-to-hotellings-t2",
-    "href": "lab04a.html#introduction-to-hotellings-t2",
-    "title": "Lab: Multivariate Statistical Inference - Hotelling’s T-squared",
+    "objectID": "labs/lab04b.html#theory",
+    "href": "labs/lab04b.html#theory",
+    "title": "Lab04b: Multivariate Statistical Inference Lab",
+    "section": "Theory",
+    "text": "Theory\nLet \\(\\boldsymbol{X}_{1}, \\dots, \\boldsymbol{X}_{n}\\) be a random sample from a population with mean \\(\\boldsymbol{\\mu}\\) and covariance \\(\\Sigma\\). For large \\(n-p\\), we test \\(H_0: \\boldsymbol{\\mu} = \\boldsymbol{\\mu}_0\\) using:\n$$n(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}_{0})^{\\top} \\mathbf{S}^{-1}(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}_{0}) &gt; \\chi_{p}^{2}(\\alpha)$$\nThe simultaneous \\(100(1-\\alpha)\\%\\) confidence intervals for linear combinations \\(\\mathbf{a}^\\top \\boldsymbol{\\mu}\\) are:\n$\\(\\mathbf{a}^{\\top} \\overline{\\boldsymbol{X}} \\pm \\sqrt{\\chi_{p}^{2}(\\alpha)} \\sqrt{\\frac{\\mathbf{a}^{\\top} \\mathbf{S a}}{n}}\\)$"
+  },
+  {
+    "objectID": "labs/lab04b.html#example-4.6-finnish-students-musical-ability",
+    "href": "labs/lab04b.html#example-4.6-finnish-students-musical-ability",
+    "title": "Lab04b: Multivariate Statistical Inference Lab",
+    "section": "Example 4.6: Finnish Students Musical Ability",
+    "text": "Example 4.6: Finnish Students Musical Ability\nConstructing 90% simultaneous confidence intervals for 7 musical ability components.\n# Summary data from Table 5.5\nn &lt;- 96\np &lt;- 7\nalpha &lt;- 0.10\n\nmeans &lt;- c(28.1, 26.6, 35.4, 34.2, 23.6, 22.0, 22.7)\nsds &lt;- c(5.76, 5.85, 3.82, 5.12, 3.76, 3.93, 4.03)\n\n# Critical value (Chi-square with p degrees of freedom)\ncrit_val &lt;- sqrt(qchisq(1 - alpha, df = p))\n\n# Simultaneous CIs\nlower &lt;- means - crit_val * (sds / sqrt(n))\nupper &lt;- means + crit_val * (sds / sqrt(n))\n\nresults &lt;- data.frame(Variable = paste0(\"X\", 1:7), Mean = means, \n                      Lower_90_CI = lower, Upper_90_CI = upper)\nprint(results)"
+  },
+  {
+    "objectID": "labs/lab04b.html#theory-1",
+    "href": "labs/lab04b.html#theory-1",
+    "title": "Lab04b: Multivariate Statistical Inference Lab",
+    "section": "Theory",
+    "text": "Theory\nFor \\(p\\) responses and 2 treatments, we calculate differences \\(\\mathbf{D}_j = \\mathbf{X}_{1j} - \\mathbf{X}_{2j}\\). We test \\(H_0: \\boldsymbol{\\delta} = \\mathbf{0}\\) using Hotelling’s \\(T^2\\):\n$$T^2 = n\\overline{\\mathbf{D}}^\\top \\mathbf{S}_d^{-1}\\overline{\\mathbf{D}} \\sim \\frac{(n-1)p}{n-p} F_{p, n-p}$$"
+  },
+  {
+    "objectID": "labs/lab04b.html#example-4.7-wastewater-effluent-data",
+    "href": "labs/lab04b.html#example-4.7-wastewater-effluent-data",
+    "title": "Lab04b: Multivariate Statistical Inference Lab",
+    "section": "Example 4.7: Wastewater Effluent Data",
+    "text": "Example 4.7: Wastewater Effluent Data\nDo the Commercial Lab and State Lab agree?\n# Data entry from Table 6.1\ncomm_lab &lt;- matrix(c(6,27, 6,23, 18,64, 8,44, 11,30, 34,75, 28,26, 71,124, 43,54, 33,30, 20,14), \n                   ncol = 2, byrow = TRUE)\nstate_lab &lt;- matrix(c(25,15, 28,13, 36,22, 35,29, 15,31, 44,64, 42,30, 54,64, 34,56, 29,20, 39,21), \n                    ncol = 2, byrow = TRUE)\n\n# Calculate differences\ndiffs &lt;- comm_lab - state_lab\ncolnames(diffs) &lt;- c(\"BOD\", \"SS\")\n\n# Hotelling's T2 Test for paired samples\n# Using ICSNP package\npaired_test &lt;- HotellingsT2(diffs)\nprint(paired_test)\n\n# Simultaneous 95% Confidence Intervals for differences\nn_d &lt;- nrow(diffs)\np_d &lt;- ncol(diffs)\nd_bar &lt;- colMeans(diffs)\nS_d &lt;- cov(diffs)\nalpha_d &lt;- 0.05\n\ncrit_T2 &lt;- ((n_d - 1) * p_d / (n_d - p_d)) * qf(1 - alpha_d, p_d, n_d - p_d)\n\n# CI for BOD and SS\nse_d &lt;- sqrt(diag(S_d)/n_d)\nlower_d &lt;- d_bar - sqrt(crit_T2) * se_d\nupper_d &lt;- d_bar + sqrt(crit_T2) * se_d\n\ndata.frame(Mean_Diff = d_bar, Lower = lower_d, Upper = upper_d)\n\nVisualizing Paired Differences (Example 4.7)\nThis plot shows the confidence region for the mean difference between labs. If the origin \\((0,0)\\) is outside the ellipse, we conclude the labs significantly differ.\nlibrary(car) # For dataEllipse\n\n# Difference data from Example 4.7\ndiff_df &lt;- as.data.frame(diffs)\n\n# Plotting the differences and the 95% confidence ellipse\nplot(diff_df$BOD, diff_df$SS, pch = 16, \n     xlab = \"Difference in BOD\", ylab = \"Difference in SS\",\n     main = \"95% Confidence Region for Lab Differences\")\nabline(h = 0, v = 0, lty = 2, col = \"red\") # Origin\n\n# Add confidence ellipse for the MEAN\n# Note: we scale the ellipse to represent the confidence region of the mean\nconfidenceEllipse(lm(cbind(BOD, SS) ~ 1, data = diff_df), \n                  fill = TRUE, fill.alpha = 0.1, col = \"blue\")"
+  },
+  {
+    "objectID": "labs/lab04b.html#example-4.8-soap-manufacturing-methods",
+    "href": "labs/lab04b.html#example-4.8-soap-manufacturing-methods",
+    "title": "Lab04b: Multivariate Statistical Inference Lab",
+    "section": "Example 4.8: Soap Manufacturing Methods",
+    "text": "Example 4.8: Soap Manufacturing Methods\nComparing Method 1 and Method 2 (\\(n_1 = 50, n_2 = 50\\)).\nn1 &lt;- 50\nn2 &lt;- 50\np_soap &lt;- 2\nx1_bar &lt;- c(8.3, 4.1)\nx2_bar &lt;- c(10.2, 3.9)\nS1 &lt;- matrix(c(2, 1, 1, 6), 2)\nS2 &lt;- matrix(c(2, 1, 1, 4), 2)\n\n# Pooled Covariance\nS_pooled &lt;- ((n1 - 1)*S1 + (n2 - 1)*S2) / (n1 + n2 - 2)\n\n# T2 Statistic\ndiff_mean &lt;- x1_bar - x2_bar\nT2_soap &lt;- t(diff_mean) %*% solve((1/n1 + 1/n2) * S_pooled) %*% diff_mean\n\n# Critical Value\nalpha_soap &lt;- 0.05\nc_sq &lt;- ((n1 + n2 - 2) * p_soap / (n1 + n2 - p_soap - 1)) * qf(1 - alpha_soap, p_soap, n1 + n2 - p_soap - 1)\n\nprint(paste(\"T2 Statistic:\", T2_soap))\nprint(paste(\"Critical Value:\", c_sq))\nprint(paste(\"Reject H0:\", T2_soap &gt; c_sq))\n\nVisualizing Two-Sample Differences (Example 4.8)\nFor the soap manufacturing methods, we visualize the difference vector \\(\\boldsymbol{\\mu}_1 - \\boldsymbol{\\mu}_2\\).\n# We simulate data based on the provided summary statistics for visualization\nlibrary(MASS)\nset.seed(123)\ndata1 &lt;- mvrnorm(n1, mu = x1_bar, Sigma = S1)\ndata2 &lt;- mvrnorm(n2, mu = x2_bar, Sigma = S2)\n\n# Plotting the two groups\nplot(data1[,1], data1[,2], col = \"blue\", pch = 1, \n     xlim = c(5, 13), ylim = c(0, 10),\n     xlab = \"Lather (X1)\", ylab = \"Mildness (X2)\",\n     main = \"Soap Manufacturing Methods: Group Comparison\")\npoints(data2[,1], data2[,2], col = \"darkgreen\", pch = 2)\n\n# Add 95% concentration ellipses for each population\ndataEllipse(data1[,1], data1[,2], levels = 0.95, add = TRUE, plot.points = FALSE, col = \"blue\")\ndataEllipse(data2[,1], data2[,2], levels = 0.95, add = TRUE, plot.points = FALSE, col = \"darkgreen\")\n\nlegend(\"topright\", legend = c(\"Method 1\", \"Method 2\"), col = c(\"blue\", \"darkgreen\"), pch = c(1, 2))"
+  },
+  {
+    "objectID": "labs/lab04b.html#boxs-m-test",
+    "href": "labs/lab04b.html#boxs-m-test",
+    "title": "Lab04b: Multivariate Statistical Inference Lab",
+    "section": "Box’s M Test",
+    "text": "Box’s M Test\n\\(H_0: \\Sigma_1 = \\dots = \\Sigma_g\\)"
+  },
+  {
+    "objectID": "labs/lab04b.html#example-4.9-nursing-home-costs",
+    "href": "labs/lab04b.html#example-4.9-nursing-home-costs",
+    "title": "Lab04b: Multivariate Statistical Inference Lab",
+    "section": "Example 4.9: Nursing Home Costs",
+    "text": "Example 4.9: Nursing Home Costs\nTesting if cost covariance matrices differ by ownership.\n# Covariance matrices provided in notes\nS1 &lt;- matrix(c(.291, -.001, .002, .010, -.001, .011, .000, .003, .002, .000, .001, .000, .010, .003, .000, .010), 4, 4)\nS2 &lt;- matrix(c(.561, -.011, .001, .037, -.011, .025, .004, .007, .001, .004, .005, .002, .037, .007, .002, .019), 4, 4)\nS3 &lt;- matrix(c(.261, -.030, .003, .018, -.030, .017, -.000, .006, .003, -.000, .004, .001, .018, .006, .001, .013), 4, 4)\n\n# Sample sizes (assuming roughly equal distribution of n=516 into 3 groups for demonstration)\n# In reality, use actual n per group.\nn_l &lt;- c(172, 172, 172) \n\n# Manual calculation of Box's M or use heplots::boxM if raw data is available.\n# Since we have only matrices, we follow the note's Chi-square approximation logic:\np_cost &lt;- 4\ng_groups &lt;- 3\n\nS_pool_cost &lt;- ((n_l[1]-1)*S1 + (n_l[2]-1)*S2 + (n_l[3]-1)*S3) / (sum(n_l) - g_groups)\n\nM &lt;- (sum(n_l) - g_groups) * log(det(S_pool_cost)) - sum((n_l - 1) * log(sapply(list(S1, S2, S3), det)))\n\nu &lt;- (sum(1/(n_l-1)) - 1/sum(n_l-1)) * ((2*p_cost^2 + 3*p_cost - 1) / (6*(p_cost+1)*(g_groups-1)))\nC &lt;- (1 - u) * M\ndf_box &lt;- 0.5 * p_cost * (p_cost + 1) * (g_groups - 1)\np_val_box &lt;- 1 - pchisq(C, df_box)\n\nprint(paste(\"Box's C Statistic:\", C))\nprint(paste(\"Degrees of Freedom:\", df_box))\nprint(paste(\"P-value:\", p_val_box))"
+  },
+  {
+    "objectID": "labs/lab03b.html",
+    "href": "labs/lab03b.html",
+    "title": "Lab03b: The Multivariate Normal Distribution",
     "section": "",
-    "text": "Hotelling’s \\(T^2\\) is the multivariate generalization of the squared Student’s t-statistic. It is used to test if a mean vector \\(\\boldsymbol{\\mu}\\) is equal to a specified vector \\(\\boldsymbol{\\mu}_0\\).\nThe formula is:\n$$T^{2}=n(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu}_{0})^{T} \\mathbf{S}^{-1}(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu}_{0})$$"
+    "text": "{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)\nlibrary(MASS)       # For mvrnorm\nlibrary(matrixcalc) # For matrix properties"
   },
   {
-    "objectID": "lab04a.html#example-4.1-manual-t2-calculation",
-    "href": "lab04a.html#example-4.1-manual-t2-calculation",
-    "title": "Lab: Multivariate Statistical Inference - Hotelling’s T-squared",
-    "section": "2. Example 4.1: Manual \\(T^2\\) Calculation",
-    "text": "2. Example 4.1: Manual \\(T^2\\) Calculation\nWe will manually calculate \\(T^2\\) for the small dataset provided in the lecture.\n# Data matrix\nX &lt;- matrix(c(6, 9, 10, 6, 8, 3), ncol = 2, byrow = TRUE)\nmu0 &lt;- c(9, 5)\nn &lt;- nrow(X)\np &lt;- ncol(X)\n\n# Sample mean and covariance\nx_bar &lt;- colMeans(X)\nS &lt;- cov(X)\n\n# Hotelling's T2 calculation\nT2_obs &lt;- n * t(x_bar - mu0) %*% solve(S) %*% (x_bar - mu0)\n\n# Critical value calculation\nalpha &lt;- 0.05\ncrit_val &lt;- ((n - 1) * p / (n - p)) * qf(1 - alpha, p, n - p)\n\ncat(\"Observed T2:\", T2_obs, \"\\n\")\ncat(\"Critical Value (alpha=0.05):\", crit_val, \"\\n\")\ncat(\"Reject H0?\", T2_obs &gt; crit_val, \"\\n\")"
+    "objectID": "labs/lab03b.html#introduction-to-the-multivariate-normal-distribution-mnd",
+    "href": "labs/lab03b.html#introduction-to-the-multivariate-normal-distribution-mnd",
+    "title": "Lab03b: The Multivariate Normal Distribution",
+    "section": "1. Introduction to the Multivariate Normal Distribution (MND)",
+    "text": "1. Introduction to the Multivariate Normal Distribution (MND)\nIf \\(\\boldsymbol{X} \\sim N_p(\\boldsymbol{\\mu}, \\Sigma)\\) , then any linear combination \\(\\mathbf{A}\\boldsymbol{X}\\) is also normally distributed.\n\nExercise 1: Linear Combinations (Example 3.4)\nLet \\(\\boldsymbol{X} \\sim N_3(\\boldsymbol{\\mu}, \\Sigma)\\) where:\n\\[\\boldsymbol{\\mu} = \\begin{bmatrix} 1 \\\\ 2 \\\\ 3 \\end{bmatrix}, \\Sigma = \\begin{bmatrix} 4 & 1 & 0 \\\\ 1 & 3 & 0 \\\\ 0 & 0 & 2 \\end{bmatrix}\\]\nWe want to find the distribution of \\(\\mathbf{A}\\boldsymbol{X}\\) where \\(\\mathbf{A} = \\begin{bmatrix} 1 & -1 & 0 \\\\ 0 & 1 & -1 \\end{bmatrix}\\).\n# Define parameters\nmu &lt;- c(1, 2, 3)\nSigma &lt;- matrix(c(4, 1, 0, \n                  1, 3, 0, \n                  0, 0, 2), nrow = 3, byrow = TRUE)\nA &lt;- matrix(c(1, -1, 0, \n              0, 1, -1), nrow = 2, byrow = TRUE)\n\n# Theoretical New Mean: A * mu\nnew_mu &lt;- A %*% mu\n\n# Theoretical New Covariance: A * Sigma * A^T\nnew_Sigma &lt;- A %*% Sigma %*% t(A)\n\nprint(\"New Mean Vector:\")\nprint(new_mu)\nprint(\"New Covariance Matrix:\")\nprint(new_Sigma)\nTask: Use mvrnorm to simulate 10,000 points from the original \\(N_3\\) distribution, transform them using matrix \\(A\\), and check if the sample mean and covariance match your theoretical results above."
   },
   {
-    "objectID": "lab04a.html#example-4.2-sweat-data-analysis",
-    "href": "lab04a.html#example-4.2-sweat-data-analysis",
-    "title": "Lab: Multivariate Statistical Inference - Hotelling’s T-squared",
-    "section": "3. Example 4.2: Sweat Data Analysis",
-    "text": "3. Example 4.2: Sweat Data Analysis\nWe test \\(H_{0}: \\boldsymbol{\\mu}^{T}=[4, 50, 10]\\) at \\(\\alpha = 0.10\\) for the perspiration components.\n# Data entry (Example 5.1/4.2)\nsweat_data &lt;- data.frame(\n  X1 = c(3.7, 5.7, 3.8, 3.2, 3.1, 4.6, 2.4, 7.2, 6.7, 5.4, 3.9, 4.5, 3.5, 4.5, 1.5, 8.5, 4.5, 6.5, 4.1, 5.5),\n  X2 = c(48.5, 65.1, 47.2, 53.2, 55.5, 36.1, 24.8, 33.1, 47.4, 54.1, 36.9, 58.8, 27.8, 40.2, 13.5, 56.4, 71.6, 52.8, 44.1, 40.9),\n  X3 = c(9.3, 8.0, 10.9, 12.0, 9.7, 7.9, 14.0, 7.6, 8.5, 11.3, 12.7, 12.3, 9.8, 8.4, 10.1, 7.1, 8.2, 10.9, 11.2, 9.4)\n)\n\nmu_null &lt;- c(4, 50, 10)\n\n# Using HotellingsT2 function\ntest_result &lt;- HotellingsT2(sweat_data, mu = mu_null)\nprint(test_result)"
+    "objectID": "labs/lab03b.html#independence-and-subsets-example-3.6",
+    "href": "labs/lab03b.html#independence-and-subsets-example-3.6",
+    "title": "Lab03b: The Multivariate Normal Distribution",
+    "section": "2. Independence and Subsets (Example 3.6)",
+    "text": "2. Independence and Subsets (Example 3.6)\nA key property of the MND is that zero covariance implies independence.\nQuestion: Based on the \\(\\Sigma\\) matrix provided in Exercise 1:\n\nAre \\(X_1\\) and \\(X_2\\) independent?\nAre \\((X_1, X_2)\\) and \\(X_3\\) independent?\n\n# X1 and X2 covariance\ncov_12 &lt;- Sigma[1,2]\n\n# Covariance matrix between (X1, X2) and X3\nSigma_12_3 &lt;- Sigma[1:2, 3]\n\ncat(\"Cov(X1, X2) is:\", cov_12, \"\\n\")\ncat(\"Cov((X1, X2), X3) is:\", Sigma_12_3, \"\\n\")"
   },
   {
-    "objectID": "lab04a.html#confidence-regions-and-ellipses",
-    "href": "lab04a.html#confidence-regions-and-ellipses",
-    "title": "Lab: Multivariate Statistical Inference - Hotelling’s T-squared",
-    "section": "4. Confidence Regions and Ellipses",
-    "text": "4. Confidence Regions and Ellipses\nThe confidence region is an ellipsoid centered at \\(\\overline{\\mathbf{x}}\\). The axes are determined by the eigenvalues and eigenvectors of \\(\\mathbf{S}\\).\n\nExample 4.3: Radiation Data Ellipse\nWe visualize the 95% confidence ellipse for the microwave radiation data (transformed by the 1/4th power).\n# Note: Sample values provided in lecture image context\n# Center (x_bar) and S for transformed data\nx_bar_rad &lt;- c(0.564, 0.603)\nS_rad &lt;- matrix(c(0.0144, 0.0117, 0.0117, 0.0146), nrow = 2)\nn_rad &lt;- 42\np_rad &lt;- 2\n\n# Critical constant c^2\nc2 &lt;- (p_rad * (n_rad - 1) / (n_rad - p_rad)) * qf(0.95, p_rad, n_rad - p_rad)\n\n# Plotting the ellipse\nconf_ellipse &lt;- ellipse(S_rad/n_rad, centre = x_bar_rad, t = sqrt(c2))\nplot(conf_ellipse, type = 'l', lwd = 2, col = \"blue\",\n     main = \"95% Confidence Ellipse for Radiation Data\",\n     xlab = \"Door Closed (x1)\", ylab = \"Door Open (x2)\")\npoints(x_bar_rad[1], x_bar_rad[2], pch = 19, col = \"red\")"
+    "objectID": "labs/lab03b.html#conditional-distributions-example-3.7",
+    "href": "labs/lab03b.html#conditional-distributions-example-3.7",
+    "title": "Lab03b: The Multivariate Normal Distribution",
+    "section": "3. Conditional Distributions (Example 3.7)",
+    "text": "3. Conditional Distributions (Example 3.7)\nIf \\(\\boldsymbol{X}\\) is partitioned into \\(\\boldsymbol{X}_1\\) and \\(\\boldsymbol{X}_2\\), the conditional distribution of \\(\\boldsymbol{X}_1 | \\boldsymbol{X}_2 = \\mathbf{x}_2\\) is normal with:\n\\[\n\\text{Mean} = \\boldsymbol{\\mu}_1 + \\Sigma_{12} \\Sigma_{22}^{-1}(\\mathbf{x}_2 - \\boldsymbol{\\mu}_2)\n\\]\n\\[\\text{Cov} = \\Sigma_{11} - \\Sigma_{12} \\Sigma_{22}^{-1} \\Sigma_{21}\\]\n\nExercise 2: Calculate Conditional Mean\nGiven the same \\(\\boldsymbol{\\mu}\\) and \\(\\Sigma\\) as Exercise 1, find the conditional distribution of \\(X_1\\) given \\(X_2 = 5\\).\nmu1 &lt;- mu[1]\nmu2 &lt;- mu[2]\nsigma11 &lt;- Sigma[1,1]\nsigma12 &lt;- Sigma[1,2]\nsigma22 &lt;- Sigma[2,2]\nx2 &lt;- 5\n\n# Conditional Mean\ncond_mu &lt;- mu1 + sigma12 * solve(sigma22) * (x2 - mu2)\n\n# Conditional Variance\ncond_var &lt;- sigma11 - sigma12 * solve(sigma22) * sigma12\n\ncat(\"Conditional Mean of X1 | X2=5 is:\", cond_mu, \"\\n\")\ncat(\"Conditional Variance is:\", cond_var, \"\\n\")"
   },
   {
-    "objectID": "lab04a.html#simultaneous-confidence-intervals",
-    "href": "lab04a.html#simultaneous-confidence-intervals",
-    "title": "Lab: Multivariate Statistical Inference - Hotelling’s T-squared",
-    "section": "5. Simultaneous Confidence Intervals",
-    "text": "5. Simultaneous Confidence Intervals\nSimultaneous intervals allow us to make statements about all linear combinations \\(\\mathbf{a}^{T} \\boldsymbol{\\mu}\\) while maintaining a collective confidence level \\(1-\\alpha\\). These are wider than univariate t-intervals because they account for the “shadows” of the confidence ellipsoid.\n\nCalculation for Component Means\nFor each component $i$, the $T^2$ interval is:\n$$\\bar{x}_i \\pm \\sqrt{\\frac{p(n-1)}{n(n-p)} F_{p, n-p}(\\alpha)} \\sqrt{\\frac{s_{ii}}{n}}$$"
+    "objectID": "labs/lab03b.html#maximum-likelihood-estimation-mle",
+    "href": "labs/lab03b.html#maximum-likelihood-estimation-mle",
+    "title": "Lab03b: The Multivariate Normal Distribution",
+    "section": "4. Maximum Likelihood Estimation (MLE)",
+    "text": "4. Maximum Likelihood Estimation (MLE)\nFor a random sample \\(\\boldsymbol{X}_1, \\dots, \\boldsymbol{X}_n \\sim N_p(\\boldsymbol{\\mu}, \\Sigma)\\), the MLEs are:\n\\[\n\\hat{\\boldsymbol{\\mu}} = \\bar{\\boldsymbol{X}}, \\quad \\hat{\\Sigma} = \\frac{n-1}{n}\\mathbf{S}\n\\]\n\nExercise 3: Implementation of MLE\n\nSimulate a sample of size \\(n=100\\) from a \\(N_2\\) distribution.\nCalculate the MLE of \\(\\boldsymbol{\\mu}\\) and \\(\\Sigma\\).\nVerify the Invariance Property: Calculate the MLE of the correlation coefficient \\(\\rho_{12}\\).\n\nset.seed(123)\nn &lt;- 100\ntrue_mu &lt;- c(5, 10)\ntrue_Sigma &lt;- matrix(c(1, 0.5, 0.5, 1), nrow = 2)\n\n# Simulate data\ndata_sample &lt;- mvrnorm(n, mu = true_mu, Sigma = true_Sigma)\n\n# MLE for mu\nmle_mu &lt;- colMeans(data_sample)\n\n# MLE for Sigma (Note: R's cov() uses n-1, MLE uses n)\nS &lt;- cov(data_sample)\nmle_Sigma &lt;- ((n - 1) / n) * S\n\n# Invariance Property: MLE of correlation\nmle_rho &lt;- mle_Sigma[1,2] / (sqrt(mle_Sigma[1,1]) * sqrt(mle_Sigma[2,2]))\n\nprint(mle_mu)\nprint(mle_Sigma)\nprint(paste(\"MLE of Correlation:\", round(mle_rho, 4)))"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "STT843: Multivariate Data Analysis",
+    "objectID": "labs/lab03a.html",
+    "href": "labs/lab03a.html",
+    "title": "Lab03a: The Multivariate Normal Distribution",
     "section": "",
-    "text": "Welcome to the course website for STT843 This course provides an introduction to the statistical analysis of multivariate data, focusing on both theoretical foundations and practical applications in R."
+    "text": "In this lab, we will visualize the Multivariate Normal (MVN) distribution, explore how the covariance matrix \\(\\Sigma\\) affects the shape of the density, and verify the Chi-square property for probability contours.\n{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\nlibrary(mvtnorm) # For multivariate normal functions\nlibrary(ellipse) # For drawing contours"
   },
   {
-    "objectID": "index.html#course-information",
-    "href": "index.html#course-information",
-    "title": "STT843: Multivariate Data Analysis",
-    "section": "📋 Course Information",
-    "text": "📋 Course Information\n\n🎓 Instructor: Dr. Guanqun Cao\n🎓 TA: Mr. Andrews Boahen (boahenan@msu.edu)\n⏰ Office Hours: Monday, 10am – 11am | C426 Wells Hall\n📄 Syllabus: click here 🔗"
-  },
-  {
-    "objectID": "index.html#weekly-schedule",
-    "href": "index.html#weekly-schedule",
-    "title": "STT843: Multivariate Data Analysis",
-    "section": "🗓️ Weekly Schedule",
-    "text": "🗓️ Weekly Schedule\n\n\n\n\n\n\nImportant Note\n\n\n\nLecture slides are updated every Sunday evening. Please ensure you have the latest version before Monday’s class.\n\n\n\n\n\nWeek\nTopic\nSlides (PDF)\nLabs (Rmd/Qmd)\nAssignment\n\n\n\n\n1\nIntroduction\nLec 1.1 🔗Lec 1.2 🔗\n💻 Lab 1a💻 Lab 1b\n–\n\n\n2\nRandom Vectors and Matrices\nLec 2.1 🔗 Lec 2.1* 🔗\n💻 Lab 2a\nHW 1\n\n\n3\nMultivariate Normal Distribution I\nLec 3.1 🔗 Lec 3.2 🔗 Lec 3.1* 🔗\n💻 Lab 3a💻 Lab 3b\nQuiz 1\n\n\n4\nMultivariate Normal Distribution II\nLec 4.1 🔗Lec 4.2 🔗\n💻 Lab 3c💻 Lab 3d\nHW 2"
-  },
-  {
-    "objectID": "index.html#software-requirements",
-    "href": "index.html#software-requirements",
-    "title": "STT843: Multivariate Data Analysis",
-    "section": "🛠️ Software Requirements",
-    "text": "🛠️ Software Requirements\nWe will be using R and RStudio for all computations. Please ensure you have the following installed:\n1. [R (version 4.3+)](https://cran.r-project.org/)\n2. [RStudio Desktop](https://posit.co/download/rstudio-desktop/)\n3. [Quarto CLI](https://quarto.org/docs/get-started/)"
-  },
-  {
-    "objectID": "labs/lab03c.html",
-    "href": "labs/lab03c.html",
-    "title": "Lab03c: Sampling Distributions and Normality Assessment",
+    "objectID": "labs/lab03a.html#introduction",
+    "href": "labs/lab03a.html#introduction",
+    "title": "Lab03a: The Multivariate Normal Distribution",
     "section": "",
-    "text": "{r setup, include=FALSE} \nknitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) \nlibrary(MASS) # For mvrnorm \nlibrary(ggplot2) # For plotting"
+    "text": "In this lab, we will visualize the Multivariate Normal (MVN) distribution, explore how the covariance matrix \\(\\Sigma\\) affects the shape of the density, and verify the Chi-square property for probability contours.\n{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\nlibrary(mvtnorm) # For multivariate normal functions\nlibrary(ellipse) # For drawing contours"
   },
   {
-    "objectID": "labs/lab03c.html#sufficient-statistics-and-sampling-distributions",
-    "href": "labs/lab03c.html#sufficient-statistics-and-sampling-distributions",
-    "title": "Lab03c: Sampling Distributions and Normality Assessment",
-    "section": "1. Sufficient Statistics and Sampling Distributions",
-    "text": "1. Sufficient Statistics and Sampling Distributions\nAs noted in the lecture, for a Multivariate Normal population, the sample mean \\(\\bar{\\boldsymbol{X}}\\) and the sample covariance \\(\\mathbf{S}\\) are sufficient statistics. This means they contain all the information available in the data regarding the parameters \\(\\boldsymbol{\\mu}\\) and \\(\\Sigma\\).\n\n1.1 Simulating the Wishart Distribution\nThe Wishart distribution is the multivariate generalization of the Chi-square distribution. If \\((n-1)\\mathbf{S} \\sim W_{n-1}(\\Sigma)\\), we can simulate this in R.\n# Parameters\np &lt;- 3\nn &lt;- 20\nSigma &lt;- matrix(c(4, 1, 1, \n                  1, 3, 0.5, \n                  1, 0.5, 2), nrow=3)\n\n# Simulating (n-1)S directly using the Wishart distribution\n# rWishart(n_simulations, df, Sigma)\nset.seed(123)\nwish_samples &lt;- rWishart(1, df = n-1, Sigma = Sigma)\nWishart_Matrix &lt;- wish_samples[,,1]\n\nprint(\"One realized Wishart Matrix (n-1)S:\")\nprint(Wishart_Matrix)\n\n# Comparing with (n-1) * sample covariance from simulated normal data\ndata &lt;- mvrnorm(n, mu = c(0,0,0), Sigma = Sigma)\nS &lt;- cov(data)\nprint(\"Calculated (n-1)S from simulated data:\")\nprint((n-1) * S)"
+    "objectID": "labs/lab03a.html#defining-the-parameters",
+    "href": "labs/lab03a.html#defining-the-parameters",
+    "title": "Lab03a: The Multivariate Normal Distribution",
+    "section": "1. Defining the Parameters",
+    "text": "1. Defining the Parameters\nFrom the lecture, we know a bivariate normal distribution is defined by a mean vector \\(\\boldsymbol{\\mu}\\) and a covariance matrix \\(\\Sigma\\).\n# Define the mean vector mu\nmu &lt;- c(1, 2)\n\n# Define the covariance matrix Sigma (Example: sigma11=1, sigma22=1, rho=0.75)\nrho &lt;- 0.75\nsigma11 &lt;- 1\nsigma22 &lt;- 1\nsigma12 &lt;- rho * sqrt(sigma11) * sqrt(sigma22)\n\nSigma &lt;- matrix(c(sigma11, sigma12, \n                  sigma12, sigma22), nrow = 2)\n\nprint(\"Mean Vector:\")\nprint(mu)\nprint(\"Covariance Matrix:\")\nprint(Sigma)"
   },
   {
-    "objectID": "labs/lab03c.html#large-sample-behavior-clt",
-    "href": "labs/lab03c.html#large-sample-behavior-clt",
-    "title": "Lab03c: Sampling Distributions and Normality Assessment",
-    "section": "2. Large-Sample Behavior (CLT)",
-    "text": "2. Large-Sample Behavior (CLT)\nThe Central Limit Theorem states that for large \\(n\\), \\(\\sqrt{n}(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu})\\) is approximately \\(N_p(0, \\Sigma)\\), even if the parent population is not normal.\n\n2.1 The Squared Generalized Distance\nThe lecture states that \\(n(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu})^{\\T} \\mathbf{S}^{-1}(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu})\\) is approximately \\(\\chi_{p}^{2}\\)\nn_sims &lt;- 1000\nn_size &lt;- 100\np_dim &lt;- 2\ntrue_mu &lt;- c(0, 0)\ntrue_sigma &lt;- diag(2)\n\nd2_values &lt;- replicate(n_sims, {\n  # Simulate from a NON-NORMAL population (e.g., Exponential)\n  X_raw &lt;- matrix(rexp(n_size * p_dim), ncol = p_dim)\n  X_bar &lt;- colMeans(X_raw)\n  S_inv &lt;- solve(cov(X_raw))\n  mu_pop &lt;- c(1, 1) # Mean of Exp(1) is 1\n  \n  # Calculate distance\n  n_size * t(X_bar - mu_pop) %*% S_inv %*% (X_bar - mu_pop)\n})\n\n# Plot against Chi-square distribution\nhist(d2_values, breaks = 30, probability = TRUE, main = \"CLT: Distribution of Squared Distances\")\ncurve(dchisq(x, df = p_dim), add = TRUE, col = \"red\", lwd = 2)"
+    "objectID": "labs/lab03a.html#visualizing-the-bivariate-density",
+    "href": "labs/lab03a.html#visualizing-the-bivariate-density",
+    "title": "Lab03a: The Multivariate Normal Distribution",
+    "section": "2. Visualizing the Bivariate Density",
+    "text": "2. Visualizing the Bivariate Density\nWe can visualize the “bell shape” in 3D using the dmvnorm function.\n# Create a grid for X and Y\nx &lt;- seq(-2, 4, length.out = 50)\ny &lt;- seq(-1, 5, length.out = 50)\ngrid &lt;- expand.grid(x = x, y = y)\n\n# Calculate density values\nz &lt;- dmvnorm(as.matrix(grid), mean = mu, sigma = Sigma)\nz_matrix &lt;- matrix(z, nrow = 50)\n\n# Plot 3D surface\npersp(x, y, z_matrix, theta = 30, phi = 30, col = \"lightblue\", \n      shade = 0.75, main = \"3D Bivariate Normal Density\")"
   },
   {
-    "objectID": "labs/lab03c.html#assessing-normality-univariate",
-    "href": "labs/lab03c.html#assessing-normality-univariate",
-    "title": "Lab03c: Sampling Distributions and Normality Assessment",
-    "section": "3. Assessing Normality (Univariate)",
-    "text": "3. Assessing Normality (Univariate)\n\n3.1 Q-Q Plots (Example 3.9)\nWe construct a Q-Q plot to check if observations \\(x_{(j)}\\) are linearly related to standard normal quantiles \\(q_{(j)}\\).\n# Data from Microwave Radiation Example (approximate)\nradiation &lt;- c(.15, .09, .18, .10, .05, .12, .08, .05, .08, .10, .07, .02, .01, .10, .10, .10, .02, .10, .01, .40)\n\n# 1. Sort observations\nx_sorted &lt;- sort(radiation)\nn &lt;- length(radiation)\n\n# 2. Calculate probabilities (j - 0.5) / n\nj &lt;- 1:n\np_j &lt;- (j - 0.5) / n\n\n# 3. Calculate standard normal quantiles\nq_j &lt;- qnorm(p_j)\n\n# 4. Plot\nplot(q_j, x_sorted, pch=19, col=\"blue\",\n     main=\"Q-Q Plot for Radiation Data\",\n     xlab=\"Theoretical Quantiles\", ylab=\"Sample Quantiles\")\nabline(lm(x_sorted ~ q_j), col=\"red\")\n\n\n3.2 Correlation Coefficient Test (\\(r_Q\\))\nThe lecture defines \\(r_Q\\) as the correlation between \\(x_{(j)}\\) and \\(q_{(j)}\\).\nr_q &lt;- cor(x_sorted, q_j)\ncat(\"The Q-Q plot correlation coefficient is:\", r_q, \"\\n\")\n\n# Decision logic based on Table 4.2\n# For n=20, alpha=0.05, critical value is 0.9508\ncritical_val &lt;- 0.9508\nif(r_q &lt; critical_val) {\n  print(\"Reject Normality Hypothesis\")\n} else {\n  print(\"Fail to Reject Normality Hypothesis\")\n}"
+    "objectID": "labs/lab03a.html#constant-probability-contours",
+    "href": "labs/lab03a.html#constant-probability-contours",
+    "title": "Lab03a: The Multivariate Normal Distribution",
+    "section": "3. Constant Probability Contours",
+    "text": "3. Constant Probability Contours\nThe lecture states that contours are ellipsoids centered at \\(\\boldsymbol{\\mu}\\). Let’s plot the \\(50\\%\\) and \\(95\\%\\) probability contours.\nplot(NULL, xlim = c(-2, 4), ylim = c(-1, 5), \n     xlab = \"X1\", ylab = \"X2\", main = \"Probability Contours\")\n\n# Plot 50% contour\nlines(ellipse(Sigma, centre = mu, level = 0.50), col = \"blue\", lwd = 2)\n# Plot 95% contour\nlines(ellipse(Sigma, centre = mu, level = 0.95), col = \"red\", lwd = 2)\n\npoints(mu[1], mu[2], pch = 19, col = \"black\") # Mean center\nlegend(\"topleft\", legend = c(\"50%\", \"95%\"), col = c(\"blue\", \"red\"), lty = 1)"
   },
   {
-    "objectID": "labs/lab03c.html#multivariate-normality-assessment",
-    "href": "labs/lab03c.html#multivariate-normality-assessment",
-    "title": "Lab03c: Sampling Distributions and Normality Assessment",
-    "section": "4. Multivariate Normality Assessment",
-    "text": "4. Multivariate Normality Assessment\nAs suggested in the lecture, we should also check linear combinations using eigenvalues.\n\n4.1 Principal Component Linear Combinations\nPlotting the data projected onto the first (\\(\\hat{\\mathbf{e}}_1\\)) and last (\\(\\hat{\\mathbf{e}}_p\\)) eigenvectors of \\(\\mathbf{S}\\).\n# Using the 'iris' numeric data for demonstration\nX_mat &lt;- as.matrix(iris[, 1:4])\nS_iris &lt;- cov(X_mat)\neigen_info &lt;- eigen(S_iris)\n\n# Largest eigenvalue combination (First Principal Component)\ne1 &lt;- eigen_info$vectors[, 1]\nproj_e1 &lt;- X_mat %*% e1\n\n# Smallest eigenvalue combination\nep &lt;- eigen_info$vectors[, 4]\nproj_ep &lt;- X_mat %*% ep\n\npar(mfrow=c(1,2))\nqqnorm(proj_e1, main=\"Q-Q Plot: Max Eigenvector\"); qqline(proj_e1)\nqqnorm(proj_ep, main=\"Q-Q Plot: Min Eigenvector\"); qqline(proj_ep)"
+    "objectID": "labs/lab03a.html#eigenvalues-and-the-shape-of-the-ellipse",
+    "href": "labs/lab03a.html#eigenvalues-and-the-shape-of-the-ellipse",
+    "title": "Lab03a: The Multivariate Normal Distribution",
+    "section": "4. Eigenvalues and the Shape of the Ellipse",
+    "text": "4. Eigenvalues and the Shape of the Ellipse\nThe axes of the ellipses are determined by the eigenvectors of \\(\\Sigma\\), and the lengths are proportional to \\(\\sqrt{\\lambda_i}\\).\n# Calculate eigenvalues and eigenvectors\nev &lt;- eigen(Sigma)\n\nprint(\"Eigenvalues (Lengths):\")\nprint(ev$values)\n\nprint(\"Eigenvectors (Directions):\")\nprint(ev$vectors)\nExercise: Notice that the first eigenvector points in the direction of the greatest spread (the major axis of the ellipse)."
   },
   {
-    "objectID": "labs/lab03d.html",
-    "href": "labs/lab03d.html",
-    "title": "Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations",
-    "section": "",
-    "text": "{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)\nlibrary(MASS)       # For mvrnorm and boxcox\nlibrary(ggplot2)    # For visualization\nlibrary(car)        # For powerTransform"
-  },
-  {
-    "objectID": "labs/lab03d.html#evaluating-bivariate-normality",
-    "href": "labs/lab03d.html#evaluating-bivariate-normality",
-    "title": "Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations",
-    "section": "1. Evaluating Bivariate Normality",
-    "text": "1. Evaluating Bivariate Normality\nA property of the Bivariate Normal distribution is that approximately 50% of the sample observations should lie within the contour ellipse defined by \\((\\mathbf{x}-\\bar{\\mathbf{x}})^{\\T} \\mathbf{S}^{-1}(\\mathbf{x}-\\bar{\\mathbf{x}}) \\leq \\chi_{2}^{2}(0.5)\\).\n\nExercise 1: Company Sales and Profits (Example 3.12)\nLet’s input the Forbes 2005 data for the 10 largest companies.\n{r setup, include=FALSE}\n# Data from Example 3.12\ncompanies &lt;- data.frame(\n  name = c(\"Citigroup\", \"General Electric\", \"American Intl Group\", \"Bank of America\", \n           \"HSBC Group\", \"ExxonMobil\", \"Royal Dutch/Shell\", \"BP\", \"ING Group\", \"Toyota Motor\"),\n  sales = c(108.28, 152.36, 95.04, 65.45, 62.97, 263.99, 265.19, 285.06, 92.01, 165.68),\n  profits = c(17.05, 16.59, 10.91, 14.14, 9.52, 25.33, 18.54, 15.73, 8.10, 11.13)\n)\n\nX &lt;- as.matrix(companies[, 2:3])\nx_bar &lt;- colMeans(X)\nS &lt;- cov(X)\nS_inv &lt;- solve(S)\n\n# Calculate squared generalized distances d^2\nd2 &lt;- apply(X, 1, function(x) t(x - x_bar) %*% S_inv %*% (x - x_bar))\ncompanies$d2 &lt;- d2\n\n# Check 50% rule: Chi-square (df=2) at 0.5 probability is ~1.386\ncutoff &lt;- qchisq(0.5, df = 2)\nproportion_inside &lt;- mean(d2 &lt;= cutoff)\n\ncat(\"Proportion of observations inside the 50% ellipse:\", proportion_inside, \"\\n\")"
-  },
-  {
-    "objectID": "labs/lab03d.html#the-chi-square-gamma-plot",
-    "href": "labs/lab03d.html#the-chi-square-gamma-plot",
-    "title": "Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations",
-    "section": "2. The Chi-Square (Gamma) Plot",
-    "text": "2. The Chi-Square (Gamma) Plot\nTo check multivariate normality, we plot the ordered squared distances \\(d_{(j)}^2\\) against the quantiles of a \\(\\chi^2_p\\) distribution.\n\nExercise 2: Constructing the Plot (Example 3.13)\nn &lt;- nrow(companies)\np &lt;- 2\nd2_ordered &lt;- sort(d2)\nprob_levels &lt;- (1:n - 0.5) / n\nchi2_quantiles &lt;- qchisq(prob_levels, df = p)\n\n# Create Plot\nplot(chi2_quantiles, d2_ordered, pch = 19, col = \"blue\",\n     main = \"Chi-Square Plot: Sales & Profits\",\n     xlab = \"Theoretical Chi-Square Quantiles\",\n     ylab = \"Ordered Squared Distances (d^2)\")\nabline(0, 1, col = \"red\", lwd = 2) # Reference line y = x"
-  },
-  {
-    "objectID": "labs/lab03d.html#detecting-outliers",
-    "href": "labs/lab03d.html#detecting-outliers",
-    "title": "Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations",
-    "section": "3. Detecting Outliers",
-    "text": "3. Detecting Outliers\nOutliers can be detected via standardized values (\\(z\\)-scores) or generalized distances.\n\nExercise 3: Standardized Values (Example 3.15)\nUsing the lumber stiffness data logic, we calculate \\(z_{jk} = (x_{jk} - \\bar{x}_k) / \\sqrt{s_{kk}}\\).\n# Standardize the sales and profits\nZ &lt;- scale(X)\ncolnames(Z) &lt;- c(\"z_sales\", \"z_profits\")\noutlier_check &lt;- cbind(companies, Z)\n\n# Identify observations with d2 &gt; 95th percentile of Chi-square\nlimit &lt;- qchisq(0.95, df = p)\noutliers &lt;- outlier_check[outlier_check$d2 &gt; limit, ]\nprint(outliers)"
-  },
-  {
-    "objectID": "labs/lab03d.html#transformations-to-near-normality",
-    "href": "labs/lab03d.html#transformations-to-near-normality",
-    "title": "Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations",
-    "section": "4. Transformations to Near Normality",
-    "text": "4. Transformations to Near Normality\nIf the data is not normal, we can use the Box-Cox transformation.\n\nExercise 4: Univariate Box-Cox (Example 3.16)\nWe use the likelihood function \\(\\ell(\\lambda)\\) to find the optimal power transformation for the sales data.\n# Using the car package to find optimal lambda\nlambda_sales &lt;- powerTransform(companies$sales)\nsummary(lambda_sales)\n\n# Visualizing Log-Likelihood profile\nbc_profile &lt;- boxcox(sales ~ 1, data = companies, lambda = seq(-1, 2, 0.1))\noptimal_lambda &lt;- bc_profile$x[which.max(bc_profile$y)]\ncat(\"Optimal Lambda for Sales:\", optimal_lambda, \"\\n\")\n\n\nExercise 5: Transforming Multivariate Data (Example 3.17)\nWhen working with multivariate data, we can apply the individual \\(\\hat{\\lambda}\\) values to each column to achieve marginal normality.\n# Transform both Sales and Profits\ntrans_X &lt;- companies\ntrans_X$sales_bc &lt;- (companies$sales^optimal_lambda - 1) / optimal_lambda\n\n# Plot comparison\npar(mfrow=c(1,2))\nqqnorm(companies$sales, main=\"Original Sales\")\nqqline(companies$sales)\nqqnorm(trans_X$sales_bc, main=\"Transformed Sales\")\nqqline(trans_X$sales_bc)"
-  },
-  {
-    "objectID": "labs/lab01a.html",
-    "href": "labs/lab01a.html",
-    "title": "Lab 01",
-    "section": "",
-    "text": "If you haven’t done so already, please download and install R and RStudio. R is the programming language, and RStudio is an integrated development environment that makes using R much more pleasurable. My advice is to always use RStudio and never run code in R itself.\nFor complete beginners: For those who are completely new to R (or those who want a refresher), I recommend working through an online tutorial."
-  },
-  {
-    "objectID": "labs/lab01a.html#getting-started",
-    "href": "labs/lab01a.html#getting-started",
-    "title": "Lab 01",
-    "section": "",
-    "text": "If you haven’t done so already, please download and install R and RStudio. R is the programming language, and RStudio is an integrated development environment that makes using R much more pleasurable. My advice is to always use RStudio and never run code in R itself.\nFor complete beginners: For those who are completely new to R (or those who want a refresher), I recommend working through an online tutorial."
-  },
-  {
-    "objectID": "labs/lab01a.html#warm-up-the-iris-dataset",
-    "href": "labs/lab01a.html#warm-up-the-iris-dataset",
-    "title": "Lab 01",
-    "section": "Warm-up: The Iris Dataset",
-    "text": "Warm-up: The Iris Dataset\nThe most important aspects of R to focus on for this module are Basic plotting and Manipulation of matrices and data frames. Let’s look at the built-in iris dataset.\n\nExercise 1\nCan you plot the sepal length against the sepal width?\n\nlibrary(ggplot2)\n\nWarning: package 'ggplot2' was built under R version 4.4.3\n\nggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +\n  geom_point() +\n  theme_minimal()\n\n\n\n\n\n\n\n\nData Manipulation\nTasks: Select the column of the iris data that contains sepal length.\n\nSelect only the rows for species setosa.\nThere are several ways to do basic data manipulation in R. You can use base R commands or the dplyr commands (part of tidyverse).\n\n library(dplyr)\n# Selecting and Filtering\niris |&gt; \n  filter(Species == 'setosa') |&gt; \n  summarise(mean_petal = mean(Petal.Length))"
-  },
-  {
-    "objectID": "labs/lab01a.html#matrix-operations",
-    "href": "labs/lab01a.html#matrix-operations",
-    "title": "Lab 01",
-    "section": "Matrix Operations",
-    "text": "Matrix Operations\nLet’s extract the four numerical columns and store them as a matrix \\(X\\).\nX &lt;- as.matrix(iris[,1:4])\nD &lt;- diag(1:4) # Diagonal matrix\nX_weighted &lt;- X %*% D\nhead(X_weighted)"
-  },
-  {
-    "objectID": "labs/lab01a.html#sample-statistics",
-    "href": "labs/lab01a.html#sample-statistics",
-    "title": "Lab 01",
-    "section": "Sample Statistics",
-    "text": "Sample Statistics\nCalculate the sample mean, covariance, and correlation for the following student data.\nEx1 &lt;- data.frame(\n  Student = LETTERS[1:5],\n  P = c(41, 72, 46, 77, 59),\n  S = c(63, 82, 38, 57, 85)\n)\n\ncolMeans(Ex1[, 2:3])\ncov(Ex1[, 2:3])"
-  },
-  {
-    "objectID": "labs/lab01a.html#multivariate-normal-distribution",
-    "href": "labs/lab01a.html#multivariate-normal-distribution",
-    "title": "Lab 01",
-    "section": "Multivariate Normal Distribution",
-    "text": "Multivariate Normal Distribution\nGenerate 100 samples from the multivariate normal distribution with \\(\\mu = (1, 0)^T\\) and \\(\\Sigma = \\begin{pmatrix} 2 & 1 \\\\ 1 & 2 \\end{pmatrix}\\).\nlibrary(mvtnorm)\nmu &lt;- c(1, 0)\nSigma &lt;- matrix(c(2, 1, 1, 2), nr=2)\nset.seed(843)\nX_mvn &lt;- rmvnorm(n=100, mean=mu, sigma=Sigma)\nplot(X_mvn, main=\"Synthetic MVN Samples\")"
-  },
-  {
-    "objectID": "labs/lab02.html",
-    "href": "labs/lab02.html",
-    "title": "Lab02a: Random Vectors and Matrices",
-    "section": "",
-    "text": "The Euclidean distance between a point \\(P = (x_1, x_2)\\) and the origin \\(O = (0,0)\\) is \\(d(O, P) = \\sqrt{x_1^2 + x_2^2}\\). However, in statistics, we must account for different variances.\n\n\nSuppose we have a point \\(P = (3, 3)\\).\n\nCalculate the Euclidean distance.\nCalculate the Statistical distance assuming \\(s_{11} = 9\\) and \\(s_{22} = 1\\).\n\n# Point P\nx &lt;- c(3, 3)\n\n# 1. Euclidean Distance\nd_euc &lt;- sqrt(sum(x^2))\nprint(paste(\"Euclidean Distance:\", round(d_euc, 4)))\n\n# 2. Statistical Distance (Standardized)\ns11 &lt;- 9\ns22 &lt;- 1\nd_stat &lt;- sqrt(x[1]^2/s11 + x[2]^2/s22)\nprint(paste(\"Statistical Distance:\", round(d_stat, 4)))\nObservation: Notice how the statistical distance penalizes the dimension with lower variability (\\(x_2\\)) more heavily."
-  },
-  {
-    "objectID": "labs/lab02.html#euclidean-vs.-statistical-distance",
-    "href": "labs/lab02.html#euclidean-vs.-statistical-distance",
-    "title": "Lab02a: Random Vectors and Matrices",
-    "section": "",
-    "text": "The Euclidean distance between a point \\(P = (x_1, x_2)\\) and the origin \\(O = (0,0)\\) is \\(d(O, P) = \\sqrt{x_1^2 + x_2^2}\\). However, in statistics, we must account for different variances.\n\n\nSuppose we have a point \\(P = (3, 3)\\).\n\nCalculate the Euclidean distance.\nCalculate the Statistical distance assuming \\(s_{11} = 9\\) and \\(s_{22} = 1\\).\n\n# Point P\nx &lt;- c(3, 3)\n\n# 1. Euclidean Distance\nd_euc &lt;- sqrt(sum(x^2))\nprint(paste(\"Euclidean Distance:\", round(d_euc, 4)))\n\n# 2. Statistical Distance (Standardized)\ns11 &lt;- 9\ns22 &lt;- 1\nd_stat &lt;- sqrt(x[1]^2/s11 + x[2]^2/s22)\nprint(paste(\"Statistical Distance:\", round(d_stat, 4)))\nObservation: Notice how the statistical distance penalizes the dimension with lower variability (\\(x_2\\)) more heavily."
-  },
-  {
-    "objectID": "labs/lab02.html#the-square-root-matrix",
-    "href": "labs/lab02.html#the-square-root-matrix",
-    "title": "Lab02a: Random Vectors and Matrices",
-    "section": "2. The Square-Root Matrix",
-    "text": "2. The Square-Root Matrix\nFor a positive definite matrix \\(\\mathbf{A}\\), the square-root matrix \\(\\mathbf{A}^{1/2}\\) is defined via spectral decomposition: \\(\\mathbf{A}^{1/2} = \\mathbf{P} \\Lambda^{1/2} \\mathbf{P}^T\\).\n\nExercise: Compute \\(A^{1/2}\\)\nGiven \\(\\mathbf{A} = \\begin{bmatrix} 4 & 1 \\\\ 1 & 9 \\end{bmatrix}\\):\nA &lt;- matrix(c(4, 1, 1, 9), nrow = 2)\n\n# Spectral Decomposition\ndecomp &lt;- eigen(A)\nP &lt;- decomp$vectors\nLambda &lt;- diag(decomp$values)\n\n# Compute Square Root Matrix\nA_sqrt &lt;- P %*% diag(sqrt(decomp$values)) %*% t(P)\n\nprint(\"Square Root Matrix A^(1/2):\")\nprint(A_sqrt)\n\n# Verification: A_sqrt * A_sqrt should equal A\nprint(\"Verification (A_sqrt %*% A_sqrt):\")\nprint(round(A_sqrt %*% A_sqrt, 10))"
-  },
-  {
-    "objectID": "labs/lab02.html#random-vectors-and-covariance",
-    "href": "labs/lab02.html#random-vectors-and-covariance",
-    "title": "Lab02a: Random Vectors and Matrices",
-    "section": "3. Random Vectors and Covariance",
-    "text": "3. Random Vectors and Covariance\nThe population correlation matrix \\(\\rho\\) is derived from the covariance matrix \\(\\Sigma\\) by \\(\\rho_{ik} = \\frac{\\sigma_{ik}}{\\sqrt{\\sigma_{ii}}\\sqrt{\\sigma_{kk}}}\\).\n\nExercise: Example 2.13\nGiven \\(\\Sigma = \\begin{bmatrix} 4 & 1 & 2 \\\\ 1 & 9 & -3 \\\\ 2 & -3 & 25 \\end{bmatrix}\\), find the correlation matrix.\nSigma &lt;- matrix(c(4, 1, 2, \n                  1, 9, -3, \n                  2, -3, 25), nrow = 3, byrow = TRUE)\n\n# Method 1: Manual Calculation using diagonals\nD_inv_sqrt &lt;- diag(1/sqrt(diag(Sigma)))\nrho_manual &lt;- D_inv_sqrt %*% Sigma %*% D_inv_sqrt\n\n# Method 2: Using R's cov2cor function\nrho_r &lt;- cov2cor(Sigma)\n\nprint(\"Correlation Matrix:\")\nprint(rho_r)"
-  },
-  {
-    "objectID": "labs/lab02.html#maximization-lemma",
-    "href": "labs/lab02.html#maximization-lemma",
-    "title": "Lab02a: Random Vectors and Matrices",
-    "section": "4. Maximization Lemma",
-    "text": "4. Maximization Lemma\nThe lecture notes state that for a positive definite matrix \\(\\mathbf{B}\\), the maximum value of \\(\\frac{(\\mathbf{x}^T \\mathbf{d})^2}{\\mathbf{x}^T \\mathbf{B} \\mathbf{x}}\\) is \\(\\mathbf{d}^T \\mathbf{B}^{-1} \\mathbf{d}\\).\n\nExercise: Verify Maximization\nLet \\(\\mathbf{B} = \\begin{bmatrix} 2 & 1 \\\\ 1 & 4 \\end{bmatrix}\\) and \\(\\mathbf{d} = \\begin{bmatrix} 1 \\\\ 1 \\end{bmatrix}\\).\nB &lt;- matrix(c(2, 1, 1, 4), nrow = 2)\nd &lt;- c(1, 1)\n\n# Theoretical Maximum\ntheo_max &lt;- t(d) %*% solve(B) %*% d\n\n# Attained at x = c * B^-1 * d\nx_opt &lt;- solve(B) %*% d\n\n# Verify\nempirical_max &lt;- (t(x_opt) %*% d)^2 / (t(x_opt) %*% B %*% x_opt)\n\nprint(paste(\"Theoretical Max:\", theo_max))\nprint(paste(\"Value at optimal x:\", empirical_max))"
-  },
-  {
-    "objectID": "labs/lab02.html#visualizing-constant-distance-ellipses",
-    "href": "labs/lab02.html#visualizing-constant-distance-ellipses",
-    "title": "Lab02a: Random Vectors and Matrices",
-    "section": "5. Visualizing Constant Distance (Ellipses)",
-    "text": "5. Visualizing Constant Distance (Ellipses)\nPoints of constant statistical distance \\(\\mathbf{x}^T \\mathbf{A} \\mathbf{x} = c^2\\) form an ellipse.\n# Define a covariance matrix\nSigma_plot &lt;- matrix(c(5, 2, 2, 2), nrow = 2)\nA_mat &lt;- solve(Sigma_plot) # Inverse for distance calculation\n\n# Generate points for an ellipse\ntheta &lt;- seq(0, 2*pi, length.out = 100)\nz &lt;- cbind(cos(theta), sin(theta))\n\n# Decompose A to transform the circle into an ellipse\ned &lt;- eigen(Sigma_plot)\n# Points = Eigenvectors * sqrt(Eigenvalues) * unit_circle\nellipse_pts &lt;- z %*% diag(sqrt(ed$values)) %*% t(ed$vectors)\nellipse_df &lt;- as.data.frame(ellipse_pts)\n\nggplot(ellipse_df, aes(V1, V2)) +\n  geom_path(color = \"blue\") +\n  coord_fixed() +\n  labs(title = \"Constant Statistical Distance Ellipse\",\n       x = \"x1\", y = \"x2\") +\n  theme_minimal()"
+    "objectID": "labs/lab03a.html#the-chi-square-property",
+    "href": "labs/lab03a.html#the-chi-square-property",
+    "title": "Lab03a: The Multivariate Normal Distribution",
+    "section": "5. The Chi-Square Property",
+    "text": "5. The Chi-Square Property\nThe squared Mahalanobis distance \\((\\mathbf{x}-\\boldsymbol{\\mu})^{\\top} \\Sigma^{-1}(\\mathbf{x}-\\boldsymbol{\\mu})\\) should follow a \\(\\chi^2\\) distribution with \\(p=2\\) degrees of freedom.\n# Generate 1000 random samples from our MVN distribution\nset.seed(123)\nsamples &lt;- rmvnorm(1000, mean = mu, sigma = Sigma)\n\n# Calculate squared distance for each sample\ndist_sq &lt;- mahalanobis(samples, center = mu, cov = Sigma)\n\n# Compare sample distribution to Chi-square (df=2) using a Q-Q plot\nqqplot(qchisq(ppoints(1000), df = 2), dist_sq,\n       main = \"Chi-Square Q-Q Plot\",\n       xlab = \"Theoretical Chi-square Quantiles\",\n       ylab = \"Sample Squared Distances\")\nabline(0, 1, col = \"red\")"
   },
   {
     "objectID": "labs/lab01b.html",
@@ -280,94 +196,220 @@
     "text": "Lab Questions:\n\nDimensionality: Each image is a vector \\(\\mathbf{X}\\). What is the dimensionality \\(p\\) of this vector?\nMean Vector: Calculate the “Average 5.” Compute the column means of all images that are labeled as ‘5’ and plot the result using plot.mnist(). Does the result look like a typical ‘5’?\n\nHint: colMeans(mnist$train$x[index_5, ])\n\nVariance: Based on your lecture notes on the Covariance Matrix \\(\\mathbf{S}\\), which pixels do you expect to have the highest variance in a dataset of handwritten ’5’s? (The center pixels or the edge pixels?)"
   },
   {
-    "objectID": "labs/lab03a.html",
-    "href": "labs/lab03a.html",
-    "title": "Lab03a: The Multivariate Normal Distribution",
+    "objectID": "labs/lab02.html",
+    "href": "labs/lab02.html",
+    "title": "Lab02a: Random Vectors and Matrices",
     "section": "",
-    "text": "In this lab, we will visualize the Multivariate Normal (MVN) distribution, explore how the covariance matrix \\(\\Sigma\\) affects the shape of the density, and verify the Chi-square property for probability contours.\n{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\nlibrary(mvtnorm) # For multivariate normal functions\nlibrary(ellipse) # For drawing contours"
+    "text": "The Euclidean distance between a point \\(P = (x_1, x_2)\\) and the origin \\(O = (0,0)\\) is \\(d(O, P) = \\sqrt{x_1^2 + x_2^2}\\). However, in statistics, we must account for different variances.\n\n\nSuppose we have a point \\(P = (3, 3)\\).\n\nCalculate the Euclidean distance.\nCalculate the Statistical distance assuming \\(s_{11} = 9\\) and \\(s_{22} = 1\\).\n\n# Point P\nx &lt;- c(3, 3)\n\n# 1. Euclidean Distance\nd_euc &lt;- sqrt(sum(x^2))\nprint(paste(\"Euclidean Distance:\", round(d_euc, 4)))\n\n# 2. Statistical Distance (Standardized)\ns11 &lt;- 9\ns22 &lt;- 1\nd_stat &lt;- sqrt(x[1]^2/s11 + x[2]^2/s22)\nprint(paste(\"Statistical Distance:\", round(d_stat, 4)))\nObservation: Notice how the statistical distance penalizes the dimension with lower variability (\\(x_2\\)) more heavily."
   },
   {
-    "objectID": "labs/lab03a.html#introduction",
-    "href": "labs/lab03a.html#introduction",
-    "title": "Lab03a: The Multivariate Normal Distribution",
+    "objectID": "labs/lab02.html#euclidean-vs.-statistical-distance",
+    "href": "labs/lab02.html#euclidean-vs.-statistical-distance",
+    "title": "Lab02a: Random Vectors and Matrices",
     "section": "",
-    "text": "In this lab, we will visualize the Multivariate Normal (MVN) distribution, explore how the covariance matrix \\(\\Sigma\\) affects the shape of the density, and verify the Chi-square property for probability contours.\n{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE)\nlibrary(mvtnorm) # For multivariate normal functions\nlibrary(ellipse) # For drawing contours"
+    "text": "The Euclidean distance between a point \\(P = (x_1, x_2)\\) and the origin \\(O = (0,0)\\) is \\(d(O, P) = \\sqrt{x_1^2 + x_2^2}\\). However, in statistics, we must account for different variances.\n\n\nSuppose we have a point \\(P = (3, 3)\\).\n\nCalculate the Euclidean distance.\nCalculate the Statistical distance assuming \\(s_{11} = 9\\) and \\(s_{22} = 1\\).\n\n# Point P\nx &lt;- c(3, 3)\n\n# 1. Euclidean Distance\nd_euc &lt;- sqrt(sum(x^2))\nprint(paste(\"Euclidean Distance:\", round(d_euc, 4)))\n\n# 2. Statistical Distance (Standardized)\ns11 &lt;- 9\ns22 &lt;- 1\nd_stat &lt;- sqrt(x[1]^2/s11 + x[2]^2/s22)\nprint(paste(\"Statistical Distance:\", round(d_stat, 4)))\nObservation: Notice how the statistical distance penalizes the dimension with lower variability (\\(x_2\\)) more heavily."
   },
   {
-    "objectID": "labs/lab03a.html#defining-the-parameters",
-    "href": "labs/lab03a.html#defining-the-parameters",
-    "title": "Lab03a: The Multivariate Normal Distribution",
-    "section": "1. Defining the Parameters",
-    "text": "1. Defining the Parameters\nFrom the lecture, we know a bivariate normal distribution is defined by a mean vector \\(\\boldsymbol{\\mu}\\) and a covariance matrix \\(\\Sigma\\).\n# Define the mean vector mu\nmu &lt;- c(1, 2)\n\n# Define the covariance matrix Sigma (Example: sigma11=1, sigma22=1, rho=0.75)\nrho &lt;- 0.75\nsigma11 &lt;- 1\nsigma22 &lt;- 1\nsigma12 &lt;- rho * sqrt(sigma11) * sqrt(sigma22)\n\nSigma &lt;- matrix(c(sigma11, sigma12, \n                  sigma12, sigma22), nrow = 2)\n\nprint(\"Mean Vector:\")\nprint(mu)\nprint(\"Covariance Matrix:\")\nprint(Sigma)"
+    "objectID": "labs/lab02.html#the-square-root-matrix",
+    "href": "labs/lab02.html#the-square-root-matrix",
+    "title": "Lab02a: Random Vectors and Matrices",
+    "section": "2. The Square-Root Matrix",
+    "text": "2. The Square-Root Matrix\nFor a positive definite matrix \\(\\mathbf{A}\\), the square-root matrix \\(\\mathbf{A}^{1/2}\\) is defined via spectral decomposition: \\(\\mathbf{A}^{1/2} = \\mathbf{P} \\Lambda^{1/2} \\mathbf{P}^T\\).\n\nExercise: Compute \\(A^{1/2}\\)\nGiven \\(\\mathbf{A} = \\begin{bmatrix} 4 & 1 \\\\ 1 & 9 \\end{bmatrix}\\):\nA &lt;- matrix(c(4, 1, 1, 9), nrow = 2)\n\n# Spectral Decomposition\ndecomp &lt;- eigen(A)\nP &lt;- decomp$vectors\nLambda &lt;- diag(decomp$values)\n\n# Compute Square Root Matrix\nA_sqrt &lt;- P %*% diag(sqrt(decomp$values)) %*% t(P)\n\nprint(\"Square Root Matrix A^(1/2):\")\nprint(A_sqrt)\n\n# Verification: A_sqrt * A_sqrt should equal A\nprint(\"Verification (A_sqrt %*% A_sqrt):\")\nprint(round(A_sqrt %*% A_sqrt, 10))"
   },
   {
-    "objectID": "labs/lab03a.html#visualizing-the-bivariate-density",
-    "href": "labs/lab03a.html#visualizing-the-bivariate-density",
-    "title": "Lab03a: The Multivariate Normal Distribution",
-    "section": "2. Visualizing the Bivariate Density",
-    "text": "2. Visualizing the Bivariate Density\nWe can visualize the “bell shape” in 3D using the dmvnorm function.\n# Create a grid for X and Y\nx &lt;- seq(-2, 4, length.out = 50)\ny &lt;- seq(-1, 5, length.out = 50)\ngrid &lt;- expand.grid(x = x, y = y)\n\n# Calculate density values\nz &lt;- dmvnorm(as.matrix(grid), mean = mu, sigma = Sigma)\nz_matrix &lt;- matrix(z, nrow = 50)\n\n# Plot 3D surface\npersp(x, y, z_matrix, theta = 30, phi = 30, col = \"lightblue\", \n      shade = 0.75, main = \"3D Bivariate Normal Density\")"
+    "objectID": "labs/lab02.html#random-vectors-and-covariance",
+    "href": "labs/lab02.html#random-vectors-and-covariance",
+    "title": "Lab02a: Random Vectors and Matrices",
+    "section": "3. Random Vectors and Covariance",
+    "text": "3. Random Vectors and Covariance\nThe population correlation matrix \\(\\rho\\) is derived from the covariance matrix \\(\\Sigma\\) by \\(\\rho_{ik} = \\frac{\\sigma_{ik}}{\\sqrt{\\sigma_{ii}}\\sqrt{\\sigma_{kk}}}\\).\n\nExercise: Example 2.13\nGiven \\(\\Sigma = \\begin{bmatrix} 4 & 1 & 2 \\\\ 1 & 9 & -3 \\\\ 2 & -3 & 25 \\end{bmatrix}\\), find the correlation matrix.\nSigma &lt;- matrix(c(4, 1, 2, \n                  1, 9, -3, \n                  2, -3, 25), nrow = 3, byrow = TRUE)\n\n# Method 1: Manual Calculation using diagonals\nD_inv_sqrt &lt;- diag(1/sqrt(diag(Sigma)))\nrho_manual &lt;- D_inv_sqrt %*% Sigma %*% D_inv_sqrt\n\n# Method 2: Using R's cov2cor function\nrho_r &lt;- cov2cor(Sigma)\n\nprint(\"Correlation Matrix:\")\nprint(rho_r)"
   },
   {
-    "objectID": "labs/lab03a.html#constant-probability-contours",
-    "href": "labs/lab03a.html#constant-probability-contours",
-    "title": "Lab03a: The Multivariate Normal Distribution",
-    "section": "3. Constant Probability Contours",
-    "text": "3. Constant Probability Contours\nThe lecture states that contours are ellipsoids centered at \\(\\boldsymbol{\\mu}\\). Let’s plot the \\(50\\%\\) and \\(95\\%\\) probability contours.\nplot(NULL, xlim = c(-2, 4), ylim = c(-1, 5), \n     xlab = \"X1\", ylab = \"X2\", main = \"Probability Contours\")\n\n# Plot 50% contour\nlines(ellipse(Sigma, centre = mu, level = 0.50), col = \"blue\", lwd = 2)\n# Plot 95% contour\nlines(ellipse(Sigma, centre = mu, level = 0.95), col = \"red\", lwd = 2)\n\npoints(mu[1], mu[2], pch = 19, col = \"black\") # Mean center\nlegend(\"topleft\", legend = c(\"50%\", \"95%\"), col = c(\"blue\", \"red\"), lty = 1)"
+    "objectID": "labs/lab02.html#maximization-lemma",
+    "href": "labs/lab02.html#maximization-lemma",
+    "title": "Lab02a: Random Vectors and Matrices",
+    "section": "4. Maximization Lemma",
+    "text": "4. Maximization Lemma\nThe lecture notes state that for a positive definite matrix \\(\\mathbf{B}\\), the maximum value of \\(\\frac{(\\mathbf{x}^T \\mathbf{d})^2}{\\mathbf{x}^T \\mathbf{B} \\mathbf{x}}\\) is \\(\\mathbf{d}^T \\mathbf{B}^{-1} \\mathbf{d}\\).\n\nExercise: Verify Maximization\nLet \\(\\mathbf{B} = \\begin{bmatrix} 2 & 1 \\\\ 1 & 4 \\end{bmatrix}\\) and \\(\\mathbf{d} = \\begin{bmatrix} 1 \\\\ 1 \\end{bmatrix}\\).\nB &lt;- matrix(c(2, 1, 1, 4), nrow = 2)\nd &lt;- c(1, 1)\n\n# Theoretical Maximum\ntheo_max &lt;- t(d) %*% solve(B) %*% d\n\n# Attained at x = c * B^-1 * d\nx_opt &lt;- solve(B) %*% d\n\n# Verify\nempirical_max &lt;- (t(x_opt) %*% d)^2 / (t(x_opt) %*% B %*% x_opt)\n\nprint(paste(\"Theoretical Max:\", theo_max))\nprint(paste(\"Value at optimal x:\", empirical_max))"
   },
   {
-    "objectID": "labs/lab03a.html#eigenvalues-and-the-shape-of-the-ellipse",
-    "href": "labs/lab03a.html#eigenvalues-and-the-shape-of-the-ellipse",
-    "title": "Lab03a: The Multivariate Normal Distribution",
-    "section": "4. Eigenvalues and the Shape of the Ellipse",
-    "text": "4. Eigenvalues and the Shape of the Ellipse\nThe axes of the ellipses are determined by the eigenvectors of \\(\\Sigma\\), and the lengths are proportional to \\(\\sqrt{\\lambda_i}\\).\n# Calculate eigenvalues and eigenvectors\nev &lt;- eigen(Sigma)\n\nprint(\"Eigenvalues (Lengths):\")\nprint(ev$values)\n\nprint(\"Eigenvectors (Directions):\")\nprint(ev$vectors)\nExercise: Notice that the first eigenvector points in the direction of the greatest spread (the major axis of the ellipse)."
+    "objectID": "labs/lab02.html#visualizing-constant-distance-ellipses",
+    "href": "labs/lab02.html#visualizing-constant-distance-ellipses",
+    "title": "Lab02a: Random Vectors and Matrices",
+    "section": "5. Visualizing Constant Distance (Ellipses)",
+    "text": "5. Visualizing Constant Distance (Ellipses)\nPoints of constant statistical distance \\(\\mathbf{x}^T \\mathbf{A} \\mathbf{x} = c^2\\) form an ellipse.\n# Define a covariance matrix\nSigma_plot &lt;- matrix(c(5, 2, 2, 2), nrow = 2)\nA_mat &lt;- solve(Sigma_plot) # Inverse for distance calculation\n\n# Generate points for an ellipse\ntheta &lt;- seq(0, 2*pi, length.out = 100)\nz &lt;- cbind(cos(theta), sin(theta))\n\n# Decompose A to transform the circle into an ellipse\ned &lt;- eigen(Sigma_plot)\n# Points = Eigenvectors * sqrt(Eigenvalues) * unit_circle\nellipse_pts &lt;- z %*% diag(sqrt(ed$values)) %*% t(ed$vectors)\nellipse_df &lt;- as.data.frame(ellipse_pts)\n\nggplot(ellipse_df, aes(V1, V2)) +\n  geom_path(color = \"blue\") +\n  coord_fixed() +\n  labs(title = \"Constant Statistical Distance Ellipse\",\n       x = \"x1\", y = \"x2\") +\n  theme_minimal()"
   },
   {
-    "objectID": "labs/lab03a.html#the-chi-square-property",
-    "href": "labs/lab03a.html#the-chi-square-property",
-    "title": "Lab03a: The Multivariate Normal Distribution",
-    "section": "5. The Chi-Square Property",
-    "text": "5. The Chi-Square Property\nThe squared Mahalanobis distance \\((\\mathbf{x}-\\boldsymbol{\\mu})^{\\top} \\Sigma^{-1}(\\mathbf{x}-\\boldsymbol{\\mu})\\) should follow a \\(\\chi^2\\) distribution with \\(p=2\\) degrees of freedom.\n# Generate 1000 random samples from our MVN distribution\nset.seed(123)\nsamples &lt;- rmvnorm(1000, mean = mu, sigma = Sigma)\n\n# Calculate squared distance for each sample\ndist_sq &lt;- mahalanobis(samples, center = mu, cov = Sigma)\n\n# Compare sample distribution to Chi-square (df=2) using a Q-Q plot\nqqplot(qchisq(ppoints(1000), df = 2), dist_sq,\n       main = \"Chi-Square Q-Q Plot\",\n       xlab = \"Theoretical Chi-square Quantiles\",\n       ylab = \"Sample Squared Distances\")\nabline(0, 1, col = \"red\")"
-  },
-  {
-    "objectID": "labs/lab03b.html",
-    "href": "labs/lab03b.html",
-    "title": "Lab03b: The Multivariate Normal Distribution",
+    "objectID": "labs/lab01a.html",
+    "href": "labs/lab01a.html",
+    "title": "Lab 01",
     "section": "",
-    "text": "{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)\nlibrary(MASS)       # For mvrnorm\nlibrary(matrixcalc) # For matrix properties"
+    "text": "If you haven’t done so already, please download and install R and RStudio. R is the programming language, and RStudio is an integrated development environment that makes using R much more pleasurable. My advice is to always use RStudio and never run code in R itself.\nFor complete beginners: For those who are completely new to R (or those who want a refresher), I recommend working through an online tutorial."
   },
   {
-    "objectID": "labs/lab03b.html#introduction-to-the-multivariate-normal-distribution-mnd",
-    "href": "labs/lab03b.html#introduction-to-the-multivariate-normal-distribution-mnd",
-    "title": "Lab03b: The Multivariate Normal Distribution",
-    "section": "1. Introduction to the Multivariate Normal Distribution (MND)",
-    "text": "1. Introduction to the Multivariate Normal Distribution (MND)\nIf \\(\\boldsymbol{X} \\sim N_p(\\boldsymbol{\\mu}, \\Sigma)\\) , then any linear combination \\(\\mathbf{A}\\boldsymbol{X}\\) is also normally distributed.\n\nExercise 1: Linear Combinations (Example 3.4)\nLet \\(\\boldsymbol{X} \\sim N_3(\\boldsymbol{\\mu}, \\Sigma)\\) where:\n\\[\\boldsymbol{\\mu} = \\begin{bmatrix} 1 \\\\ 2 \\\\ 3 \\end{bmatrix}, \\Sigma = \\begin{bmatrix} 4 & 1 & 0 \\\\ 1 & 3 & 0 \\\\ 0 & 0 & 2 \\end{bmatrix}\\]\nWe want to find the distribution of \\(\\mathbf{A}\\boldsymbol{X}\\) where \\(\\mathbf{A} = \\begin{bmatrix} 1 & -1 & 0 \\\\ 0 & 1 & -1 \\end{bmatrix}\\).\n# Define parameters\nmu &lt;- c(1, 2, 3)\nSigma &lt;- matrix(c(4, 1, 0, \n                  1, 3, 0, \n                  0, 0, 2), nrow = 3, byrow = TRUE)\nA &lt;- matrix(c(1, -1, 0, \n              0, 1, -1), nrow = 2, byrow = TRUE)\n\n# Theoretical New Mean: A * mu\nnew_mu &lt;- A %*% mu\n\n# Theoretical New Covariance: A * Sigma * A^T\nnew_Sigma &lt;- A %*% Sigma %*% t(A)\n\nprint(\"New Mean Vector:\")\nprint(new_mu)\nprint(\"New Covariance Matrix:\")\nprint(new_Sigma)\nTask: Use mvrnorm to simulate 10,000 points from the original \\(N_3\\) distribution, transform them using matrix \\(A\\), and check if the sample mean and covariance match your theoretical results above."
-  },
-  {
-    "objectID": "labs/lab03b.html#independence-and-subsets-example-3.6",
-    "href": "labs/lab03b.html#independence-and-subsets-example-3.6",
-    "title": "Lab03b: The Multivariate Normal Distribution",
-    "section": "2. Independence and Subsets (Example 3.6)",
-    "text": "2. Independence and Subsets (Example 3.6)\nA key property of the MND is that zero covariance implies independence.\nQuestion: Based on the \\(\\Sigma\\) matrix provided in Exercise 1:\n\nAre \\(X_1\\) and \\(X_2\\) independent?\nAre \\((X_1, X_2)\\) and \\(X_3\\) independent?\n\n# X1 and X2 covariance\ncov_12 &lt;- Sigma[1,2]\n\n# Covariance matrix between (X1, X2) and X3\nSigma_12_3 &lt;- Sigma[1:2, 3]\n\ncat(\"Cov(X1, X2) is:\", cov_12, \"\\n\")\ncat(\"Cov((X1, X2), X3) is:\", Sigma_12_3, \"\\n\")"
-  },
-  {
-    "objectID": "labs/lab03b.html#conditional-distributions-example-3.7",
-    "href": "labs/lab03b.html#conditional-distributions-example-3.7",
-    "title": "Lab03b: The Multivariate Normal Distribution",
-    "section": "3. Conditional Distributions (Example 3.7)",
-    "text": "3. Conditional Distributions (Example 3.7)\nIf \\(\\boldsymbol{X}\\) is partitioned into \\(\\boldsymbol{X}_1\\) and \\(\\boldsymbol{X}_2\\), the conditional distribution of \\(\\boldsymbol{X}_1 | \\boldsymbol{X}_2 = \\mathbf{x}_2\\) is normal with:\n\\[\n\\text{Mean} = \\boldsymbol{\\mu}_1 + \\Sigma_{12} \\Sigma_{22}^{-1}(\\mathbf{x}_2 - \\boldsymbol{\\mu}_2)\n\\]\n\\[\\text{Cov} = \\Sigma_{11} - \\Sigma_{12} \\Sigma_{22}^{-1} \\Sigma_{21}\\]\n\nExercise 2: Calculate Conditional Mean\nGiven the same \\(\\boldsymbol{\\mu}\\) and \\(\\Sigma\\) as Exercise 1, find the conditional distribution of \\(X_1\\) given \\(X_2 = 5\\).\nmu1 &lt;- mu[1]\nmu2 &lt;- mu[2]\nsigma11 &lt;- Sigma[1,1]\nsigma12 &lt;- Sigma[1,2]\nsigma22 &lt;- Sigma[2,2]\nx2 &lt;- 5\n\n# Conditional Mean\ncond_mu &lt;- mu1 + sigma12 * solve(sigma22) * (x2 - mu2)\n\n# Conditional Variance\ncond_var &lt;- sigma11 - sigma12 * solve(sigma22) * sigma12\n\ncat(\"Conditional Mean of X1 | X2=5 is:\", cond_mu, \"\\n\")\ncat(\"Conditional Variance is:\", cond_var, \"\\n\")"
-  },
-  {
-    "objectID": "labs/lab03b.html#maximum-likelihood-estimation-mle",
-    "href": "labs/lab03b.html#maximum-likelihood-estimation-mle",
-    "title": "Lab03b: The Multivariate Normal Distribution",
-    "section": "4. Maximum Likelihood Estimation (MLE)",
-    "text": "4. Maximum Likelihood Estimation (MLE)\nFor a random sample \\(\\boldsymbol{X}_1, \\dots, \\boldsymbol{X}_n \\sim N_p(\\boldsymbol{\\mu}, \\Sigma)\\), the MLEs are:\n\\[\n\\hat{\\boldsymbol{\\mu}} = \\bar{\\boldsymbol{X}}, \\quad \\hat{\\Sigma} = \\frac{n-1}{n}\\mathbf{S}\n\\]\n\nExercise 3: Implementation of MLE\n\nSimulate a sample of size \\(n=100\\) from a \\(N_2\\) distribution.\nCalculate the MLE of \\(\\boldsymbol{\\mu}\\) and \\(\\Sigma\\).\nVerify the Invariance Property: Calculate the MLE of the correlation coefficient \\(\\rho_{12}\\).\n\nset.seed(123)\nn &lt;- 100\ntrue_mu &lt;- c(5, 10)\ntrue_Sigma &lt;- matrix(c(1, 0.5, 0.5, 1), nrow = 2)\n\n# Simulate data\ndata_sample &lt;- mvrnorm(n, mu = true_mu, Sigma = true_Sigma)\n\n# MLE for mu\nmle_mu &lt;- colMeans(data_sample)\n\n# MLE for Sigma (Note: R's cov() uses n-1, MLE uses n)\nS &lt;- cov(data_sample)\nmle_Sigma &lt;- ((n - 1) / n) * S\n\n# Invariance Property: MLE of correlation\nmle_rho &lt;- mle_Sigma[1,2] / (sqrt(mle_Sigma[1,1]) * sqrt(mle_Sigma[2,2]))\n\nprint(mle_mu)\nprint(mle_Sigma)\nprint(paste(\"MLE of Correlation:\", round(mle_rho, 4)))"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "labs/lab01a.html#getting-started",
+    "href": "labs/lab01a.html#getting-started",
+    "title": "Lab 01",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "If you haven’t done so already, please download and install R and RStudio. R is the programming language, and RStudio is an integrated development environment that makes using R much more pleasurable. My advice is to always use RStudio and never run code in R itself.\nFor complete beginners: For those who are completely new to R (or those who want a refresher), I recommend working through an online tutorial."
+  },
+  {
+    "objectID": "labs/lab01a.html#warm-up-the-iris-dataset",
+    "href": "labs/lab01a.html#warm-up-the-iris-dataset",
+    "title": "Lab 01",
+    "section": "Warm-up: The Iris Dataset",
+    "text": "Warm-up: The Iris Dataset\nThe most important aspects of R to focus on for this module are Basic plotting and Manipulation of matrices and data frames. Let’s look at the built-in iris dataset.\n\nExercise 1\nCan you plot the sepal length against the sepal width?\n\nlibrary(ggplot2)\n\nWarning: package 'ggplot2' was built under R version 4.4.3\n\nggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +\n  geom_point() +\n  theme_minimal()\n\n\n\n\n\n\n\n\nData Manipulation\nTasks: Select the column of the iris data that contains sepal length.\n\nSelect only the rows for species setosa.\nThere are several ways to do basic data manipulation in R. You can use base R commands or the dplyr commands (part of tidyverse).\n\n library(dplyr)\n# Selecting and Filtering\niris |&gt; \n  filter(Species == 'setosa') |&gt; \n  summarise(mean_petal = mean(Petal.Length))"
+  },
+  {
+    "objectID": "labs/lab01a.html#matrix-operations",
+    "href": "labs/lab01a.html#matrix-operations",
+    "title": "Lab 01",
+    "section": "Matrix Operations",
+    "text": "Matrix Operations\nLet’s extract the four numerical columns and store them as a matrix \\(X\\).\nX &lt;- as.matrix(iris[,1:4])\nD &lt;- diag(1:4) # Diagonal matrix\nX_weighted &lt;- X %*% D\nhead(X_weighted)"
+  },
+  {
+    "objectID": "labs/lab01a.html#sample-statistics",
+    "href": "labs/lab01a.html#sample-statistics",
+    "title": "Lab 01",
+    "section": "Sample Statistics",
+    "text": "Sample Statistics\nCalculate the sample mean, covariance, and correlation for the following student data.\nEx1 &lt;- data.frame(\n  Student = LETTERS[1:5],\n  P = c(41, 72, 46, 77, 59),\n  S = c(63, 82, 38, 57, 85)\n)\n\ncolMeans(Ex1[, 2:3])\ncov(Ex1[, 2:3])"
+  },
+  {
+    "objectID": "labs/lab01a.html#multivariate-normal-distribution",
+    "href": "labs/lab01a.html#multivariate-normal-distribution",
+    "title": "Lab 01",
+    "section": "Multivariate Normal Distribution",
+    "text": "Multivariate Normal Distribution\nGenerate 100 samples from the multivariate normal distribution with \\(\\mu = (1, 0)^T\\) and \\(\\Sigma = \\begin{pmatrix} 2 & 1 \\\\ 1 & 2 \\end{pmatrix}\\).\nlibrary(mvtnorm)\nmu &lt;- c(1, 0)\nSigma &lt;- matrix(c(2, 1, 1, 2), nr=2)\nset.seed(843)\nX_mvn &lt;- rmvnorm(n=100, mean=mu, sigma=Sigma)\nplot(X_mvn, main=\"Synthetic MVN Samples\")"
+  },
+  {
+    "objectID": "labs/lab03d.html",
+    "href": "labs/lab03d.html",
+    "title": "Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations",
+    "section": "",
+    "text": "{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)\nlibrary(MASS)       # For mvrnorm and boxcox\nlibrary(ggplot2)    # For visualization\nlibrary(car)        # For powerTransform"
+  },
+  {
+    "objectID": "labs/lab03d.html#evaluating-bivariate-normality",
+    "href": "labs/lab03d.html#evaluating-bivariate-normality",
+    "title": "Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations",
+    "section": "1. Evaluating Bivariate Normality",
+    "text": "1. Evaluating Bivariate Normality\nA property of the Bivariate Normal distribution is that approximately 50% of the sample observations should lie within the contour ellipse defined by \\((\\mathbf{x}-\\bar{\\mathbf{x}})^{\\T} \\mathbf{S}^{-1}(\\mathbf{x}-\\bar{\\mathbf{x}}) \\leq \\chi_{2}^{2}(0.5)\\).\n\nExercise 1: Company Sales and Profits (Example 3.12)\nLet’s input the Forbes 2005 data for the 10 largest companies.\n{r setup, include=FALSE}\n# Data from Example 3.12\ncompanies &lt;- data.frame(\n  name = c(\"Citigroup\", \"General Electric\", \"American Intl Group\", \"Bank of America\", \n           \"HSBC Group\", \"ExxonMobil\", \"Royal Dutch/Shell\", \"BP\", \"ING Group\", \"Toyota Motor\"),\n  sales = c(108.28, 152.36, 95.04, 65.45, 62.97, 263.99, 265.19, 285.06, 92.01, 165.68),\n  profits = c(17.05, 16.59, 10.91, 14.14, 9.52, 25.33, 18.54, 15.73, 8.10, 11.13)\n)\n\nX &lt;- as.matrix(companies[, 2:3])\nx_bar &lt;- colMeans(X)\nS &lt;- cov(X)\nS_inv &lt;- solve(S)\n\n# Calculate squared generalized distances d^2\nd2 &lt;- apply(X, 1, function(x) t(x - x_bar) %*% S_inv %*% (x - x_bar))\ncompanies$d2 &lt;- d2\n\n# Check 50% rule: Chi-square (df=2) at 0.5 probability is ~1.386\ncutoff &lt;- qchisq(0.5, df = 2)\nproportion_inside &lt;- mean(d2 &lt;= cutoff)\n\ncat(\"Proportion of observations inside the 50% ellipse:\", proportion_inside, \"\\n\")"
+  },
+  {
+    "objectID": "labs/lab03d.html#the-chi-square-gamma-plot",
+    "href": "labs/lab03d.html#the-chi-square-gamma-plot",
+    "title": "Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations",
+    "section": "2. The Chi-Square (Gamma) Plot",
+    "text": "2. The Chi-Square (Gamma) Plot\nTo check multivariate normality, we plot the ordered squared distances \\(d_{(j)}^2\\) against the quantiles of a \\(\\chi^2_p\\) distribution.\n\nExercise 2: Constructing the Plot (Example 3.13)\nn &lt;- nrow(companies)\np &lt;- 2\nd2_ordered &lt;- sort(d2)\nprob_levels &lt;- (1:n - 0.5) / n\nchi2_quantiles &lt;- qchisq(prob_levels, df = p)\n\n# Create Plot\nplot(chi2_quantiles, d2_ordered, pch = 19, col = \"blue\",\n     main = \"Chi-Square Plot: Sales & Profits\",\n     xlab = \"Theoretical Chi-Square Quantiles\",\n     ylab = \"Ordered Squared Distances (d^2)\")\nabline(0, 1, col = \"red\", lwd = 2) # Reference line y = x"
+  },
+  {
+    "objectID": "labs/lab03d.html#detecting-outliers",
+    "href": "labs/lab03d.html#detecting-outliers",
+    "title": "Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations",
+    "section": "3. Detecting Outliers",
+    "text": "3. Detecting Outliers\nOutliers can be detected via standardized values (\\(z\\)-scores) or generalized distances.\n\nExercise 3: Standardized Values (Example 3.15)\nUsing the lumber stiffness data logic, we calculate \\(z_{jk} = (x_{jk} - \\bar{x}_k) / \\sqrt{s_{kk}}\\).\n# Standardize the sales and profits\nZ &lt;- scale(X)\ncolnames(Z) &lt;- c(\"z_sales\", \"z_profits\")\noutlier_check &lt;- cbind(companies, Z)\n\n# Identify observations with d2 &gt; 95th percentile of Chi-square\nlimit &lt;- qchisq(0.95, df = p)\noutliers &lt;- outlier_check[outlier_check$d2 &gt; limit, ]\nprint(outliers)"
+  },
+  {
+    "objectID": "labs/lab03d.html#transformations-to-near-normality",
+    "href": "labs/lab03d.html#transformations-to-near-normality",
+    "title": "Lab03d: Bivariate Normality, Chi-Square Plots, and Transformations",
+    "section": "4. Transformations to Near Normality",
+    "text": "4. Transformations to Near Normality\nIf the data is not normal, we can use the Box-Cox transformation.\n\nExercise 4: Univariate Box-Cox (Example 3.16)\nWe use the likelihood function \\(\\ell(\\lambda)\\) to find the optimal power transformation for the sales data.\n# Using the car package to find optimal lambda\nlambda_sales &lt;- powerTransform(companies$sales)\nsummary(lambda_sales)\n\n# Visualizing Log-Likelihood profile\nbc_profile &lt;- boxcox(sales ~ 1, data = companies, lambda = seq(-1, 2, 0.1))\noptimal_lambda &lt;- bc_profile$x[which.max(bc_profile$y)]\ncat(\"Optimal Lambda for Sales:\", optimal_lambda, \"\\n\")\n\n\nExercise 5: Transforming Multivariate Data (Example 3.17)\nWhen working with multivariate data, we can apply the individual \\(\\hat{\\lambda}\\) values to each column to achieve marginal normality.\n# Transform both Sales and Profits\ntrans_X &lt;- companies\ntrans_X$sales_bc &lt;- (companies$sales^optimal_lambda - 1) / optimal_lambda\n\n# Plot comparison\npar(mfrow=c(1,2))\nqqnorm(companies$sales, main=\"Original Sales\")\nqqline(companies$sales)\nqqnorm(trans_X$sales_bc, main=\"Transformed Sales\")\nqqline(trans_X$sales_bc)"
+  },
+  {
+    "objectID": "labs/lab03c.html",
+    "href": "labs/lab03c.html",
+    "title": "Lab03c: Sampling Distributions and Normality Assessment",
+    "section": "",
+    "text": "{r setup, include=FALSE} \nknitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) \nlibrary(MASS) # For mvrnorm \nlibrary(ggplot2) # For plotting"
+  },
+  {
+    "objectID": "labs/lab03c.html#sufficient-statistics-and-sampling-distributions",
+    "href": "labs/lab03c.html#sufficient-statistics-and-sampling-distributions",
+    "title": "Lab03c: Sampling Distributions and Normality Assessment",
+    "section": "1. Sufficient Statistics and Sampling Distributions",
+    "text": "1. Sufficient Statistics and Sampling Distributions\nAs noted in the lecture, for a Multivariate Normal population, the sample mean \\(\\bar{\\boldsymbol{X}}\\) and the sample covariance \\(\\mathbf{S}\\) are sufficient statistics. This means they contain all the information available in the data regarding the parameters \\(\\boldsymbol{\\mu}\\) and \\(\\Sigma\\).\n\n1.1 Simulating the Wishart Distribution\nThe Wishart distribution is the multivariate generalization of the Chi-square distribution. If \\((n-1)\\mathbf{S} \\sim W_{n-1}(\\Sigma)\\), we can simulate this in R.\n# Parameters\np &lt;- 3\nn &lt;- 20\nSigma &lt;- matrix(c(4, 1, 1, \n                  1, 3, 0.5, \n                  1, 0.5, 2), nrow=3)\n\n# Simulating (n-1)S directly using the Wishart distribution\n# rWishart(n_simulations, df, Sigma)\nset.seed(123)\nwish_samples &lt;- rWishart(1, df = n-1, Sigma = Sigma)\nWishart_Matrix &lt;- wish_samples[,,1]\n\nprint(\"One realized Wishart Matrix (n-1)S:\")\nprint(Wishart_Matrix)\n\n# Comparing with (n-1) * sample covariance from simulated normal data\ndata &lt;- mvrnorm(n, mu = c(0,0,0), Sigma = Sigma)\nS &lt;- cov(data)\nprint(\"Calculated (n-1)S from simulated data:\")\nprint((n-1) * S)"
+  },
+  {
+    "objectID": "labs/lab03c.html#large-sample-behavior-clt",
+    "href": "labs/lab03c.html#large-sample-behavior-clt",
+    "title": "Lab03c: Sampling Distributions and Normality Assessment",
+    "section": "2. Large-Sample Behavior (CLT)",
+    "text": "2. Large-Sample Behavior (CLT)\nThe Central Limit Theorem states that for large \\(n\\), \\(\\sqrt{n}(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu})\\) is approximately \\(N_p(0, \\Sigma)\\), even if the parent population is not normal.\n\n2.1 The Squared Generalized Distance\nThe lecture states that \\(n(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu})^{\\T} \\mathbf{S}^{-1}(\\overline{\\boldsymbol{X}}-\\boldsymbol{\\mu})\\) is approximately \\(\\chi_{p}^{2}\\)\nn_sims &lt;- 1000\nn_size &lt;- 100\np_dim &lt;- 2\ntrue_mu &lt;- c(0, 0)\ntrue_sigma &lt;- diag(2)\n\nd2_values &lt;- replicate(n_sims, {\n  # Simulate from a NON-NORMAL population (e.g., Exponential)\n  X_raw &lt;- matrix(rexp(n_size * p_dim), ncol = p_dim)\n  X_bar &lt;- colMeans(X_raw)\n  S_inv &lt;- solve(cov(X_raw))\n  mu_pop &lt;- c(1, 1) # Mean of Exp(1) is 1\n  \n  # Calculate distance\n  n_size * t(X_bar - mu_pop) %*% S_inv %*% (X_bar - mu_pop)\n})\n\n# Plot against Chi-square distribution\nhist(d2_values, breaks = 30, probability = TRUE, main = \"CLT: Distribution of Squared Distances\")\ncurve(dchisq(x, df = p_dim), add = TRUE, col = \"red\", lwd = 2)"
+  },
+  {
+    "objectID": "labs/lab03c.html#assessing-normality-univariate",
+    "href": "labs/lab03c.html#assessing-normality-univariate",
+    "title": "Lab03c: Sampling Distributions and Normality Assessment",
+    "section": "3. Assessing Normality (Univariate)",
+    "text": "3. Assessing Normality (Univariate)\n\n3.1 Q-Q Plots (Example 3.9)\nWe construct a Q-Q plot to check if observations \\(x_{(j)}\\) are linearly related to standard normal quantiles \\(q_{(j)}\\).\n# Data from Microwave Radiation Example (approximate)\nradiation &lt;- c(.15, .09, .18, .10, .05, .12, .08, .05, .08, .10, .07, .02, .01, .10, .10, .10, .02, .10, .01, .40)\n\n# 1. Sort observations\nx_sorted &lt;- sort(radiation)\nn &lt;- length(radiation)\n\n# 2. Calculate probabilities (j - 0.5) / n\nj &lt;- 1:n\np_j &lt;- (j - 0.5) / n\n\n# 3. Calculate standard normal quantiles\nq_j &lt;- qnorm(p_j)\n\n# 4. Plot\nplot(q_j, x_sorted, pch=19, col=\"blue\",\n     main=\"Q-Q Plot for Radiation Data\",\n     xlab=\"Theoretical Quantiles\", ylab=\"Sample Quantiles\")\nabline(lm(x_sorted ~ q_j), col=\"red\")\n\n\n3.2 Correlation Coefficient Test (\\(r_Q\\))\nThe lecture defines \\(r_Q\\) as the correlation between \\(x_{(j)}\\) and \\(q_{(j)}\\).\nr_q &lt;- cor(x_sorted, q_j)\ncat(\"The Q-Q plot correlation coefficient is:\", r_q, \"\\n\")\n\n# Decision logic based on Table 4.2\n# For n=20, alpha=0.05, critical value is 0.9508\ncritical_val &lt;- 0.9508\nif(r_q &lt; critical_val) {\n  print(\"Reject Normality Hypothesis\")\n} else {\n  print(\"Fail to Reject Normality Hypothesis\")\n}"
+  },
+  {
+    "objectID": "labs/lab03c.html#multivariate-normality-assessment",
+    "href": "labs/lab03c.html#multivariate-normality-assessment",
+    "title": "Lab03c: Sampling Distributions and Normality Assessment",
+    "section": "4. Multivariate Normality Assessment",
+    "text": "4. Multivariate Normality Assessment\nAs suggested in the lecture, we should also check linear combinations using eigenvalues.\n\n4.1 Principal Component Linear Combinations\nPlotting the data projected onto the first (\\(\\hat{\\mathbf{e}}_1\\)) and last (\\(\\hat{\\mathbf{e}}_p\\)) eigenvectors of \\(\\mathbf{S}\\).\n# Using the 'iris' numeric data for demonstration\nX_mat &lt;- as.matrix(iris[, 1:4])\nS_iris &lt;- cov(X_mat)\neigen_info &lt;- eigen(S_iris)\n\n# Largest eigenvalue combination (First Principal Component)\ne1 &lt;- eigen_info$vectors[, 1]\nproj_e1 &lt;- X_mat %*% e1\n\n# Smallest eigenvalue combination\nep &lt;- eigen_info$vectors[, 4]\nproj_ep &lt;- X_mat %*% ep\n\npar(mfrow=c(1,2))\nqqnorm(proj_e1, main=\"Q-Q Plot: Max Eigenvector\"); qqline(proj_e1)\nqqnorm(proj_ep, main=\"Q-Q Plot: Min Eigenvector\"); qqline(proj_ep)"
+  },
+  {
+    "objectID": "labs/lab04a.html",
+    "href": "labs/lab04a.html",
+    "title": "Lab04a: Multivariate Hypothesis Testing and Confidence Regions",
+    "section": "",
+    "text": "{r setup, include=FALSE}\nknitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)\nlibrary(ICSNP) # For Hotelling's T2 test\nlibrary(ggplot2)\nlibrary(car)    # For ellipse plotting"
+  },
+  {
+    "objectID": "labs/lab04a.html#introduction-hotellings-t2",
+    "href": "labs/lab04a.html#introduction-hotellings-t2",
+    "title": "Lab04a: Multivariate Hypothesis Testing and Confidence Regions",
+    "section": "1. Introduction: Hotelling’s \\(T^2\\)",
+    "text": "1. Introduction: Hotelling’s \\(T^2\\)\nIn univariate statistics, we use the \\(t\\)-test to determine if a population mean \\(\\mu\\) is equal to a specific value \\(\\mu_0\\). In the multivariate case (\\(p &gt; 1\\)), we use Hotelling’s \\(T^2\\) statistic.\nThe hypothesis is:\\[H_0: \\boldsymbol{\\mu} = \\boldsymbol{\\mu}_0 \\quad \\text{vs} \\quad H_1: \\boldsymbol{\\mu} \\neq \\boldsymbol{\\mu}_0\\]\nThe test statistic is:\\[T^2 = n(\\bar{\\mathbf{x}} - \\boldsymbol{\\mu}_0)^\\top \\mathbf{S}^{-1} (\\bar{\\mathbf{x}} - \\boldsymbol{\\mu}_0)\\]\nUnder \\(H_0\\), the distribution follows:\\[T^2 \\sim \\frac{(n-1)p}{n-p} F_{p, n-p}\\]\n##Example 4.1: Manual Calculation of \\(T^2\\)\nLet’s evaluate \\(T^2\\) for a small sample where \\(n=3\\) and \\(p=2\\).\n{r setup, include=FALSE}\n# Data Matrix\nX &lt;- matrix(c(6, 10, 8, \n              9, 6, 3), ncol = 2)\ncolnames(X) &lt;- c(\"X1\", \"X2\")\n\n# Null Hypothesis\nmu0 &lt;- c(9, 5)\n\n# Calculations\nn &lt;- nrow(X)\np &lt;- ncol(X)\nx_bar &lt;- colMeans(X)\nS &lt;- var(X)\n\n# Hotelling's T2 Statistic\ndiff &lt;- x_bar - mu0\nT2 &lt;- n * t(diff) %*% solve(S) %*% diff\n\ncat(\"Sample Mean Vector:\\n\")\nprint(x_bar)\ncat(\"\\nHotelling's T2 Statistic:\", T2, \"\\n\")"
+  },
+  {
+    "objectID": "labs/lab04a.html#example-4.2-testing-sweat-data",
+    "href": "labs/lab04a.html#example-4.2-testing-sweat-data",
+    "title": "Lab04a: Multivariate Hypothesis Testing and Confidence Regions",
+    "section": "3. Example 4.2: Testing Sweat Data",
+    "text": "3. Example 4.2: Testing Sweat Data\nUsing the perspiration data for 20 healthy females (\\(n=20, p=3\\)). We test \\(H_0: \\boldsymbol{\\mu} = [4, 50, 10]^\\top\\) at \\(\\alpha = 0.10\\).\n\nExercise 2: Constructing the Plot (Example 3.13)\n# Manually creating a subset of the data\nsweat_data &lt;- data.frame(\n  Rate = c(3.7, 5.7, 3.8, 3.2, 3.1, 4.6, 2.4, 7.2, 6.7, 5.4, 3.9, 4.5, 3.5, 4.5, 1.5, 8.5, 4.5, 6.5, 4.1, 5.5),\n  Sodium = c(48.5, 65.1, 47.2, 53.2, 55.5, 36.1, 24.8, 33.1, 47.4, 54.1, 36.9, 58.8, 27.8, 40.2, 13.5, 56.4, 71.6, 52.8, 44.1, 40.9),\n  Potassium = c(9.3, 8.0, 10.9, 12.0, 9.7, 7.9, 14.0, 7.6, 8.5, 11.3, 12.7, 12.3, 9.8, 8.4, 10.1, 7.1, 8.2, 10.9, 11.2, 9.4)\n)\n\nmu0_sweat &lt;- c(4, 50, 10)\n\n# Using HotellingsT2 from ICSNP package\ntest_result &lt;- HotellingsT2(sweat_data, mu = mu0_sweat)\nprint(test_result)"
+  },
+  {
+    "objectID": "labs/lab04a.html#confidence-regions-and-ellipsoids",
+    "href": "labs/lab04a.html#confidence-regions-and-ellipsoids",
+    "title": "Lab04a: Multivariate Hypothesis Testing and Confidence Regions",
+    "section": "4. Confidence Regions and Ellipsoids",
+    "text": "4. Confidence Regions and Ellipsoids\nThe confidence ellipsoid for \\(\\boldsymbol{\\mu}\\) is the set of all \\(\\boldsymbol{\\mu}\\) satisfying:\n\\[n(\\bar{\\mathbf{x}} - \\boldsymbol{\\mu})^\\top \\mathbf{S}^{-1} (\\bar{\\mathbf{x}} - \\boldsymbol{\\mu}) \\leq \\frac{p(n-1)}{n-p} F_{p, n-p}(\\alpha)\\]\nThe axes are determined by the eigenvalues (\\(\\lambda_i\\)) and eigenvectors (\\(\\mathbf{e}_i\\)) of \\(\\mathbf{S}\\).\n# Example using the 'car' package to visualize a 95% confidence ellipse\n# We will use two variables from the sweat data for visualization\ndata_2d &lt;- sweat_data[, 1:2]\nmu_2d &lt;- colMeans(data_2d)\n\nplot(data_2d, main=\"95% Confidence Ellipse for Sweat Rate and Sodium\", pch=19)\nconfidenceEllipse(lm(cbind(Rate, Sodium) ~ 1, data=sweat_data), \n                  levels=0.95, add=TRUE, col=\"red\")\npoints(mu_2d[1], mu_2d[2], col=\"blue\", pch=18, cex=2) # Sample mean"
+  },
+  {
+    "objectID": "labs/lab04a.html#simultaneous-confidence-intervals",
+    "href": "labs/lab04a.html#simultaneous-confidence-intervals",
+    "title": "Lab04a: Multivariate Hypothesis Testing and Confidence Regions",
+    "section": "5. Simultaneous Confidence Intervals",
+    "text": "5. Simultaneous Confidence Intervals\nTo obtain \\(100(1-\\alpha)\\%\\) simultaneous confidence intervals for all linear combinations \\(\\mathbf{a}^\\top \\boldsymbol{\\mu}\\), we use:\\[\\mathbf{a}^\\top \\bar{\\mathbf{x}} \\pm \\sqrt{\\frac{p(n-1)}{n-p} F_{p, n-p}(\\alpha)} \\sqrt{\\frac{\\mathbf{a}^\\top \\mathbf{S} \\mathbf{a}}{n}}\\]\n###Comparison: \\(T^2\\) Intervals vs. One-at-a-time \\(t\\)-intervals\nThe simultaneous \\(T^2\\) intervals are “shadows” of the confidence ellipse on the axes and are wider than univariate intervals to maintain the family-wise error rate.\n# Calculate 95% Simultaneous T2 Intervals for Sweat Data\nn &lt;- nrow(sweat_data)\np &lt;- ncol(sweat_data)\nalpha &lt;- 0.05\ncritical_val &lt;- sqrt(((p * (n - 1)) / (n - p)) * qf(1 - alpha, p, n - p))\n\n# For each component (Rate, Sodium, Potassium)\nmeans &lt;- colMeans(sweat_data)\nvars &lt;- diag(var(sweat_data))\nse &lt;- sqrt(vars/n)\n\nlower &lt;- means - critical_val * se\nupper &lt;- means + critical_val * se\n\nresults &lt;- data.frame(Mean = means, Lower = lower, Upper = upper)\nprint(results)"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "STT843: Multivariate Data Analysis",
+    "section": "",
+    "text": "Welcome to the course website for STT843 This course provides an introduction to the statistical analysis of multivariate data, focusing on both theoretical foundations and practical applications in R."
+  },
+  {
+    "objectID": "index.html#course-information",
+    "href": "index.html#course-information",
+    "title": "STT843: Multivariate Data Analysis",
+    "section": "📋 Course Information",
+    "text": "📋 Course Information\n\n🎓 Instructor: Dr. Guanqun Cao\n🎓 TA: Mr. Andrews Boahen (boahenan@msu.edu)\n⏰ Office Hours: Monday, 10am – 11am | C426 Wells Hall\n📄 Syllabus: click here 🔗"
+  },
+  {
+    "objectID": "index.html#weekly-schedule",
+    "href": "index.html#weekly-schedule",
+    "title": "STT843: Multivariate Data Analysis",
+    "section": "🗓️ Weekly Schedule",
+    "text": "🗓️ Weekly Schedule\n\n\n\n\n\n\nImportant Note\n\n\n\nLecture slides are updated every Sunday evening. Please ensure you have the latest version before Monday’s class.\n\n\n\n\n\nWeek\nTopic\nSlides (PDF)\nLabs (Rmd/Qmd)\nAssignment\n\n\n\n\n1\nIntroduction\nLec 1.1 🔗Lec 1.2 🔗\n💻 Lab 1a💻 Lab 1b\n–\n\n\n2\nRandom Vectors and Matrices\nLec 2.1 🔗 Lec 2.1* 🔗\n💻 Lab 2a\nHW 1\n\n\n3\nMultivariate Normal Distribution I\nLec 3.1 🔗 Lec 3.2 🔗 Lec 3.1* 🔗\n💻 Lab 3a💻 Lab 3b\nQuiz 1\n\n\n4\nMultivariate Normal Distribution II\nLec 4.1 🔗Lec 4.2 🔗\n💻 Lab 3c💻 Lab 3d\nHW 2\n\n\n5\nMean Vector\nLec 5.1 🔗Lec 5.2 🔗\n💻 Lab 4a💻 Lab 4d"
+  },
+  {
+    "objectID": "index.html#software-requirements",
+    "href": "index.html#software-requirements",
+    "title": "STT843: Multivariate Data Analysis",
+    "section": "🛠️ Software Requirements",
+    "text": "🛠️ Software Requirements\nWe will be using R and RStudio for all computations. Please ensure you have the following installed:\n1. [R (version 4.3+)](https://cran.r-project.org/)\n2. [RStudio Desktop](https://posit.co/download/rstudio-desktop/)\n3. [Quarto CLI](https://quarto.org/docs/get-started/)"
   }
 ]

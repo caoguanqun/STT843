@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Dr.&nbsp;Guanqun Cao">
-<meta name="dcterms.date" content="2026-01-31">
+<meta name="dcterms.date" content="2026-02-07">
 
-<title>Lab: Multivariate Statistical Inference - Hotelling’s T-squared – STT843 Multivariate Data Analysis</title>
+<title>Lab04a: Multivariate Hypothesis Testing and Confidence Regions – STT843 Multivariate Data Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -60,23 +60,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-9344fb9851b4da3cab95007ef9d770dc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-9344fb9851b4da3cab95007ef9d770dc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -135,7 +135,7 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -145,7 +145,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">STT843 Multivariate Data Analysis</span>
     </a>
   </div>
@@ -156,7 +156,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
 </ul>
@@ -175,20 +175,13 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction-to-hotellings-t2" id="toc-introduction-to-hotellings-t2" class="nav-link active" data-scroll-target="#introduction-to-hotellings-t2">1. Introduction to Hotelling’s <span class="math inline">\(T^2\)</span></a></li>
-  <li><a href="#example-4.1-manual-t2-calculation" id="toc-example-4.1-manual-t2-calculation" class="nav-link" data-scroll-target="#example-4.1-manual-t2-calculation">2. Example 4.1: Manual <span class="math inline">\(T^2\)</span> Calculation</a></li>
-  <li><a href="#example-4.2-sweat-data-analysis" id="toc-example-4.2-sweat-data-analysis" class="nav-link" data-scroll-target="#example-4.2-sweat-data-analysis">3. Example 4.2: Sweat Data Analysis</a></li>
-  <li><a href="#confidence-regions-and-ellipses" id="toc-confidence-regions-and-ellipses" class="nav-link" data-scroll-target="#confidence-regions-and-ellipses">4. Confidence Regions and Ellipses</a>
+  <li><a href="#introduction-hotellings-t2" id="toc-introduction-hotellings-t2" class="nav-link active" data-scroll-target="#introduction-hotellings-t2">1. Introduction: Hotelling’s <span class="math inline">\(T^2\)</span></a></li>
+  <li><a href="#example-4.2-testing-sweat-data" id="toc-example-4.2-testing-sweat-data" class="nav-link" data-scroll-target="#example-4.2-testing-sweat-data">3. Example 4.2: Testing Sweat Data</a>
   <ul class="collapse">
-  <li><a href="#example-4.3-radiation-data-ellipse" id="toc-example-4.3-radiation-data-ellipse" class="nav-link" data-scroll-target="#example-4.3-radiation-data-ellipse">Example 4.3: Radiation Data Ellipse</a></li>
+  <li><a href="#exercise-2-constructing-the-plot-example-3.13" id="toc-exercise-2-constructing-the-plot-example-3.13" class="nav-link" data-scroll-target="#exercise-2-constructing-the-plot-example-3.13">Exercise 2: Constructing the Plot (Example 3.13)</a></li>
   </ul></li>
-  <li><a href="#simultaneous-confidence-intervals" id="toc-simultaneous-confidence-intervals" class="nav-link" data-scroll-target="#simultaneous-confidence-intervals">5. Simultaneous Confidence Intervals</a>
-  <ul class="collapse">
-  <li><a href="#calculation-for-component-means" id="toc-calculation-for-component-means" class="nav-link" data-scroll-target="#calculation-for-component-means">Calculation for Component Means</a></li>
-  </ul></li>
-  <li><a href="#using-sweat-data-from-earlier" id="toc-using-sweat-data-from-earlier" class="nav-link" data-scroll-target="#using-sweat-data-from-earlier">Using Sweat Data from earlier</a></li>
-  <li><a href="#multiplier-for-t2-intervals" id="toc-multiplier-for-t2-intervals" class="nav-link" data-scroll-target="#multiplier-for-t2-intervals">Multiplier for T2 intervals</a></li>
-  <li><a href="#calculate-intervals" id="toc-calculate-intervals" class="nav-link" data-scroll-target="#calculate-intervals">Calculate intervals</a></li>
+  <li><a href="#confidence-regions-and-ellipsoids" id="toc-confidence-regions-and-ellipsoids" class="nav-link" data-scroll-target="#confidence-regions-and-ellipsoids">4. Confidence Regions and Ellipsoids</a></li>
+  <li><a href="#simultaneous-confidence-intervals" id="toc-simultaneous-confidence-intervals" class="nav-link" data-scroll-target="#simultaneous-confidence-intervals">5. Simultaneous Confidence Intervals</a></li>
   </ul>
 </nav>
     </div>
@@ -197,7 +190,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lab: Multivariate Statistical Inference - Hotelling’s T-squared</h1>
+<h1 class="title">Lab04a: Multivariate Hypothesis Testing and Confidence Regions</h1>
 <p class="subtitle lead">STT 843: Multivariate Analysis</p>
 </div>
 
@@ -215,7 +208,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 31, 2026</p>
+      <p class="date">February 7, 2026</p>
     </div>
   </div>
   
@@ -227,97 +220,97 @@ window.Quarto = {
 </header>
 
 
-<section id="introduction-to-hotellings-t2" class="level2">
-<h2 class="anchored" data-anchor-id="introduction-to-hotellings-t2">1. Introduction to Hotelling’s <span class="math inline">\(T^2\)</span></h2>
-<p>Hotelling’s <span class="math inline">\(T^2\)</span> is the multivariate generalization of the squared Student’s t-statistic. It is used to test if a mean vector <span class="math inline">\(\boldsymbol{\mu}\)</span> is equal to a specified vector <span class="math inline">\(\boldsymbol{\mu}_0\)</span>.</p>
-<p>The formula is:</p>
-<p>$$T^{2}=n(\overline{\boldsymbol{X}}-\boldsymbol{\mu}_{0})^{T} \mathbf{S}^{-1}(\overline{\boldsymbol{X}}-\boldsymbol{\mu}_{0})$$</p>
-</section>
-<section id="example-4.1-manual-t2-calculation" class="level2">
-<h2 class="anchored" data-anchor-id="example-4.1-manual-t2-calculation">2. Example 4.1: Manual <span class="math inline">\(T^2\)</span> Calculation</h2>
-<p>We will manually calculate <span class="math inline">\(T^2\)</span> for the small dataset provided in the lecture.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data matrix</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">3</span>), <span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">9</span>, <span class="dv">5</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(X)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ncol</span>(X)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample mean and covariance</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>x_bar <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(X)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">cov</span>(X)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Hotelling's T2 calculation</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>T2_obs <span class="ot">&lt;-</span> n <span class="sc">*</span> <span class="fu">t</span>(x_bar <span class="sc">-</span> mu0) <span class="sc">%*%</span> <span class="fu">solve</span>(S) <span class="sc">%*%</span> (x_bar <span class="sc">-</span> mu0)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Critical value calculation</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>crit_val <span class="ot">&lt;-</span> ((n <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> p <span class="sc">/</span> (n <span class="sc">-</span> p)) <span class="sc">*</span> <span class="fu">qf</span>(<span class="dv">1</span> <span class="sc">-</span> alpha, p, n <span class="sc">-</span> p)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Observed T2:"</span>, T2_obs, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Critical Value (alpha=0.05):"</span>, crit_val, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Reject H0?"</span>, T2_obs <span class="sc">&gt;</span> crit_val, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="example-4.2-sweat-data-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="example-4.2-sweat-data-analysis">3. Example 4.2: Sweat Data Analysis</h2>
-<p>We test <span class="math inline">\(H_{0}: \boldsymbol{\mu}^{T}=[4, 50, 10]\)</span> at <span class="math inline">\(\alpha = 0.10\)</span> for the perspiration components.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data entry (Example 5.1/4.2)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sweat_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">X1 =</span> <span class="fu">c</span>(<span class="fl">3.7</span>, <span class="fl">5.7</span>, <span class="fl">3.8</span>, <span class="fl">3.2</span>, <span class="fl">3.1</span>, <span class="fl">4.6</span>, <span class="fl">2.4</span>, <span class="fl">7.2</span>, <span class="fl">6.7</span>, <span class="fl">5.4</span>, <span class="fl">3.9</span>, <span class="fl">4.5</span>, <span class="fl">3.5</span>, <span class="fl">4.5</span>, <span class="fl">1.5</span>, <span class="fl">8.5</span>, <span class="fl">4.5</span>, <span class="fl">6.5</span>, <span class="fl">4.1</span>, <span class="fl">5.5</span>),</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">X2 =</span> <span class="fu">c</span>(<span class="fl">48.5</span>, <span class="fl">65.1</span>, <span class="fl">47.2</span>, <span class="fl">53.2</span>, <span class="fl">55.5</span>, <span class="fl">36.1</span>, <span class="fl">24.8</span>, <span class="fl">33.1</span>, <span class="fl">47.4</span>, <span class="fl">54.1</span>, <span class="fl">36.9</span>, <span class="fl">58.8</span>, <span class="fl">27.8</span>, <span class="fl">40.2</span>, <span class="fl">13.5</span>, <span class="fl">56.4</span>, <span class="fl">71.6</span>, <span class="fl">52.8</span>, <span class="fl">44.1</span>, <span class="fl">40.9</span>),</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">X3 =</span> <span class="fu">c</span>(<span class="fl">9.3</span>, <span class="fl">8.0</span>, <span class="fl">10.9</span>, <span class="fl">12.0</span>, <span class="fl">9.7</span>, <span class="fl">7.9</span>, <span class="fl">14.0</span>, <span class="fl">7.6</span>, <span class="fl">8.5</span>, <span class="fl">11.3</span>, <span class="fl">12.7</span>, <span class="fl">12.3</span>, <span class="fl">9.8</span>, <span class="fl">8.4</span>, <span class="fl">10.1</span>, <span class="fl">7.1</span>, <span class="fl">8.2</span>, <span class="fl">10.9</span>, <span class="fl">11.2</span>, <span class="fl">9.4</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>mu_null <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">50</span>, <span class="dv">10</span>)</span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{r setup, include<span class="ot">=</span><span class="cn">FALSE</span>}</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">echo =</span> <span class="cn">TRUE</span>, <span class="at">message =</span> <span class="cn">FALSE</span>, <span class="at">warning =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ICSNP) <span class="co"># For Hotelling's T2 test</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)    <span class="co"># For ellipse plotting</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="introduction-hotellings-t2" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-hotellings-t2">1. Introduction: Hotelling’s <span class="math inline">\(T^2\)</span></h2>
+<p>In univariate statistics, we use the <span class="math inline">\(t\)</span>-test to determine if a population mean <span class="math inline">\(\mu\)</span> is equal to a specific value <span class="math inline">\(\mu_0\)</span>. In the multivariate case (<span class="math inline">\(p &gt; 1\)</span>), we use Hotelling’s <span class="math inline">\(T^2\)</span> statistic.</p>
+<p>The hypothesis is:<span class="math display">\[H_0: \boldsymbol{\mu} = \boldsymbol{\mu}_0 \quad \text{vs} \quad H_1: \boldsymbol{\mu} \neq \boldsymbol{\mu}_0\]</span></p>
+<p>The test statistic is:<span class="math display">\[T^2 = n(\bar{\mathbf{x}} - \boldsymbol{\mu}_0)^\top \mathbf{S}^{-1} (\bar{\mathbf{x}} - \boldsymbol{\mu}_0)\]</span></p>
+<p>Under <span class="math inline">\(H_0\)</span>, the distribution follows:<span class="math display">\[T^2 \sim \frac{(n-1)p}{n-p} F_{p, n-p}\]</span></p>
+<p>##Example 4.1: Manual Calculation of <span class="math inline">\(T^2\)</span></p>
+<p>Let’s evaluate <span class="math inline">\(T^2\)</span> for a small sample where <span class="math inline">\(n=3\)</span> and <span class="math inline">\(p=2\)</span>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>{r setup, include<span class="ot">=</span><span class="cn">FALSE</span>}</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Data Matrix</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">8</span>, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>              <span class="dv">9</span>, <span class="dv">6</span>, <span class="dv">3</span>), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(X) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"X1"</span>, <span class="st">"X2"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Null Hypothesis</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">9</span>, <span class="dv">5</span>)</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Using HotellingsT2 function</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>test_result <span class="ot">&lt;-</span> <span class="fu">HotellingsT2</span>(sweat_data, <span class="at">mu =</span> mu_null)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(test_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculations</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(X)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ncol</span>(X)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>x_bar <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(X)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">var</span>(X)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Hotelling's T2 Statistic</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>diff <span class="ot">&lt;-</span> x_bar <span class="sc">-</span> mu0</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>T2 <span class="ot">&lt;-</span> n <span class="sc">*</span> <span class="fu">t</span>(diff) <span class="sc">%*%</span> <span class="fu">solve</span>(S) <span class="sc">%*%</span> diff</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Sample Mean Vector:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(x_bar)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Hotelling's T2 Statistic:"</span>, T2, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="confidence-regions-and-ellipses" class="level2">
-<h2 class="anchored" data-anchor-id="confidence-regions-and-ellipses">4. Confidence Regions and Ellipses</h2>
-<p>The confidence region is an ellipsoid centered at <span class="math inline">\(\overline{\mathbf{x}}\)</span>. The axes are determined by the eigenvalues and eigenvectors of <span class="math inline">\(\mathbf{S}\)</span>.</p>
-<section id="example-4.3-radiation-data-ellipse" class="level3">
-<h3 class="anchored" data-anchor-id="example-4.3-radiation-data-ellipse">Example 4.3: Radiation Data Ellipse</h3>
-<p>We visualize the 95% confidence ellipse for the microwave radiation data (transformed by the 1/4th power).</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: Sample values provided in lecture image context</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Center (x_bar) and S for transformed data</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>x_bar_rad <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.564</span>, <span class="fl">0.603</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>S_rad <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.0144</span>, <span class="fl">0.0117</span>, <span class="fl">0.0117</span>, <span class="fl">0.0146</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>n_rad <span class="ot">&lt;-</span> <span class="dv">42</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>p_rad <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<section id="example-4.2-testing-sweat-data" class="level2">
+<h2 class="anchored" data-anchor-id="example-4.2-testing-sweat-data">3. Example 4.2: Testing Sweat Data</h2>
+<p>Using the perspiration data for 20 healthy females (<span class="math inline">\(n=20, p=3\)</span>). We test <span class="math inline">\(H_0: \boldsymbol{\mu} = [4, 50, 10]^\top\)</span> at <span class="math inline">\(\alpha = 0.10\)</span>.</p>
+<section id="exercise-2-constructing-the-plot-example-3.13" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-constructing-the-plot-example-3.13">Exercise 2: Constructing the Plot (Example 3.13)</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manually creating a subset of the data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sweat_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Rate =</span> <span class="fu">c</span>(<span class="fl">3.7</span>, <span class="fl">5.7</span>, <span class="fl">3.8</span>, <span class="fl">3.2</span>, <span class="fl">3.1</span>, <span class="fl">4.6</span>, <span class="fl">2.4</span>, <span class="fl">7.2</span>, <span class="fl">6.7</span>, <span class="fl">5.4</span>, <span class="fl">3.9</span>, <span class="fl">4.5</span>, <span class="fl">3.5</span>, <span class="fl">4.5</span>, <span class="fl">1.5</span>, <span class="fl">8.5</span>, <span class="fl">4.5</span>, <span class="fl">6.5</span>, <span class="fl">4.1</span>, <span class="fl">5.5</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sodium =</span> <span class="fu">c</span>(<span class="fl">48.5</span>, <span class="fl">65.1</span>, <span class="fl">47.2</span>, <span class="fl">53.2</span>, <span class="fl">55.5</span>, <span class="fl">36.1</span>, <span class="fl">24.8</span>, <span class="fl">33.1</span>, <span class="fl">47.4</span>, <span class="fl">54.1</span>, <span class="fl">36.9</span>, <span class="fl">58.8</span>, <span class="fl">27.8</span>, <span class="fl">40.2</span>, <span class="fl">13.5</span>, <span class="fl">56.4</span>, <span class="fl">71.6</span>, <span class="fl">52.8</span>, <span class="fl">44.1</span>, <span class="fl">40.9</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Potassium =</span> <span class="fu">c</span>(<span class="fl">9.3</span>, <span class="fl">8.0</span>, <span class="fl">10.9</span>, <span class="fl">12.0</span>, <span class="fl">9.7</span>, <span class="fl">7.9</span>, <span class="fl">14.0</span>, <span class="fl">7.6</span>, <span class="fl">8.5</span>, <span class="fl">11.3</span>, <span class="fl">12.7</span>, <span class="fl">12.3</span>, <span class="fl">9.8</span>, <span class="fl">8.4</span>, <span class="fl">10.1</span>, <span class="fl">7.1</span>, <span class="fl">8.2</span>, <span class="fl">10.9</span>, <span class="fl">11.2</span>, <span class="fl">9.4</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Critical constant c^2</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>c2 <span class="ot">&lt;-</span> (p_rad <span class="sc">*</span> (n_rad <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> (n_rad <span class="sc">-</span> p_rad)) <span class="sc">*</span> <span class="fu">qf</span>(<span class="fl">0.95</span>, p_rad, n_rad <span class="sc">-</span> p_rad)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the ellipse</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>conf_ellipse <span class="ot">&lt;-</span> <span class="fu">ellipse</span>(S_rad<span class="sc">/</span>n_rad, <span class="at">centre =</span> x_bar_rad, <span class="at">t =</span> <span class="fu">sqrt</span>(c2))</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(conf_ellipse, <span class="at">type =</span> <span class="st">'l'</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"blue"</span>,</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"95% Confidence Ellipse for Radiation Data"</span>,</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Door Closed (x1)"</span>, <span class="at">ylab =</span> <span class="st">"Door Open (x2)"</span>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(x_bar_rad[<span class="dv">1</span>], x_bar_rad[<span class="dv">2</span>], <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>mu0_sweat <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">50</span>, <span class="dv">10</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Using HotellingsT2 from ICSNP package</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>test_result <span class="ot">&lt;-</span> <span class="fu">HotellingsT2</span>(sweat_data, <span class="at">mu =</span> mu0_sweat)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(test_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
+</section>
+<section id="confidence-regions-and-ellipsoids" class="level2">
+<h2 class="anchored" data-anchor-id="confidence-regions-and-ellipsoids">4. Confidence Regions and Ellipsoids</h2>
+<p>The confidence ellipsoid for <span class="math inline">\(\boldsymbol{\mu}\)</span> is the set of all <span class="math inline">\(\boldsymbol{\mu}\)</span> satisfying:</p>
+<p><span class="math display">\[n(\bar{\mathbf{x}} - \boldsymbol{\mu})^\top \mathbf{S}^{-1} (\bar{\mathbf{x}} - \boldsymbol{\mu}) \leq \frac{p(n-1)}{n-p} F_{p, n-p}(\alpha)\]</span></p>
+<p>The axes are determined by the eigenvalues (<span class="math inline">\(\lambda_i\)</span>) and eigenvectors (<span class="math inline">\(\mathbf{e}_i\)</span>) of <span class="math inline">\(\mathbf{S}\)</span>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example using the 'car' package to visualize a 95% confidence ellipse</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We will use two variables from the sweat data for visualization</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>data_2d <span class="ot">&lt;-</span> sweat_data[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>mu_2d <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(data_2d)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(data_2d, <span class="at">main=</span><span class="st">"95% Confidence Ellipse for Sweat Rate and Sodium"</span>, <span class="at">pch=</span><span class="dv">19</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">confidenceEllipse</span>(<span class="fu">lm</span>(<span class="fu">cbind</span>(Rate, Sodium) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data=</span>sweat_data), </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">levels=</span><span class="fl">0.95</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(mu_2d[<span class="dv">1</span>], mu_2d[<span class="dv">2</span>], <span class="at">col=</span><span class="st">"blue"</span>, <span class="at">pch=</span><span class="dv">18</span>, <span class="at">cex=</span><span class="dv">2</span>) <span class="co"># Sample mean</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="simultaneous-confidence-intervals" class="level2">
 <h2 class="anchored" data-anchor-id="simultaneous-confidence-intervals">5. Simultaneous Confidence Intervals</h2>
-<p>Simultaneous intervals allow us to make statements about all linear combinations <span class="math inline">\(\mathbf{a}^{T} \boldsymbol{\mu}\)</span> while maintaining a collective confidence level <span class="math inline">\(1-\alpha\)</span>. These are wider than univariate t-intervals because they account for the “shadows” of the confidence ellipsoid.</p>
-<section id="calculation-for-component-means" class="level3">
-<h3 class="anchored" data-anchor-id="calculation-for-component-means">Calculation for Component Means</h3>
-<p>For each component $i$, the $T^2$ interval is:</p>
-<p>$$\bar{x}_i \pm \sqrt{\frac{p(n-1)}{n(n-p)} F_{p, n-p}(\alpha)} \sqrt{\frac{s_{ii}}{n}}$$</p>
-</section>
-</section>
-<section id="using-sweat-data-from-earlier" class="level1">
-<h1>Using Sweat Data from earlier</h1>
-<p>n_s &lt;- nrow(sweat_data) p_s &lt;- ncol(sweat_data) x_bar_s &lt;- colMeans(sweat_data) diag_s &lt;- diag(cov(sweat_data))</p>
-</section>
-<section id="multiplier-for-t2-intervals" class="level1">
-<h1>Multiplier for T2 intervals</h1>
-<p>multiplier &lt;- sqrt(((n_s - 1) * p_s / (n_s - p_s)) * qf(0.95, p_s, n_s - p_s))</p>
-</section>
-<section id="calculate-intervals" class="level1">
-<h1>Calculate intervals</h1>
-<p>intervals &lt;- data.frame( Lower = x_bar_s - multiplier * sqrt(diag_s / n_s), Mean = x_bar_s, Upper = x_bar_s + multiplier * sqrt(diag_s / n_s) )</p>
-<p>print(“95% Simultaneous T2 Intervals:”) print(intervals)</p>
+<p>To obtain <span class="math inline">\(100(1-\alpha)\%\)</span> simultaneous confidence intervals for all linear combinations <span class="math inline">\(\mathbf{a}^\top \boldsymbol{\mu}\)</span>, we use:<span class="math display">\[\mathbf{a}^\top \bar{\mathbf{x}} \pm \sqrt{\frac{p(n-1)}{n-p} F_{p, n-p}(\alpha)} \sqrt{\frac{\mathbf{a}^\top \mathbf{S} \mathbf{a}}{n}}\]</span></p>
+<p>###Comparison: <span class="math inline">\(T^2\)</span> Intervals vs.&nbsp;One-at-a-time <span class="math inline">\(t\)</span>-intervals</p>
+<p>The simultaneous <span class="math inline">\(T^2\)</span> intervals are “shadows” of the confidence ellipse on the axes and are wider than univariate intervals to maintain the family-wise error rate.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate 95% Simultaneous T2 Intervals for Sweat Data</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(sweat_data)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ncol</span>(sweat_data)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>critical_val <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(((p <span class="sc">*</span> (n <span class="sc">-</span> <span class="dv">1</span>)) <span class="sc">/</span> (n <span class="sc">-</span> p)) <span class="sc">*</span> <span class="fu">qf</span>(<span class="dv">1</span> <span class="sc">-</span> alpha, p, n <span class="sc">-</span> p))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># For each component (Rate, Sodium, Potassium)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(sweat_data)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">var</span>(sweat_data))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(vars<span class="sc">/</span>n)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>lower <span class="ot">&lt;-</span> means <span class="sc">-</span> critical_val <span class="sc">*</span> se</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>upper <span class="ot">&lt;-</span> means <span class="sc">+</span> critical_val <span class="sc">*</span> se</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Mean =</span> means, <span class="at">Lower =</span> lower, <span class="at">Upper =</span> upper)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>

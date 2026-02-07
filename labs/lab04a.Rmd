@@ -1,0 +1,129 @@
+---
+title: "Lab04a: Multivariate Hypothesis Testing and Confidence Regions"
+subtitle: "STT 843: Multivariate Analysis"
+author: "Dr. Guanqun Cao"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+``` r
+{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(ICSNP) # For Hotelling's T2 test
+library(ggplot2)
+library(car)    # For ellipse plotting
+```
+
+## 1. Introduction: Hotelling's $T^2$
+
+In univariate statistics, we use the $t$-test to determine if a population mean $\mu$ is equal to a specific value $\mu_0$. In the multivariate case ($p > 1$), we use Hotelling's $T^2$ statistic.
+
+The hypothesis is:$$H_0: \boldsymbol{\mu} = \boldsymbol{\mu}_0 \quad \text{vs} \quad H_1: \boldsymbol{\mu} \neq \boldsymbol{\mu}_0$$
+
+The test statistic is:$$T^2 = n(\bar{\mathbf{x}} - \boldsymbol{\mu}_0)^\top \mathbf{S}^{-1} (\bar{\mathbf{x}} - \boldsymbol{\mu}_0)$$
+
+Under $H_0$, the distribution follows:$$T^2 \sim \frac{(n-1)p}{n-p} F_{p, n-p}$$
+
+##Example 4.1: Manual Calculation of $T^2$
+
+Let's evaluate $T^2$ for a small sample where $n=3$ and $p=2$.
+
+``` r
+{r setup, include=FALSE}
+# Data Matrix
+X <- matrix(c(6, 10, 8, 
+              9, 6, 3), ncol = 2)
+colnames(X) <- c("X1", "X2")
+
+# Null Hypothesis
+mu0 <- c(9, 5)
+
+# Calculations
+n <- nrow(X)
+p <- ncol(X)
+x_bar <- colMeans(X)
+S <- var(X)
+
+# Hotelling's T2 Statistic
+diff <- x_bar - mu0
+T2 <- n * t(diff) %*% solve(S) %*% diff
+
+cat("Sample Mean Vector:\n")
+print(x_bar)
+cat("\nHotelling's T2 Statistic:", T2, "\n")
+```
+
+## 3. Example 4.2: Testing Sweat Data
+
+Using the perspiration data for 20 healthy females ($n=20, p=3$). We test $H_0: \boldsymbol{\mu} = [4, 50, 10]^\top$ at $\alpha = 0.10$.
+
+### Exercise 2: Constructing the Plot (Example 3.13)
+
+``` r
+# Manually creating a subset of the data
+sweat_data <- data.frame(
+  Rate = c(3.7, 5.7, 3.8, 3.2, 3.1, 4.6, 2.4, 7.2, 6.7, 5.4, 3.9, 4.5, 3.5, 4.5, 1.5, 8.5, 4.5, 6.5, 4.1, 5.5),
+  Sodium = c(48.5, 65.1, 47.2, 53.2, 55.5, 36.1, 24.8, 33.1, 47.4, 54.1, 36.9, 58.8, 27.8, 40.2, 13.5, 56.4, 71.6, 52.8, 44.1, 40.9),
+  Potassium = c(9.3, 8.0, 10.9, 12.0, 9.7, 7.9, 14.0, 7.6, 8.5, 11.3, 12.7, 12.3, 9.8, 8.4, 10.1, 7.1, 8.2, 10.9, 11.2, 9.4)
+)
+
+mu0_sweat <- c(4, 50, 10)
+
+# Using HotellingsT2 from ICSNP package
+test_result <- HotellingsT2(sweat_data, mu = mu0_sweat)
+print(test_result)
+```
+
+## 4. Confidence Regions and Ellipsoids
+
+The confidence ellipsoid for $\boldsymbol{\mu}$ is the set of all $\boldsymbol{\mu}$ satisfying:
+
+$$n(\bar{\mathbf{x}} - \boldsymbol{\mu})^\top \mathbf{S}^{-1} (\bar{\mathbf{x}} - \boldsymbol{\mu}) \leq \frac{p(n-1)}{n-p} F_{p, n-p}(\alpha)$$
+
+The axes are determined by the eigenvalues ($\lambda_i$) and eigenvectors ($\mathbf{e}_i$) of $\mathbf{S}$.
+
+ 
+``` r
+# Example using the 'car' package to visualize a 95% confidence ellipse
+# We will use two variables from the sweat data for visualization
+data_2d <- sweat_data[, 1:2]
+mu_2d <- colMeans(data_2d)
+
+plot(data_2d, main="95% Confidence Ellipse for Sweat Rate and Sodium", pch=19)
+confidenceEllipse(lm(cbind(Rate, Sodium) ~ 1, data=sweat_data), 
+                  levels=0.95, add=TRUE, col="red")
+points(mu_2d[1], mu_2d[2], col="blue", pch=18, cex=2) # Sample mean
+```
+
+## 5. Simultaneous Confidence Intervals
+
+To obtain $100(1-\alpha)\%$ simultaneous confidence intervals for all linear combinations $\mathbf{a}^\top \boldsymbol{\mu}$, we use:$$\mathbf{a}^\top \bar{\mathbf{x}} \pm \sqrt{\frac{p(n-1)}{n-p} F_{p, n-p}(\alpha)} \sqrt{\frac{\mathbf{a}^\top \mathbf{S} \mathbf{a}}{n}}$$
+
+###Comparison: $T^2$ Intervals vs. One-at-a-time $t$-intervals
+
+The simultaneous $T^2$ intervals are "shadows" of the confidence ellipse on the axes and are wider than univariate intervals to maintain the family-wise error rate.
+
+ 
+
+``` r
+# Calculate 95% Simultaneous T2 Intervals for Sweat Data
+n <- nrow(sweat_data)
+p <- ncol(sweat_data)
+alpha <- 0.05
+critical_val <- sqrt(((p * (n - 1)) / (n - p)) * qf(1 - alpha, p, n - p))
+
+# For each component (Rate, Sodium, Potassium)
+means <- colMeans(sweat_data)
+vars <- diag(var(sweat_data))
+se <- sqrt(vars/n)
+
+lower <- means - critical_val * se
+upper <- means + critical_val * se
+
+results <- data.frame(Mean = means, Lower = lower, Upper = upper)
+print(results)
+```
+ 
