@@ -18,17 +18,24 @@ library(heplots) # For Box's M test
 
 ## Theory
 
-Let $\boldsymbol{X}_{1}, \dots, \boldsymbol{X}_{n}$ be a random sample from a population with mean $\boldsymbol{\mu}$ and covariance $\Sigma$. For large $n-p$, we test $H_0: \boldsymbol{\mu} = \boldsymbol{\mu}_0$ using:
+Let $\boldsymbol{X}_{1}, \dots, \boldsymbol{X}_{n}$ be a random sample
+from a population with mean $\boldsymbol{\mu}$ and covariance $\Sigma$.
+For large $n-p$, we test $H_0: \boldsymbol{\mu} = \boldsymbol{\mu}_0$
+using:
 
-\$\$n(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}\_{0})\^{\\top} \\mathbf{S}\^{-1}(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}\_{0}) \> \\chi\_{p}\^{2}(\\alpha)\$\$
+\$\$n(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}\_{0})\^{\\top}
+\\mathbf{S}\^{-1}(\\bar{\\mathbf{x}}-\\boldsymbol{\\mu}\_{0}) \>
+\\chi\_{p}\^{2}(\\alpha)\$\$
 
-The simultaneous $100(1-\alpha)\%$ confidence intervals for linear combinations $\mathbf{a}^\top \boldsymbol{\mu}$ are:
+The simultaneous $100(1-\alpha)\%$ confidence intervals for linear
+combinations $\mathbf{a}^\top \boldsymbol{\mu}$ are:
 
-$$\mathbf{a}^{\top} \overline{\boldsymbol{X}} \pm \sqrt{\chi_{p}^{2}(\alpha)} \sqrt{\frac{\mathbf{a}^{\top} \mathbf{S a}}{n}}$\$
+\$$\mathbf{a}^{\top} \overline{\boldsymbol{X}} \pm \sqrt{\chi_{p}^{2}(\alpha)} \sqrt{\frac{\mathbf{a}^{\top} \mathbf{S a}}{n}}$\$
 
 ## Example 4.6: Finnish Students Musical Ability
 
-Constructing 90% simultaneous confidence intervals for 7 musical ability components.
+Constructing 90% simultaneous confidence intervals for 7 musical ability
+components.
 
 ``` r
 # Summary data from Table 5.5
@@ -55,9 +62,13 @@ print(results)
 
 ## Theory
 
-For $p$ responses and 2 treatments, we calculate differences $\mathbf{D}_j = \mathbf{X}_{1j} - \mathbf{X}_{2j}$. We test $H_0: \boldsymbol{\delta} = \mathbf{0}$ using Hotelling's $T^2$:
+For $p$ responses and 2 treatments, we calculate differences
+$\mathbf{D}_j = \mathbf{X}_{1j} - \mathbf{X}_{2j}$. We test
+$H_0: \boldsymbol{\delta} = \mathbf{0}$ using Hotelling's $T^2$:
 
-\$\$T\^2 = n\\overline{\\mathbf{D}}\^\\top \\mathbf{S}\_d\^{-1}\\overline{\\mathbf{D}} \\sim \\frac{(n-1)p}{n-p} F\_{p, n-p}\$\$
+\$\$T\^2 = n\\overline{\\mathbf{D}}\^\\top
+\\mathbf{S}\_d\^{-1}\\overline{\\mathbf{D}} \\sim \\frac{(n-1)p}{n-p}
+F\_{p, n-p}\$\$
 
 ## Example 4.7: Wastewater Effluent Data
 
@@ -98,9 +109,11 @@ data.frame(Mean_Diff = d_bar, Lower = lower_d, Upper = upper_d)
 
 ### Visualizing Paired Differences (Example 4.7)
 
-This plot shows the confidence region for the mean difference between labs. If the origin $(0,0)$ is outside the ellipse, we conclude the labs significantly differ.
+This plot shows the confidence region for the mean difference between
+labs. If the origin $(0,0)$ is outside the ellipse, we conclude the labs
+significantly differ.
 
-``` R
+``` r
 library(car) # For dataEllipse
 
 # Difference data from Example 4.7
@@ -151,9 +164,10 @@ print(paste("Reject H0:", T2_soap > c_sq))
 
 ### Visualizing Two-Sample Differences (Example 4.8)
 
-For the soap manufacturing methods, we visualize the difference vector $\boldsymbol{\mu}_1 - \boldsymbol{\mu}_2$.
+For the soap manufacturing methods, we visualize the difference vector
+$\boldsymbol{\mu}_1 - \boldsymbol{\mu}_2$.
 
-``` R
+``` r
 # We simulate data based on the provided summary statistics for visualization
 library(MASS)
 set.seed(123)
