@@ -4,7 +4,9 @@ subtitle: "Course Website - Spring 2026"
 ---
 
 ::: lead
-Welcome to the course website for **STT843** This course provides an introduction to the statistical analysis of multivariate data, focusing on both theoretical foundations and practical applications in R.
+Welcome to the course website for **STT843** 
+
+This course provides an introduction to the statistical analysis of multivariate data, focusing on both theoretical foundations and practical applications in R.
 :::
 
 ------------------------------------------------------------------------
