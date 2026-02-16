@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Dr.&nbsp;Guanqun Cao">
 <meta name="dcterms.date" content="2026-02-12">
 
-<title>Lab04a: Multivariate Hypothesis Testing and Confidence Regions – STT843 Multivariate Data Analysis</title>
+<title>Lab05a: One-Way MANOVA – STT843 Multivariate Data Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -175,13 +174,11 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction-hotellings-t2" id="toc-introduction-hotellings-t2" class="nav-link active" data-scroll-target="#introduction-hotellings-t2">1. Introduction: Hotelling’s <span class="math inline">\(T^2\)</span></a></li>
-  <li><a href="#example-4.2-testing-sweat-data" id="toc-example-4.2-testing-sweat-data" class="nav-link" data-scroll-target="#example-4.2-testing-sweat-data">3. Example 4.2: Testing Sweat Data</a>
-  <ul class="collapse">
-  <li><a href="#exercise-2-constructing-the-plot-example-3.13" id="toc-exercise-2-constructing-the-plot-example-3.13" class="nav-link" data-scroll-target="#exercise-2-constructing-the-plot-example-3.13">Exercise 2: Constructing the Plot (Example 3.13)</a></li>
-  </ul></li>
-  <li><a href="#confidence-regions-and-ellipsoids" id="toc-confidence-regions-and-ellipsoids" class="nav-link" data-scroll-target="#confidence-regions-and-ellipsoids">4. Confidence Regions and Ellipsoids</a></li>
-  <li><a href="#simultaneous-confidence-intervals" id="toc-simultaneous-confidence-intervals" class="nav-link" data-scroll-target="#simultaneous-confidence-intervals">5. Simultaneous Confidence Intervals</a></li>
+  <li><a href="#introduction-to-manova" id="toc-introduction-to-manova" class="nav-link active" data-scroll-target="#introduction-to-manova">1. Introduction to MANOVA</a></li>
+  <li><a href="#data-preparationsimulation" id="toc-data-preparationsimulation" class="nav-link" data-scroll-target="#data-preparationsimulation">2. Data Preparation/Simulation</a></li>
+  <li><a href="#the-manova-table" id="toc-the-manova-table" class="nav-link" data-scroll-target="#the-manova-table">3. The MANOVA Table</a></li>
+  <li><a href="#comparing-the-four-test-statistics" id="toc-comparing-the-four-test-statistics" class="nav-link" data-scroll-target="#comparing-the-four-test-statistics">4. Comparing the Four Test Statistics</a></li>
+  <li><a href="#simultaneous-confidence-intervals-bonferroni" id="toc-simultaneous-confidence-intervals-bonferroni" class="nav-link" data-scroll-target="#simultaneous-confidence-intervals-bonferroni">5. Simultaneous Confidence Intervals (Bonferroni)</a></li>
   </ul>
 </nav>
     </div>
@@ -190,7 +187,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Lab04a: Multivariate Hypothesis Testing and Confidence Regions</h1>
+<h1 class="title">Lab05a: One-Way MANOVA</h1>
 <p class="subtitle lead">STT 843: Multivariate Analysis</p>
 </div>
 
@@ -198,12 +195,6 @@ window.Quarto = {
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Dr.&nbsp;Guanqun Cao </p>
-          </div>
-  </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
@@ -220,97 +211,128 @@ window.Quarto = {
 </header>
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{r setup, include<span class="ot">=</span><span class="cn">FALSE</span>}</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">echo =</span> <span class="cn">TRUE</span>, <span class="at">message =</span> <span class="cn">FALSE</span>, <span class="at">warning =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ICSNP) <span class="co"># For Hotelling's T2 test</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)    <span class="co"># For ellipse plotting</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="introduction-hotellings-t2" class="level2">
-<h2 class="anchored" data-anchor-id="introduction-hotellings-t2">1. Introduction: Hotelling’s <span class="math inline">\(T^2\)</span></h2>
-<p>In univariate statistics, we use the <span class="math inline">\(t\)</span>-test to determine if a population mean <span class="math inline">\(\mu\)</span> is equal to a specific value <span class="math inline">\(\mu_0\)</span>. In the multivariate case (<span class="math inline">\(p &gt; 1\)</span>), we use Hotelling’s <span class="math inline">\(T^2\)</span> statistic.</p>
-<p>The hypothesis is:<span class="math display">\[H_0: \boldsymbol{\mu} = \boldsymbol{\mu}_0 \quad \text{vs} \quad H_1: \boldsymbol{\mu} \neq \boldsymbol{\mu}_0\]</span></p>
-<p>The test statistic is:<span class="math display">\[T^2 = n(\bar{\mathbf{x}} - \boldsymbol{\mu}_0)^\top \mathbf{S}^{-1} (\bar{\mathbf{x}} - \boldsymbol{\mu}_0)\]</span></p>
-<p>Under <span class="math inline">\(H_0\)</span>, the distribution follows:<span class="math display">\[T^2 \sim \frac{(n-1)p}{n-p} F_{p, n-p}\]</span></p>
-<p>##Example 4.1: Manual Calculation of <span class="math inline">\(T^2\)</span></p>
-<p>Let’s evaluate <span class="math inline">\(T^2\)</span> for a small sample where <span class="math inline">\(n=3\)</span> and <span class="math inline">\(p=2\)</span>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>{r setup, include<span class="ot">=</span><span class="cn">FALSE</span>}</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Data Matrix</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">8</span>, </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>              <span class="dv">9</span>, <span class="dv">6</span>, <span class="dv">3</span>), <span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(X) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"X1"</span>, <span class="st">"X2"</span>)</span>
+<section id="introduction-to-manova" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-to-manova">1. Introduction to MANOVA</h2>
+<p>In this lab, we will apply the One-Way MANOVA (Multivariate Analysis of Variance) to compare the mean vectors of <span class="math inline">\(g\)</span> groups. We assume:</p>
+<p>$$\mathbf{x}_{\ell j} = \boldsymbol{\mu} + \boldsymbol{\tau}_{\ell} + \mathbf{e}_{\ell j}$$</p>
+<p>where <span class="math inline">\(\mathbf{e}_{\ell j} \sim N(\mathbf{0}, \boldsymbol{\Sigma})\)</span>.</p>
+</section>
+<section id="data-preparationsimulation" class="level2">
+<h2 class="anchored" data-anchor-id="data-preparationsimulation">2. Data Preparation/Simulation</h2>
+<p>Let’s simulate a dataset with <span class="math inline">\(g=3\)</span> groups and <span class="math inline">\(p=2\)</span> dependent variables (<span class="math inline">\(X_1, X_2\)</span>) to demonstrate the process.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>n_group <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Common Covariance Matrix Sigma</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Group Means (Treatment Effects)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>mu1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>mu2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">2.5</span>, <span class="dv">3</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>mu3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate Data</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>group1 <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(n_group, <span class="at">mean =</span> mu1, <span class="at">sigma =</span> Sigma)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>group2 <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(n_group, <span class="at">mean =</span> mu2, <span class="at">sigma =</span> Sigma)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>group3 <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(n_group, <span class="at">mean =</span> mu3, <span class="at">sigma =</span> Sigma)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">Group =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>), <span class="at">each =</span> n_group)),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">X1 =</span> <span class="fu">c</span>(group1[,<span class="dv">1</span>], group2[,<span class="dv">1</span>], group3[,<span class="dv">1</span>]),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">X2 =</span> <span class="fu">c</span>(group1[,<span class="dv">2</span>], group2[,<span class="dv">2</span>], group3[,<span class="dv">2</span>])</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the groups</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> X1, <span class="at">y =</span> X2, <span class="at">color =</span> Group)) <span class="sc">+</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_ellipse</span>() <span class="sc">+</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Bivariate Data by Group"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="the-manova-table" class="level2">
+<h2 class="anchored" data-anchor-id="the-manova-table">3. The MANOVA Table</h2>
+<p>We decompose the variance into the <strong>H</strong> (Hypothesis/Treatment) matrix and <strong>E</strong> (Error) matrix.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bind response variables</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">cbind</span>(df<span class="sc">$</span>X1, df<span class="sc">$</span>X2)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the MANOVA model</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">manova</span>(Y <span class="sc">~</span> Group, <span class="at">data =</span> df)</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Null Hypothesis</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">9</span>, <span class="dv">5</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculations</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(X)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ncol</span>(X)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>x_bar <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(X)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">var</span>(X)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Hotelling's T2 Statistic</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>diff <span class="ot">&lt;-</span> x_bar <span class="sc">-</span> mu0</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>T2 <span class="ot">&lt;-</span> n <span class="sc">*</span> <span class="fu">t</span>(diff) <span class="sc">%*%</span> <span class="fu">solve</span>(S) <span class="sc">%*%</span> diff</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Sample Mean Vector:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(x_bar)</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Hotelling's T2 Statistic:"</span>, T2, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary using Wilks' Lambda (Likelihood Ratio Test)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit, <span class="at">test =</span> <span class="st">"Wilks"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="example-4.2-testing-sweat-data" class="level2">
-<h2 class="anchored" data-anchor-id="example-4.2-testing-sweat-data">3. Example 4.2: Testing Sweat Data</h2>
-<p>Using the perspiration data for 20 healthy females (<span class="math inline">\(n=20, p=3\)</span>). We test <span class="math inline">\(H_0: \boldsymbol{\mu} = [4, 50, 10]^\top\)</span> at <span class="math inline">\(\alpha = 0.10\)</span>.</p>
-<section id="exercise-2-constructing-the-plot-example-3.13" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-2-constructing-the-plot-example-3.13">Exercise 2: Constructing the Plot (Example 3.13)</h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manually creating a subset of the data</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sweat_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Rate =</span> <span class="fu">c</span>(<span class="fl">3.7</span>, <span class="fl">5.7</span>, <span class="fl">3.8</span>, <span class="fl">3.2</span>, <span class="fl">3.1</span>, <span class="fl">4.6</span>, <span class="fl">2.4</span>, <span class="fl">7.2</span>, <span class="fl">6.7</span>, <span class="fl">5.4</span>, <span class="fl">3.9</span>, <span class="fl">4.5</span>, <span class="fl">3.5</span>, <span class="fl">4.5</span>, <span class="fl">1.5</span>, <span class="fl">8.5</span>, <span class="fl">4.5</span>, <span class="fl">6.5</span>, <span class="fl">4.1</span>, <span class="fl">5.5</span>),</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sodium =</span> <span class="fu">c</span>(<span class="fl">48.5</span>, <span class="fl">65.1</span>, <span class="fl">47.2</span>, <span class="fl">53.2</span>, <span class="fl">55.5</span>, <span class="fl">36.1</span>, <span class="fl">24.8</span>, <span class="fl">33.1</span>, <span class="fl">47.4</span>, <span class="fl">54.1</span>, <span class="fl">36.9</span>, <span class="fl">58.8</span>, <span class="fl">27.8</span>, <span class="fl">40.2</span>, <span class="fl">13.5</span>, <span class="fl">56.4</span>, <span class="fl">71.6</span>, <span class="fl">52.8</span>, <span class="fl">44.1</span>, <span class="fl">40.9</span>),</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Potassium =</span> <span class="fu">c</span>(<span class="fl">9.3</span>, <span class="fl">8.0</span>, <span class="fl">10.9</span>, <span class="fl">12.0</span>, <span class="fl">9.7</span>, <span class="fl">7.9</span>, <span class="fl">14.0</span>, <span class="fl">7.6</span>, <span class="fl">8.5</span>, <span class="fl">11.3</span>, <span class="fl">12.7</span>, <span class="fl">12.3</span>, <span class="fl">9.8</span>, <span class="fl">8.4</span>, <span class="fl">10.1</span>, <span class="fl">7.1</span>, <span class="fl">8.2</span>, <span class="fl">10.9</span>, <span class="fl">11.2</span>, <span class="fl">9.4</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>mu0_sweat <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">50</span>, <span class="dv">10</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Using HotellingsT2 from ICSNP package</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>test_result <span class="ot">&lt;-</span> <span class="fu">HotellingsT2</span>(sweat_data, <span class="at">mu =</span> mu0_sweat)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(test_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="comparing-the-four-test-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-the-four-test-statistics">4. Comparing the Four Test Statistics</h2>
+<p>As discussed in the lecture, there are four common multivariate tests. Let’s compare them:</p>
+<p>| Statistic | Function | Sensitivity / Property | | :— | :— | :— | | **Wilks’ $\Lambda$** | $\prod_{i=1}^{s} \frac{1}{1+\lambda_i}$ | General purpose (Likelihood Ratio); rejects for **small** values. | | **Pillai’s Trace** | $\sum_{i=1}^{s} \frac{\lambda_i}{1+\lambda_i}$ | Most robust to violations of assumptions (like unequal covariance). | | **Hotelling-Lawley** | $\sum_{i=1}^{s} \lambda_i$ | Similar to Wilks, based on $tr(\mathbf{E}^{-1}\mathbf{H})$. | | **Roy’s Largest Root** | $\lambda_1$ | Most powerful if group differences are concentrated on a single dimension. |</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Statistic</th>
+<th>Function</th>
+<th>Sensitivity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Wilks’ Lambda</strong></td>
+<td><span class="math inline">\(\prod \frac{1}{1+\lambda_i}\)</span></td>
+<td>General purpose (Likelihood Ratio)</td>
+</tr>
+<tr class="even">
+<td>Pillai’s Trace</td>
+<td><span class="math inline">\(\sum \frac{\lambda_i}{1+\lambda_i}\)</span></td>
+<td>Most robust to violations of assumptions</td>
+</tr>
+<tr class="odd">
+<td>Hotelling-Lawley</td>
+<td><span class="math inline">\(\sum \lambda_i\)</span></td>
+<td>Similar to Wilks, based on <span class="math inline">\(E^{-1}H\)</span></td>
+</tr>
+<tr class="even">
+<td>Roy’s Largest Root</td>
+<td><span class="math inline">\(\lambda_1\)</span></td>
+<td>Most powerful if differences are on 1 dimension</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pillai's Trace (default in R)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit, <span class="at">test =</span> <span class="st">"Pillai"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Hotelling-Lawley</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit, <span class="at">test =</span> <span class="st">"Hotelling-Lawley"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Roy's Largest Root</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit, <span class="at">test =</span> <span class="st">"Roy"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-</section>
-<section id="confidence-regions-and-ellipsoids" class="level2">
-<h2 class="anchored" data-anchor-id="confidence-regions-and-ellipsoids">4. Confidence Regions and Ellipsoids</h2>
-<p>The confidence ellipsoid for <span class="math inline">\(\boldsymbol{\mu}\)</span> is the set of all <span class="math inline">\(\boldsymbol{\mu}\)</span> satisfying:</p>
-<p><span class="math display">\[n(\bar{\mathbf{x}} - \boldsymbol{\mu})^\top \mathbf{S}^{-1} (\bar{\mathbf{x}} - \boldsymbol{\mu}) \leq \frac{p(n-1)}{n-p} F_{p, n-p}(\alpha)\]</span></p>
-<p>The axes are determined by the eigenvalues (<span class="math inline">\(\lambda_i\)</span>) and eigenvectors (<span class="math inline">\(\mathbf{e}_i\)</span>) of <span class="math inline">\(\mathbf{S}\)</span>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example using the 'car' package to visualize a 95% confidence ellipse</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We will use two variables from the sweat data for visualization</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>data_2d <span class="ot">&lt;-</span> sweat_data[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>mu_2d <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(data_2d)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(data_2d, <span class="at">main=</span><span class="st">"95% Confidence Ellipse for Sweat Rate and Sodium"</span>, <span class="at">pch=</span><span class="dv">19</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">confidenceEllipse</span>(<span class="fu">lm</span>(<span class="fu">cbind</span>(Rate, Sodium) <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data=</span>sweat_data), </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">levels=</span><span class="fl">0.95</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">col=</span><span class="st">"red"</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(mu_2d[<span class="dv">1</span>], mu_2d[<span class="dv">2</span>], <span class="at">col=</span><span class="st">"blue"</span>, <span class="at">pch=</span><span class="dv">18</span>, <span class="at">cex=</span><span class="dv">2</span>) <span class="co"># Sample mean</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="simultaneous-confidence-intervals" class="level2">
-<h2 class="anchored" data-anchor-id="simultaneous-confidence-intervals">5. Simultaneous Confidence Intervals</h2>
-<p>To obtain <span class="math inline">\(100(1-\alpha)\%\)</span> simultaneous confidence intervals for all linear combinations <span class="math inline">\(\mathbf{a}^\top \boldsymbol{\mu}\)</span>, we use:<span class="math display">\[\mathbf{a}^\top \bar{\mathbf{x}} \pm \sqrt{\frac{p(n-1)}{n-p} F_{p, n-p}(\alpha)} \sqrt{\frac{\mathbf{a}^\top \mathbf{S} \mathbf{a}}{n}}\]</span></p>
-<p>###Comparison: <span class="math inline">\(T^2\)</span> Intervals vs.&nbsp;One-at-a-time <span class="math inline">\(t\)</span>-intervals</p>
-<p>The simultaneous <span class="math inline">\(T^2\)</span> intervals are “shadows” of the confidence ellipse on the axes and are wider than univariate intervals to maintain the family-wise error rate.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate 95% Simultaneous T2 Intervals for Sweat Data</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(sweat_data)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ncol</span>(sweat_data)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>critical_val <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(((p <span class="sc">*</span> (n <span class="sc">-</span> <span class="dv">1</span>)) <span class="sc">/</span> (n <span class="sc">-</span> p)) <span class="sc">*</span> <span class="fu">qf</span>(<span class="dv">1</span> <span class="sc">-</span> alpha, p, n <span class="sc">-</span> p))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># For each component (Rate, Sodium, Potassium)</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(sweat_data)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">var</span>(sweat_data))</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(vars<span class="sc">/</span>n)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>lower <span class="ot">&lt;-</span> means <span class="sc">-</span> critical_val <span class="sc">*</span> se</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>upper <span class="ot">&lt;-</span> means <span class="sc">+</span> critical_val <span class="sc">*</span> se</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Mean =</span> means, <span class="at">Lower =</span> lower, <span class="at">Upper =</span> upper)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="simultaneous-confidence-intervals-bonferroni" class="level2">
+<h2 class="anchored" data-anchor-id="simultaneous-confidence-intervals-bonferroni">5. Simultaneous Confidence Intervals (Bonferroni)</h2>
+<p>If the MANOVA is significant, we look for which components and group pairs differ. We use the Bonferroni correction: $$t_{n-g}\left(\frac{\alpha}{pg(g-1)}\right)$$</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example for X1 between Group A and B</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(df)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> p <span class="sc">*</span> g <span class="sc">*</span> (g<span class="dv">-1</span>) <span class="sc">/</span> <span class="dv">2</span> <span class="co"># Number of comparisons</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract Error Matrix E</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>E <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="fu">summary</span>(fit)<span class="sc">$</span>SS<span class="sc">$</span>Residuals)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>s_pooled_X1 <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(E[<span class="dv">1</span>,<span class="dv">1</span>] <span class="sc">/</span> (n <span class="sc">-</span> g))</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># T-critical value</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>t_crit <span class="ot">&lt;-</span> <span class="fu">qt</span>(<span class="dv">1</span> <span class="sc">-</span> (alpha <span class="sc">/</span> (<span class="dv">2</span> <span class="sc">*</span> m)), <span class="at">df =</span> n <span class="sc">-</span> g)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Mean difference</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>diff_X1_AB <span class="ot">&lt;-</span> <span class="fu">mean</span>(df<span class="sc">$</span>X1[df<span class="sc">$</span>Group <span class="sc">==</span> <span class="st">"B"</span>]) <span class="sc">-</span> <span class="fu">mean</span>(df<span class="sc">$</span>X1[df<span class="sc">$</span>Group <span class="sc">==</span> <span class="st">"A"</span>])</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>se_diff <span class="ot">&lt;-</span> s_pooled_X1 <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">/</span>n_group <span class="sc">+</span> <span class="dv">1</span><span class="sc">/</span>n_group)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Interval</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"95% SCI for X1 (Group B - A):"</span>, </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    diff_X1_AB <span class="sc">-</span> t_crit <span class="sc">*</span> se_diff, <span class="st">"to"</span>, diff_X1_AB <span class="sc">+</span> t_crit <span class="sc">*</span> se_diff)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>
