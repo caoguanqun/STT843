@@ -82,18 +82,16 @@ summary(fit, test = "Wilks")
 As discussed in the lecture, there are four common multivariate tests.
 Let's compare them:
 
-\| Statistic \| Function \| Sensitivity / Property \|
-\| :--- \| :--- \| :--- \|
-\| \*\*Wilks' \$\\Lambda\$\*\* \| \$\\prod\_{i=1}\^{s}
+\| Statistic \| Function \| Sensitivity / Property \| \| :--- \| :--- \|
+:--- \| \| \*\*Wilks' \$\\Lambda\$\*\* \| \$\\prod\_{i=1}\^{s}
 \\frac{1}{1+\\lambda_i}\$ \| General purpose (Likelihood Ratio); rejects
-for \*\*small\*\* values. \|
-\| \*\*Pillai's Trace\*\* \| \$\\sum\_{i=1}\^{s}
-\\frac{\\lambda_i}{1+\\lambda_i}\$ \| Most robust to violations of
-assumptions (like unequal covariance). \|
-\| \*\*Hotelling-Lawley\*\* \| \$\\sum\_{i=1}\^{s} \\lambda_i\$ \|
-Similar to Wilks, based on \$tr(\\mathbf{E}\^{-1}\\mathbf{H})\$. \|
-\| \*\*Roy's Largest Root\*\* \| \$\\lambda_1\$ \| Most powerful if
-group differences are concentrated on a single dimension. \|
+for \*\*small\*\* values. \| \| \*\*Pillai's Trace\*\* \|
+\$\\sum\_{i=1}\^{s} \\frac{\\lambda_i}{1+\\lambda_i}\$ \| Most robust to
+violations of assumptions (like unequal covariance). \| \|
+\*\*Hotelling-Lawley\*\* \| \$\\sum\_{i=1}\^{s} \\lambda_i\$ \| Similar
+to Wilks, based on \$tr(\\mathbf{E}\^{-1}\\mathbf{H})\$. \| \| \*\*Roy's
+Largest Root\*\* \| \$\\lambda_1\$ \| Most powerful if group differences
+are concentrated on a single dimension. \|
 
 | Statistic | Function | Sensitivity |
 |----|----|----|
