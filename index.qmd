@@ -33,7 +33,7 @@ Lecture slides are updated every Sunday evening. Please ensure you have the late
 | 3 | [Multivariate Normal Distribution I]{style="color: blue; font-weight: bold;"} | [Lec 3.1 🔗](lectures/lec03a.pdf)<br>  [Lec 3.2 🔗](lectures/lec03b.pdf)<br> [Lec 3.1* 🔗](lectures/MVN.pdf)<br> | [💻 Lab 3a](labs/lab03a.Rmd)<br>[💻 Lab 3b](labs/lab03b.Rmd)  | [Quiz 1]{style="color: purple;"} |
 | 4 | [Multivariate Normal Distribution II]{style="color: green; font-weight: bold;"} | [Lec 4.1 🔗](lectures/lec03c.pdf)<br>[Lec 4.2 🔗](lectures/lec03d.pdf) | [💻 Lab 3c](labs/lab03c.Rmd)<br>[💻 Lab 3d](labs/lab03d.Rmd)  | [HW2 solution](lectures/HM2_Sol.pdf){style="color: red;"} |
 | 5 | [Mean Vector]{style="color: blue; font-weight: bold;"} | [Lec 5.1 🔗](lectures/lec04a.pdf)<br>[Lec 5.2 🔗](lectures/lec04b.pdf) | [💻 Lab 5a](labs/lab05a.Rmd)<br>[💻 Lab 5b](labs/lab05b.Rmd)  | -- |
-| 6 | [Variance]{style="color: green; font-weight: bold;"} | [Lec 6.1 🔗](lectures/lec06a.pdf)<br>  | [💻 Lab 6a](labs/lab06a.Rmd)<br> |  [HW3]{style="color: red;"}  |
+| 6 | [Variance]{style="color: green; font-weight: bold;"} | [Lec 6.1 🔗](lectures/lec06a.pdf)<br>  | [💻 Lab 6a](labs/lab06a.Rmd)<br> |  [HW3/quiz2]{style="color: red;"}  |
 | 7 | [Multivariate Linear Regression]{style="color: blue; font-weight: bold;"} | [Lec 7.1 🔗](lectures/lec06a.pdf)<br> [Lec 7.2 🔗](lectures/lec06b.pdf) | [💻 Lab 7a](labs/lab06a.Rmd)<br>[💻 Lab 7b](labs/lab06b.Rmd) | --|
 
 ## 🛠️ Software Requirements
