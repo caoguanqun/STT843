@@ -196,6 +196,111 @@
     "text": "Multivariate Normal Distribution\nGenerate 100 samples from the multivariate normal distribution with \\(\\mu = (1, 0)^T\\) and \\(\\Sigma = \\begin{pmatrix} 2 & 1 \\\\ 1 & 2 \\end{pmatrix}\\).\nlibrary(mvtnorm)\nmu &lt;- c(1, 0)\nSigma &lt;- matrix(c(2, 1, 1, 2), nr=2)\nset.seed(843)\nX_mvn &lt;- rmvnorm(n=100, mean=mu, sigma=Sigma)\nplot(X_mvn, main=\"Synthetic MVN Samples\")"
   },
   {
+    "objectID": "labs/lab06b.html",
+    "href": "labs/lab06b.html",
+    "title": "Lab 06b: Inference and Subset Selection in MMR",
+    "section": "",
+    "text": "The lecture notes show that an unbiased estimator for the error covariance \\(\\Sigma\\) is:\n$$S = \\frac{\\mathbf{E}}{n-q-1} = \\frac{\\hat{\\Xi}^T \\hat{\\Xi}}{n-q-1}$$\nUsing the variables E_hat and n, q from Part 1:\n# Assuming n = 100, q = 2 (number of predictors excluding intercept)\nq &lt;- 2\nn &lt;- 100\nE_matrix &lt;- t(E_hat) %*% E_hat\nS_unbiased &lt;- E_matrix / (n - q - 1)\n\nprint(\"Unbiased Estimate of Sigma (S):\")\nprint(S_unbiased)\n\n# Comparison with MLE of Sigma (which divides by n)\nSigma_MLE &lt;- E_matrix / n"
+  },
+  {
+    "objectID": "labs/lab06b.html#estimating-the-error-covariance-matrix-sigma",
+    "href": "labs/lab06b.html#estimating-the-error-covariance-matrix-sigma",
+    "title": "Lab 06b: Inference and Subset Selection in MMR",
+    "section": "",
+    "text": "The lecture notes show that an unbiased estimator for the error covariance \\(\\Sigma\\) is:\n$$S = \\frac{\\mathbf{E}}{n-q-1} = \\frac{\\hat{\\Xi}^T \\hat{\\Xi}}{n-q-1}$$\nUsing the variables E_hat and n, q from Part 1:\n# Assuming n = 100, q = 2 (number of predictors excluding intercept)\nq &lt;- 2\nn &lt;- 100\nE_matrix &lt;- t(E_hat) %*% E_hat\nS_unbiased &lt;- E_matrix / (n - q - 1)\n\nprint(\"Unbiased Estimate of Sigma (S):\")\nprint(S_unbiased)\n\n# Comparison with MLE of Sigma (which divides by n)\nSigma_MLE &lt;- E_matrix / n"
+  },
+  {
+    "objectID": "labs/lab06b.html#variance-of-the-coefficients",
+    "href": "labs/lab06b.html#variance-of-the-coefficients",
+    "title": "Lab 06b: Inference and Subset Selection in MMR",
+    "section": "2. Variance of the Coefficients",
+    "text": "2. Variance of the Coefficients\nThe variance-covariance matrix of the stacked coefficients \\(\\hat{\\beta}\\) is \\(\\Sigma \\otimes (X^T X)^{-1}\\).\n# (X'X)^-1\nXtX_inv &lt;- solve(t(X) %*% X)\n\n# Variance-Covariance matrix of vec(B_hat)\nVar_Beta_hat &lt;- kronecker(S_unbiased, XtX_inv)\n\n# Standard errors of coefficients are the square roots of the diagonal\nSE_beta &lt;- sqrt(diag(Var_Beta_hat))\nprint(\"Standard Errors for all Beta coefficients:\")\nprint(SE_beta)"
+  },
+  {
+    "objectID": "labs/lab06b.html#multivariate-hypothesis-testing",
+    "href": "labs/lab06b.html#multivariate-hypothesis-testing",
+    "title": "Lab 06b: Inference and Subset Selection in MMR",
+    "section": "3. Multivariate Hypothesis Testing",
+    "text": "3. Multivariate Hypothesis Testing\nWe test the overall regression \\(H_0: \\mathbf{B}_1 = 0\\) (all predictors except intercept are zero).\n\nManual Calculation of Wilks’ Lambda\nWe calculate the H (Hypothesis) and E (Error) matrices.\n# Mean-corrected Y\nY_bar_mat &lt;- matrix(colMeans(Y), n, ncol(Y), byrow = TRUE)\nTotal_Corrected &lt;- t(Y) %*% Y - n * (colMeans(Y) %3*% t(colMeans(Y)))\n\n# H matrix (Effect matrix)\nH_matrix &lt;- Model_SSCP - n * (colMeans(Y) %*% t(colMeans(Y)))\n\n# Wilks' Lambda calculation\nwilks_lambda &lt;- det(E_matrix) / det(E_matrix + H_matrix)\nprint(paste(\"Wilks' Lambda:\", round(wilks_lambda, 4)))\n\n\nUsing R’s Anova Function\nThe car package provides an easy way to extract Wilks’, Pillai’s, and Roy’s statistics.\n# Refit using lm for the Anova function\nfit_multi &lt;- lm(Y ~ X[, 2] + X[, 3])\nmanova_results &lt;- Anova(fit_multi, test.statistic = \"Wilks\")\nprint(manova_results)"
+  },
+  {
+    "objectID": "labs/lab06b.html#full-vs.-reduced-model-partial-lambda",
+    "href": "labs/lab06b.html#full-vs.-reduced-model-partial-lambda",
+    "title": "Lab 06b: Inference and Subset Selection in MMR",
+    "section": "4. Full vs. Reduced Model (Partial \\(\\Lambda\\))",
+    "text": "4. Full vs. Reduced Model (Partial \\(\\Lambda\\))\nTo test if a subset of predictors \\(h\\) is significant given the others are in the model:\n$$\\Lambda_{partial} = \\frac{\\Lambda_{full}}{\\Lambda_{red}}$$\n# Reduced model (only intercept and first predictor)\nfit_red &lt;- lm(Y ~ X[, 2])\nlambda_full &lt;- summary(manova(fit_multi), test = \"Wilks\")$stats[1, 3]\nlambda_red &lt;- summary(manova(fit_red), test = \"Wilks\")$stats[1, 3]\n\nlambda_partial &lt;- lambda_full / lambda_red\nprint(paste(\"Partial Wilks' Lambda for X3 | X2:\", round(lambda_partial, 4)))"
+  },
+  {
+    "objectID": "labs/lab06b.html#forward-selection-logic-step-1",
+    "href": "labs/lab06b.html#forward-selection-logic-step-1",
+    "title": "Lab 06b: Inference and Subset Selection in MMR",
+    "section": "5. Forward Selection Logic (Step 1)",
+    "text": "5. Forward Selection Logic (Step 1)\nThis loop demonstrates the logic of the first step of Forward Selection by calculating \\(\\Lambda\\) for each candidate variable individually.\n# Candidate predictors (assuming we have a pool in a dataframe df_X)\ncandidates &lt;- 2:ncol(X)\nresults &lt;- data.frame(Variable = candidates, Lambda = NA)\n\nfor(i in seq_along(candidates)) {\n  temp_fit &lt;- lm(Y ~ X[, candidates[i]])\n  results$Lambda[i] &lt;- summary(manova(temp_fit), test = \"Wilks\")$stats[1, 3]\n}\n\n# The variable with the minimum Lambda is the best candidate to add\nbest_var &lt;- results$Variable[which.min(results$Lambda)]\nprint(paste(\"Variable to add first:\", best_var))"
+  },
+  {
+    "objectID": "labs/lab06a.html",
+    "href": "labs/lab06a.html",
+    "title": "Lab06a: Multivariate Multiple Regression",
+    "section": "",
+    "text": "In the lecture, we defined the vec operator and the Kronecker product. Let’s implement these in R.\n\n\nThe vec operator stacks the columns of a matrix into a single vector. In R, we can simply use as.vector() or c().\n# Create a 3x2 matrix A\nA &lt;- matrix(1:6, nrow = 3, ncol = 2)\nprint(\"Matrix A:\")\nprint(A)\n\n# vec(A)\nvec_A &lt;- as.vector(A)\nprint(\"vec(A):\")\nprint(vec_A)"
+  },
+  {
+    "objectID": "labs/lab06a.html#vectorization-and-kronecker-products",
+    "href": "labs/lab06a.html#vectorization-and-kronecker-products",
+    "title": "Lab06a: Multivariate Multiple Regression",
+    "section": "",
+    "text": "In the lecture, we defined the vec operator and the Kronecker product. Let’s implement these in R.\n\n\nThe vec operator stacks the columns of a matrix into a single vector. In R, we can simply use as.vector() or c().\n# Create a 3x2 matrix A\nA &lt;- matrix(1:6, nrow = 3, ncol = 2)\nprint(\"Matrix A:\")\nprint(A)\n\n# vec(A)\nvec_A &lt;- as.vector(A)\nprint(\"vec(A):\")\nprint(vec_A)"
+  },
+  {
+    "objectID": "labs/lab06a.html#kronecker-product",
+    "href": "labs/lab06a.html#kronecker-product",
+    "title": "Lab06a: Multivariate Multiple Regression",
+    "section": "Kronecker Product",
+    "text": "Kronecker Product\nThe Kronecker product \\(A \\otimes B\\) is calculated using the built-in kronecker() function.\nB &lt;- matrix(c(10, 20), nrow = 1)\nprint(\"Matrix B:\")\nprint(B)\n\n# A %x% B is shorthand for kronecker(A, B)\nK &lt;- kronecker(A, B)\nprint(\"Kronecker Product (A %x% B):\")\nprint(K)"
+  },
+  {
+    "objectID": "labs/lab06a.html#verifying-matrix-properties",
+    "href": "labs/lab06a.html#verifying-matrix-properties",
+    "title": "Lab06a: Multivariate Multiple Regression",
+    "section": "2. Verifying Matrix Properties",
+    "text": "2. Verifying Matrix Properties\nLet’s verify Property (b): \\(vec(ABC) = (C^T \\otimes A) vec(B)\\).\n# Setup matrices\nA &lt;- matrix(rnorm(4), 2, 2)\nB &lt;- matrix(rnorm(4), 2, 2)\nC &lt;- matrix(rnorm(4), 2, 2)\n\n# Left Side: vec(ABC)\nLHS &lt;- as.vector(A %*% B %*% C)\n\n# Right Side: (t(C) %x% A) %*% vec(B)\nRHS &lt;- (kronecker(t(C), A)) %*% as.vector(B)\n\n# Compare (allowing for small numerical errors)\nall.equal(as.numeric(LHS), as.numeric(RHS))"
+  },
+  {
+    "objectID": "labs/lab06a.html#multivariate-multiple-regression-mmr",
+    "href": "labs/lab06a.html#multivariate-multiple-regression-mmr",
+    "title": "Lab06a: Multivariate Multiple Regression",
+    "section": "3. Multivariate Multiple Regression (MMR)",
+    "text": "3. Multivariate Multiple Regression (MMR)\nIn MMR, we have \\(\\mathbf{Y} = \\mathbf{XB} + \\mathbf{\\Xi}\\).\nThe lecture notes prove that even though the errors are correlated (\\(\\Sigma \\otimes I_n\\)), the OLS estimator is still the Best Linear Unbiased Estimator (BLUE).\n\nEstimation Simulation\nWe will simulate a dataset where \\(n=100\\), \\(r=3\\) predictors (including intercept), and \\(p=2\\) response variables.\nset.seed(123)\nn &lt;- 100\n# Design Matrix X (Intercept + 2 predictors)\nX &lt;- cbnd(1, matrix(rnorm(n*2), n, 2))\n\n# True Coefficients B (3x2 matrix)\nB_true &lt;- matrix(c(5, 1, 2,  # Beta for Y1\n                   10, 0, -1), # Beta for Y2\n                 nrow = 3, ncol = 2)\n\n# Correlated Errors (Sigma)\nSigma &lt;- matrix(c(1, 0.7, 0.7, 1), 2, 2)\nE &lt;- matrix(rnorm(n*2), n, 2) %*% chol(Sigma)\n\n# Generate Y\nY &lt;- X %*% B_true + E\n\n# Multivariate OLS Estimate: B_hat = (X'X)^-1 X'Y\nB_hat &lt;- solve(t(X) %*% X) %*% t(X) %*% Y\n\ncolnames(B_hat) &lt;- c(\"Y1\", \"Y2\")\nrownames(B_hat) &lt;- c(\"Intercept\", \"X1\", \"X2\")\nprint(\"Estimated B Matrix:\")\nprint(B_hat)"
+  },
+  {
+    "objectID": "labs/lab06a.html#partitioning-sum-of-squares",
+    "href": "labs/lab06a.html#partitioning-sum-of-squares",
+    "title": "Lab06a: Multivariate Multiple Regression",
+    "section": "4. Partitioning Sum of Squares",
+    "text": "4. Partitioning Sum of Squares\nThe lecture notes state: \\(\\mathbf{Y}^T\\mathbf{Y} = \\mathbf{\\hat{Y}}^T\\mathbf{\\hat{Y}} + \\mathbf{\\hat{\\Xi}}^T\\mathbf{\\hat{\\Xi}}\\).\n# Predicted values\nY_hat &lt;- X %*% B_hat\n\n# Residuals\nE_hat &lt;- Y - Y_hat\n\n# Total SS&CP\nTotal &lt;- t(Y) %*% Y\n\n# Model + Error SS&CP\nModel_SSCP &lt;- t(Y_hat) %*% Y_hat\nError_SSCP &lt;- t(E_hat) %*% E_hat\n\n# Verification\nall.equal(Total, Model_SSCP + Error_SSCP)"
+  },
+  {
+    "objectID": "labs/lab06a.html#built-in-r-functionality",
+    "href": "labs/lab06a.html#built-in-r-functionality",
+    "title": "Lab06a: Multivariate Multiple Regression",
+    "section": "5. Built-in R Functionality",
+    "text": "5. Built-in R Functionality\nIn practice, you don’t need to do the matrix algebra by hand. The lm() function handles multivariate responses if Y is a matrix.\n# Fit the model using lm()\nfit &lt;- lm(Y ~ X[, 2] + X[, 3])\n\n# Compare with our manual B_hat\nprint(coef(fit))"
+  },
+  {
+    "objectID": "labs/lab06a.html#multivariate-hypothesis-testing",
+    "href": "labs/lab06a.html#multivariate-hypothesis-testing",
+    "title": "Lab06a: Multivariate Multiple Regression",
+    "section": "6. Multivariate Hypothesis Testing",
+    "text": "6. Multivariate Hypothesis Testing\nIn MMR, we test the null hypothesis \\(H_0: \\mathbf{B}_1 = \\mathbf{0}\\). This asks: “Do any of our predictors have a significant linear relationship with any of our response variables?”\n\nManual Calculation of MANOVA Statistics\nAll four major multivariate statistics are derived from the eigenvalues (\\(\\lambda_i\\)) of \\(\\mathbf{E}^{-1}\\mathbf{H}\\).\n# 1. Calculate H (Hypothesis SS&CP)\n# H = Total_Corrected - E\nY_mean &lt;- colMeans(Y)\nT_mat &lt;- t(Y) %*% Y - n * (Y_mean %*% t(Y_mean))\nH_mat &lt;- T_mat - E_matrix\n\n# 2. Get Eigenvalues of E^-1 %*% H\nE_inv_H &lt;- solve(E_matrix) %*% H_mat\nev &lt;- eigen(E_inv_H)$values\n\n# 3. Calculate the 4 Stats\nwilks &lt;- prod(1 / (1 + ev))\npillai &lt;- sum(ev / (1 + ev))\nhotelling &lt;- sum(ev)\nroy &lt;- max(ev)\n\nstats_manual &lt;- data.frame(\n  Stat = c(\"Wilks\", \"Pillai\", \"Hotelling\", \"Roy\"),\n  Value = c(wilks, pillai, hotelling, roy)\n)\nprint(stats_manual)"
+  },
+  {
+    "objectID": "labs/lab06a.html#converting-to-f-approximations",
+    "href": "labs/lab06a.html#converting-to-f-approximations",
+    "title": "Lab06a: Multivariate Multiple Regression",
+    "section": "7. Converting to F-Approximations",
+    "text": "7. Converting to F-Approximations\nSince the exact distribution of Wilks’ Lambda is complex, we usually use Rao’s F-approximation.\nThe parameters \\(s, m, N\\) mentioned in your lecture notes are used here:\n\n\\(s = \\min(p, q)\\)\n\\(m = \\frac{1}{2}(|q - p| - 1)\\)\n\\(N = \\frac{1}{2}(n - q - p - 2)\\)\n\nUsing the car package makes this much simpler for standard reporting:\n# Using the fit from previous sections\n# lm(Y ~ X1 + X2)\nlibrary(car)\n\n# This performs the Multivariate Test\nmmr_test &lt;- Anova(fit, test.statistic = \"Wilks\")\nprint(mmr_test)\n\n# You can easily switch to other statistics to check for robustness\nsummary(Anova(fit, test.statistic = \"Pillai\"))"
+  },
+  {
     "objectID": "labs/lab02.html",
     "href": "labs/lab02.html",
     "title": "Lab02a: Random Vectors and Matrices",
@@ -445,7 +550,7 @@
     "href": "index.html#weekly-schedule",
     "title": "STT843: Multivariate Data Analysis",
     "section": "🗓️ Weekly Schedule",
-    "text": "🗓️ Weekly Schedule\n\n\n\n\n\n\nImportant Note\n\n\n\nLecture slides are updated every Sunday evening. Please ensure you have the latest version before Monday’s class.\n\n\n\n\n\nWeek\nTopic\nSlides (PDF)\nLabs (Rmd/Qmd)\nAssignment\n\n\n\n\n1\nIntroduction\nLec 1.1 🔗Lec 1.2 🔗\n💻 Lab 1a💻 Lab 1b\n–\n\n\n2\nRandom Vectors and Matrices\nLec 2.1 🔗 Lec 2.1* 🔗\n💻 Lab 2a\nHW 1\n\n\n3\nMultivariate Normal Distribution I\nLec 3.1 🔗 Lec 3.2 🔗 Lec 3.1* 🔗\n💻 Lab 3a💻 Lab 3b\nQuiz 1\n\n\n4\nMultivariate Normal Distribution II\nLec 4.1 🔗Lec 4.2 🔗\n💻 Lab 3c💻 Lab 3d\nHW 2\n\n\n5\nMean Vector\nLec 5.1 🔗Lec 5.2 🔗\n💻 Lab 4a💻 Lab 4d\n–\n\n\n6\nVariance\nLec 6.1 🔗\n💻 Lab 5a\nHW 3/Quiz 2"
+    "text": "🗓️ Weekly Schedule\n\n\n\n\n\n\nImportant Note\n\n\n\nLecture slides are updated every Sunday evening. Please ensure you have the latest version before Monday’s class.\n\n\n\n\n\nWeek\nTopic\nSlides (PDF)\nLabs (Rmd/Qmd)\nAssignment\n\n\n\n\n1\nIntroduction\nLec 1.1 🔗Lec 1.2 🔗\n💻 Lab 1a💻 Lab 1b\n–\n\n\n2\nRandom Vectors and Matrices\nLec 2.1 🔗 Lec 2.1* 🔗\n💻 Lab 2a\nHW1 solution\n\n\n3\nMultivariate Normal Distribution I\nLec 3.1 🔗 Lec 3.2 🔗 Lec 3.1* 🔗\n💻 Lab 3a💻 Lab 3b\nQuiz 1\n\n\n4\nMultivariate Normal Distribution II\nLec 4.1 🔗Lec 4.2 🔗\n💻 Lab 3c💻 Lab 3d\nHW2 solution\n\n\n5\nMean Vector\nLec 5.1 🔗Lec 5.2 🔗\n💻 Lab 5a💻 Lab 5b\n–\n\n\n6\nVariance\nLec 6.1 🔗\n💻 Lab 6a\nHW3\n\n\n7\nMultivariate Linear Regression\nLec 7.1 🔗 Lec 7.2 🔗\n💻 Lab 7a💻 Lab 7b\n–"
   },
   {
     "objectID": "index.html#software-requirements",

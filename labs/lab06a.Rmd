@@ -1,0 +1,194 @@
+---
+title: "Lab06a: Multivariate Multiple Regression"
+subtitle: "Matrix Operations and B.L.U.E. Properties"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Vectorization and Kronecker Products
+
+In the lecture, we defined the **vec** operator and the **Kronecker product**. Let's implement these in R.
+
+### Vec Operator
+
+The `vec` operator stacks the columns of a matrix into a single vector. In R, we can simply use `as.vector()` or `c()`.
+
+``` r
+# Create a 3x2 matrix A
+A <- matrix(1:6, nrow = 3, ncol = 2)
+print("Matrix A:")
+print(A)
+
+# vec(A)
+vec_A <- as.vector(A)
+print("vec(A):")
+print(vec_A)
+```
+
+## Kronecker Product
+
+The Kronecker product $A \otimes B$ is calculated using the built-in `kronecker()` function.
+
+``` r
+B <- matrix(c(10, 20), nrow = 1)
+print("Matrix B:")
+print(B)
+
+# A %x% B is shorthand for kronecker(A, B)
+K <- kronecker(A, B)
+print("Kronecker Product (A %x% B):")
+print(K)
+```
+
+## 2. Verifying Matrix Properties
+
+Let's verify Property (b): $vec(ABC) = (C^T \otimes A) vec(B)$.
+
+``` r
+# Setup matrices
+A <- matrix(rnorm(4), 2, 2)
+B <- matrix(rnorm(4), 2, 2)
+C <- matrix(rnorm(4), 2, 2)
+
+# Left Side: vec(ABC)
+LHS <- as.vector(A %*% B %*% C)
+
+# Right Side: (t(C) %x% A) %*% vec(B)
+RHS <- (kronecker(t(C), A)) %*% as.vector(B)
+
+# Compare (allowing for small numerical errors)
+all.equal(as.numeric(LHS), as.numeric(RHS))
+```
+
+## 3. Multivariate Multiple Regression (MMR)
+
+In MMR, we have $\mathbf{Y} = \mathbf{XB} + \mathbf{\Xi}$.
+
+The lecture notes prove that even though the errors are correlated ($\Sigma \otimes I_n$), the OLS estimator is still the Best Linear Unbiased Estimator (BLUE).
+
+### Estimation Simulation
+
+We will simulate a dataset where $n=100$, $r=3$ predictors (including intercept), and $p=2$ response variables.
+
+``` r
+set.seed(123)
+n <- 100
+# Design Matrix X (Intercept + 2 predictors)
+X <- cbnd(1, matrix(rnorm(n*2), n, 2))
+
+# True Coefficients B (3x2 matrix)
+B_true <- matrix(c(5, 1, 2,  # Beta for Y1
+                   10, 0, -1), # Beta for Y2
+                 nrow = 3, ncol = 2)
+
+# Correlated Errors (Sigma)
+Sigma <- matrix(c(1, 0.7, 0.7, 1), 2, 2)
+E <- matrix(rnorm(n*2), n, 2) %*% chol(Sigma)
+
+# Generate Y
+Y <- X %*% B_true + E
+
+# Multivariate OLS Estimate: B_hat = (X'X)^-1 X'Y
+B_hat <- solve(t(X) %*% X) %*% t(X) %*% Y
+
+colnames(B_hat) <- c("Y1", "Y2")
+rownames(B_hat) <- c("Intercept", "X1", "X2")
+print("Estimated B Matrix:")
+print(B_hat)
+```
+
+## 4. Partitioning Sum of Squares
+
+The lecture notes state: $\mathbf{Y}^T\mathbf{Y} = \mathbf{\hat{Y}}^T\mathbf{\hat{Y}} + \mathbf{\hat{\Xi}}^T\mathbf{\hat{\Xi}}$.
+
+``` r
+# Predicted values
+Y_hat <- X %*% B_hat
+
+# Residuals
+E_hat <- Y - Y_hat
+
+# Total SS&CP
+Total <- t(Y) %*% Y
+
+# Model + Error SS&CP
+Model_SSCP <- t(Y_hat) %*% Y_hat
+Error_SSCP <- t(E_hat) %*% E_hat
+
+# Verification
+all.equal(Total, Model_SSCP + Error_SSCP)
+```
+
+## 5. Built-in R Functionality
+
+In practice, you don't need to do the matrix algebra by hand. The `lm()` function handles multivariate responses if `Y` is a matrix.
+
+``` r
+# Fit the model using lm()
+fit <- lm(Y ~ X[, 2] + X[, 3])
+
+# Compare with our manual B_hat
+print(coef(fit))
+```
+
+## 6. Multivariate Hypothesis Testing
+
+In MMR, we test the null hypothesis $H_0: \mathbf{B}_1 = \mathbf{0}$. This asks: "Do any of our predictors have a significant linear relationship with *any* of our response variables?"
+
+### Manual Calculation of MANOVA Statistics
+
+All four major multivariate statistics are derived from the eigenvalues ($\lambda_i$) of $\mathbf{E}^{-1}\mathbf{H}$.
+
+``` r
+# 1. Calculate H (Hypothesis SS&CP)
+# H = Total_Corrected - E
+Y_mean <- colMeans(Y)
+T_mat <- t(Y) %*% Y - n * (Y_mean %*% t(Y_mean))
+H_mat <- T_mat - E_matrix
+
+# 2. Get Eigenvalues of E^-1 %*% H
+E_inv_H <- solve(E_matrix) %*% H_mat
+ev <- eigen(E_inv_H)$values
+
+# 3. Calculate the 4 Stats
+wilks <- prod(1 / (1 + ev))
+pillai <- sum(ev / (1 + ev))
+hotelling <- sum(ev)
+roy <- max(ev)
+
+stats_manual <- data.frame(
+  Stat = c("Wilks", "Pillai", "Hotelling", "Roy"),
+  Value = c(wilks, pillai, hotelling, roy)
+)
+print(stats_manual)
+```
+
+## 7. Converting to F-Approximations
+
+Since the exact distribution of Wilks' Lambda is complex, we usually use **Rao’s F-approximation**.
+
+The parameters $s, m, N$ mentioned in your lecture notes are used here:
+
+-   $s = \min(p, q)$
+
+-   $m = \frac{1}{2}(|q - p| - 1)$
+
+-   $N = \frac{1}{2}(n - q - p - 2)$
+
+Using the `car` package makes this much simpler for standard reporting:
+
+``` r
+# Using the fit from previous sections
+# lm(Y ~ X1 + X2)
+library(car)
+
+# This performs the Multivariate Test
+mmr_test <- Anova(fit, test.statistic = "Wilks")
+print(mmr_test)
+
+# You can easily switch to other statistics to check for robustness
+summary(Anova(fit, test.statistic = "Pillai"))
+```
