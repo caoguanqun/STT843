@@ -36,7 +36,7 @@ Lecture slides are updated every Sunday evening. Please ensure you have the late
 | 6 | [Variance]{style="color: green; font-weight: bold;"} | [Lec 6.1 🔗](lectures/lec05a.pdf)<br>  | [💻 Lab 6a](labs/lab05a.Rmd)<br> |  [HW3/quiz2]{style="color: red;"}  |
 | 7 | [Multivariate Linear Regression]{style="color: blue; font-weight: bold;"} | [Lec 7.1 🔗](lectures/lec06a.pdf)<br> [Lec 7.2 🔗](lectures/lec06b.pdf) | [💻 Lab 7a](labs/lab06a.Rmd)<br>[💻 Lab 7b](labs/lab06b.Rmd) | --|
 |8|[Exam 1]{style="color: green; font-weight: bold;"}| | | --|
-|9|[Project Preparation]{style="color: blue; font-weight: bold;"}| [requirement 🔗](lectures/final.pdf)<br>| [proposal]{style="color: red;"} |
+|9|[Project Preparation]{style="color: blue; font-weight: bold;"}| [project 🔗](lectures/final.pdf)<br>| | [proposal]{style="color: red;"} |
 
 ## 🛠️ Software Requirements
 
