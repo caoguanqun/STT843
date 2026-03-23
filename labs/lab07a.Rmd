@@ -1,0 +1,139 @@
+---
+title: "Lab 07a: Principal Component Analysis (PCA) & SVD"
+subtitle: "STT843: Multivariate Data Analysis"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(tidyverse)
+library(ggplot2)
+```
+
+## 1. Singular Value Decomposition (SVD)
+
+The lecture defined SVD as $\mathbf{X} = \mathbf{U}\mathbf{\Sigma}\mathbf{V}^\top$. In R, we use the svd() function.Note: We must center the data first, as PCA depends on the covariance structure around the mean.
+
+```r
+# Manual Centering
+X_centered <- scale(X, center = TRUE, scale = FALSE)
+
+# Compute SVD
+X_svd <- svd(X_centered)
+
+# U: Left singular vectors (related to scores)
+# D: Singular values (diagonal of Sigma)
+# V: Right singular vectors (Loadings/Principal Directions)
+V <- X_svd$v
+colnames(V) <- c("PC1", "PC2")
+V
+```
+
+The first column of $V$ is our "shark head tilt"—the direction of maximum spread.
+
+## 2. Principal Components via Covariance
+
+Alternatively, we can find the components using the eigenvalues of the sample covariance matrix $\mathbf{S} = \frac{1}{n-1}\mathbf{X}^\top\mathbf{X}$.
+
+```r
+S <- cov(X_centered)
+eigen_dec <- eigen(S)
+
+# Eigenvectors match the V matrix from SVD
+eigen_dec$vectors
+```
+
+## 3. PCA in Practice: prcomp
+
+While SVD and eigen show the math, the most common way to run PCA in R is prcomp. It automatically handles centering.
+
+```r
+pca_res <- prcomp(X, center = TRUE, scale. = FALSE)
+
+# Summary shows Proportion of Variance
+summary(pca_res)
+
+# Plot the PC directions on the original data
+plot(X_centered, asp = 1, pch = 19, col = "grey")
+abline(0, V[2,1]/V[1,1], col = "red", lwd = 2) # PC1
+abline(0, V[2,2]/V[1,2], col = "blue", lwd = 2) # PC2
+legend("topleft", legend=c("PC1 (Head Tilt)", "PC2"), col=c("red", "blue"), lwd=2)
+```
+
+## 4. The Effect of Scaling (Scale Invariance)
+As noted in the lecture, PCA is NOT scale-invariant. Let's see what happens if we change the units of one variable (e.g., from meters to centimeters).
+
+``` r
+# Multiply X2 by 100
+X_scaled <- X
+X_scaled[,2] <- X_scaled[,2] * 100
+
+# PCA on unscaled data
+pca_unscaled <- prcomp(X_scaled, scale. = FALSE)
+# PCA on standardized data (Correlation Matrix)
+pca_standardized <- prcomp(X_scaled, scale. = TRUE)
+
+print("Loadings without standardization (Dominated by X2):")
+pca_unscaled$rotation[,1]
+
+print("Loadings with standardization (Balanced):")
+pca_standardized$rotation[,1]
+```
+
+## iris data example ##
+First, we isolate the numeric measurements. In PCA, we typically standardize ($scale = TRUE$) because the variables have different ranges (e.g., Petal Length varies much more than Sepal Width).
+
+```r
+data(iris)
+iris_numeric <- iris[, 1:4]
+
+# Run PCA with scaling
+iris_pca <- prcomp(iris_numeric, center = TRUE, scale. = TRUE)
+```
+
+# The "Loadings" (The Rotation Matrix)
+The loadings ($\mathbf{V}$ or rotation) tell us how much each original variable contributes to the new axes.
+
+```r
+iris_pca$rotation
+```
+
+Interpretation: You will likely see that Petal.Length and Petal.Width have very high loadings on PC1. This means PC1 is essentially a "Petal Size" index.
+
+The Contrast: If one variable has a positive loading and another has a negative loading on the same PC, that PC is measuring the difference or "contrast" between those two features.
+ 
+# The "Scree Plot" (Essential Dimensions)
+ How many components do we need? The Scree Plot visualizes the eigenvalues ($\lambda_i$).
+ ```r
+ # Plot variance explained
+plot(iris_pca, type = "l", main = "Scree Plot for Iris PCA")
+```
+In the iris data, PC1 usually explains ~73% of the variance, and PC2 explains ~23%. Together, they account for over 95% of the total information. We can effectively discard PC3 and PC4 with almost no loss of "structure."
+
+#The Biplot: Visualizing Scores and Loadings
+The Biplot is the most powerful tool for interpretation. It plots the PC scores (the samples) and the PC loadings (the variables) on the same axes.
+```r
+biplot(iris_pca, cex = 0.7, col = c("gray", "red"))
+```
+Clusters: You will notice that Iris setosa forms a very distinct cluster far away from versicolor and virginica.
+
+Directionality: The red arrows (loadings) pointing toward a cluster indicate that those samples have high values for those specific variables. For example, the virginica points will be pulled in the direction of the "Petal Length" arrow.
+
+#Visualizing Species Separation
+By plotting the first two PC scores, we can see how PCA (an unsupervised technique) naturally "discovers" the biological species categories.
+
+```r
+# Create a data frame for plotting
+pca_data <- data.frame(iris_pca$x, Species = iris$Species)
+
+ggplot(pca_data, aes(x = PC1, y = PC2, color = Species)) +
+  geom_point(size = 3, alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "PCA: Iris Species Separation",
+       x = "PC1 (73% Variance)",
+       y = "PC2 (23% Variance)")
+```

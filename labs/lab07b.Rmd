@@ -1,0 +1,107 @@
+---
+title: "Lab 07b: PCA Example: MNIST Handwritten Digits"
+subtitle: "STT843 Multivariate Data Analysis"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+# Note: Ensure the 'dslabs' package is installed for the MNIST data
+# install.packages("dslabs")
+library(dslabs)
+```
+
+## MNIST: The 784-Dimensional Space
+
+Handwritten digits in the MNIST dataset are $28 \times 28$ pixel images.
+
+Each pixel is a feature (variable).
+
+$p = 28 \times 28 = 784$.
+
+Each image is a vector $\mathbf{x}_i \in \mathbb{R}^{784}$.
+
+PCA finds the best $k$-dimensional subspace to represent these 784
+dimensions while minimizing "ink" loss (reconstruction error).
+
+## Loading the Data 
+We will look at a subset of the digits (the "zeros")
+
+```{r}
+mnist <- read_mnist()
+# Filter for the digit '0'
+zeros <- mnist$train$images[mnist$train$labels == 0, ]
+n_images <- nrow(zeros)
+
+# Center the data
+zeros_centered <- scale(zeros, center = TRUE, scale = FALSE)
+avg_zero <- attr(zeros_centered, "scaled:center")
+```
+
+## Visualizing the "Average Zero" 
+The "center" of our data
+$\bar{\mathbf{x}}$ is the average shape of a handwritten zero.
+
+```{r}
+image(matrix(avg_zero, 28, 28)[, 28:1], col = gray.colors(256), 
+      main = "The Mean Digit (Origin)", xaxt='n', yaxt='n')
+      
+ # Get the indices of the first 9 occurrences of the digit '0'
+zero_indices <- which(mnist$train$labels == 0)[1:9]
+
+par(mfrow = c(3, 3), mar = c(0.1, 0.1, 1, 0.1))
+
+for (idx in zero_indices) {
+  mat <- matrix(mnist$train$images[idx, ], 28, 28)
+  image(mat[, 28:1], col = gray.colors(256), xaxt = 'n', yaxt = 'n')
+}
+```
+
+## Eigen-Digits (Principal Components)
+
+The eigenvectors $\mathbf{v}_j$ (Loadings) represent the primary modes
+of variation. In image analysis, these are often called Eigen-digits.
+
+```{r}
+# We use svd for efficiency on large matrices
+pca_zeros <- prcomp(zeros, center = TRUE, scale. = FALSE)
+
+# Variance Explained
+var_exp <- cumsum(pca_zeros$sdev^2) / sum(pca_zeros$sdev^2)
+```
+
+PC1 typically captures the "thickness" or "tilt" of the zero.
+
+## The Scree Plot: How many dimensions? 
+How many components do we need to
+reconstruct a '0' accurately?
+
+```{r}
+plot(var_exp[1:100], type = "b", xlab = "Number of Components", 
+     ylab = "Cumulative Variance Explained", main = "Scree Plot for MNIST '0's")
+abline(h = 0.9, col = "red", linetype = "dashed")
+```
+
+## Reconstruction: PCA as Least Squares Recall
+$\hat{\mathbf{x}}_i = \bar{\mathbf{x}} + \sum_{j=1}^k y_{ij}\mathbf{v}_j$.As
+$k$ increases, the approximation $\hat{\mathbf{x}}_i$ gets closer to the
+original $\mathbf{x}_i$.
+
+```{r}
+# Reconstruct the first '0' using k components
+reconstruct <- function(pca_obj, k, index, mean_vec) {
+  recon <- mean_vec + pca_obj$x[index, 1:k] %*% t(pca_obj$rotation[, 1:k])
+  return(matrix(recon, 28, 28)[, 28:1])
+}
+
+par(mfrow=c(1,4))
+image(reconstruct(pca_zeros, 2, 1, avg_zero), col=gray.colors(256), main="k=2", xaxt='n', yaxt='n')
+image(reconstruct(pca_zeros, 10, 1, avg_zero), col=gray.colors(256), main="k=10", xaxt='n', yaxt='n')
+image(reconstruct(pca_zeros, 50, 1, avg_zero), col=gray.colors(256), main="k=50", xaxt='n', yaxt='n')
+image(matrix(zeros[1,], 28, 28)[, 28:1], col=gray.colors(256), main="Original", xaxt='n', yaxt='n')
+```

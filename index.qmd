@@ -37,6 +37,8 @@ Lecture slides are updated every Sunday evening. Please ensure you have the late
 | 7 | [Multivariate Linear Regression]{style="color: blue; font-weight: bold;"} | [Lec 7.1 🔗](lectures/lec06a.pdf)<br> [Lec 7.2 🔗](lectures/lec06b.pdf) | [💻 Lab 7a](labs/lab06a.Rmd)<br>[💻 Lab 7b](labs/lab06b.Rmd) | --|
 |8|[Exam 1]{style="color: green; font-weight: bold;"}| | | --|
 |9|[Project Preparation]{style="color: blue; font-weight: bold;"}| [project 🔗](lectures/final.pdf)<br>| | [proposal]{style="color: red;"} |
+| 10 | [Principal Component Analysis]{style="color: green; font-weight: bold;"} | [Lec 8.1 🔗](lectures/lec07a.pdf)<br> [Lec 8.2 🔗](lectures/lec07b.pdf) | [💻 Lab 8a](labs/lab07a.Rmd)<br>[💻 Lab 8b](labs/lab07b.Rmd) | --|
+
 
 ## 🛠️ Software Requirements
 
