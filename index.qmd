@@ -38,8 +38,8 @@ Lecture slides are updated every Sunday evening. Please ensure you have the late
 |8|[Exam 1]{style="color: green; font-weight: bold;"}| | | --|
 |9|[Project Preparation]{style="color: blue; font-weight: bold;"}| [project 🔗](lectures/final.pdf)<br>| | [proposal]{style="color: red;"} |
 | 10 | [Principal Component Analysis]{style="color: green; font-weight: bold;"} | [Lec 8.1 🔗](lectures/lec07a.pdf)<br> [Lec 8.2 🔗](lectures/lec07b.pdf) | [💻 Lab 8a](labs/lab07a.Rmd)<br>[💻 Lab 8b](labs/lab07b.Rmd) | --|
-
-
+| 11 | [Factor Analysis and Canonical Correlation Analysis I]{style="color: blue; font-weight: bold;"} | [Lec 9.1 🔗](lectures/lec08a.pdf)<br> [Lec 10.1 🔗](lectures/lec09a.pdf) | [💻 Lab 9a](labs/lab08a.Rmd)<br>[💻 Lab 9b](labs/lab09a.Rmd) | [HW4]{style="color: red;"}|
+| 12 | [Canonical Correlation Analysis II]{style="color: green; font-weight: bold;"} | [Lec 10.2 🔗](lectures/lec09b.pdf)<br> [Lec 11.1 🔗](lectures/lec10a.pdf) | [💻 Lab 10a](labs/lab09b.Rmd)<br>[💻 Lab 10b](labs/lab10a.Rmd) | --|
 ## 🛠️ Software Requirements
 
 We will be using **R** and **RStudio** for all computations. Please ensure you have the following installed:

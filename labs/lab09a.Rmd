@@ -1,0 +1,87 @@
+---
+title: "Lab09a: Canonical Correlation Analysis: Foundations and Application"
+subtitle: "STT 843: Multivariate Analysis"
+author: "Dr. Guanqun Cao"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+ 
+ 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(CCA)
+```
+
+# 1. Introduction to Canonical Correlation
+Canonical Correlation Analysis (CCA) is used to identify and quantify the associations between two sets of variables. It finds linear combinations of variables in the first set ($X^{(1)}$) and the second set ($X^{(2)}$) that have the highest possible correlation.
+
+**Examples:**
+* **Education:** Arithmetic skills vs. Reading skills.
+* **Economics:** Government policy variables vs. Economic goal indicators.
+* **Psychology:** Job characteristics vs. Job satisfaction.
+
+# 2. Mathematical Formulation
+Let $\boldsymbol{X}^{(1)}$ be $p \times 1$ and $\boldsymbol{X}^{(2)}$ be $q \times 1$ ($p \leq q$).
+We seek vectors $\mathbf{a}$ and $\mathbf{b}$ to maximize:
+$$\operatorname{Corr}(U, V) = \frac{\mathbf{a}^{\prime} \Sigma_{12} \mathbf{b}}{\sqrt{\mathbf{a}^{\prime} \Sigma_{11} \mathbf{a}} \sqrt{\mathbf{b}^{\prime} \Sigma_{22} \mathbf{b}}}$$
+
+
+
+### Result 9.1: Canonical Variate Pairs
+The $k$-th pair of canonical variates $(U_k, V_k)$ are linear combinations that maximize correlation subject to being uncorrelated with the previous $k-1$ pairs.
+
+* **First Pair ($U_1, V_1$):** Highest possible correlation $\rho_1^*$.
+* **Properties:** $\operatorname{Var}(U_k) = \operatorname{Var}(V_k) = 1$ and $\operatorname{Corr}(U_k, U_l) = \operatorname{Corr}(V_k, V_l) = 0$ for $k \neq l$.
+
+# 3. Sample Canonical Correlation
+In practice, we use the sample covariance matrices $S_{11}, S_{22}, S_{12}$ to estimate the variates.
+
+### Calculation Logic
+The squared sample canonical correlations $\hat{\rho}_k^{*2}$ are the eigenvalues of:
+$$S_{11}^{-1/2} S_{12} S_{22}^{-1} S_{21} S_{11}^{-1/2}$$
+
+The sample canonical variates are then:
+$$\hat{U}_k = \hat{\mathbf{a}}_k^{\prime} \mathbf{x}^{(1)}, \quad \hat{V}_k = \hat{\mathbf{b}}_k^{\prime} \mathbf{x}^{(2)}$$
+
+# 4. Example: Chicken-Bone Data (Standardized)
+Analysis of skull measurements vs. leg measurements in white leghorn fowl.
+
+```{r chicken_bone}
+# Correlation Matrix R
+R <- matrix(c(1.0, .505, .569, .602,
+              .505, 1.0, .422, .467,
+              .569, .422, 1.0, .926,
+              .602, .467, .926, 1.0), 4, 4)
+
+# Canonical Correlation Result (First Pair)
+rho1 <- 0.631
+# U1 = 0.781*z1 + 0.345*z2
+# V1 = 0.060*z3 + 0.944*z4
+```
+
+**Interpretation:** The first canonical correlation is moderately strong (0.631). $U_1$ is heavily influenced by skull length, while $V_1$ is almost entirely dominated by tibia length.
+
+# 5. Case Study: Job Satisfaction
+In a study of $n=784$ executives, we analyze $p=5$ job characteristics and $q=7$ satisfaction variables.
+
+### Interpreting Correlations (Loadings)
+It is often more useful to look at the **loadings** (correlations between the canonical variate and the original variables) rather than just the coefficients.
+
+| Variable | Corr with $\hat{U}_1$ | Corr with $\hat{V}_1$ |
+| :--- | :---: | :---: |
+| Feedback | 0.83 | 0.46 |
+| Autonomy | 0.85 | 0.48 |
+| Supervisor Sat. | 0.42 | 0.75 |
+| Kind-of-work Sat. | 0.44 | 0.80 |
+
+**Conclusion:** The first pair ($\hat{\rho}_1^* = 0.55$) suggests a "Job Characteristic Index" ($U_1$) is related to a "Satisfaction-Identification Index" ($V_1$).
+
+# 6. Best Practices for Analysis
+* **Scatter Plots:** Always plot $(\hat{U}_k, \hat{V}_k)$ to identify outliers or non-linear patterns.
+* **Sample Splitting:** For large datasets (like the job satisfaction study), split the data to validate the stability of the canonical coefficients.
+* **Standardization:** Standardization is recommended when variables are measured in different units; it does not change the canonical correlations themselves.
+```

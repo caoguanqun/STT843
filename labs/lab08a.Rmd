@@ -1,0 +1,126 @@
+---
+title: "Lab08a: Factor Analysis and Structured Covariance Matrices"
+subtitle: "STT 843: Multivariate Analysis"
+author: "Dr. Guanqun Cao"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(psych)  # For factor analysis functions
+library(GPArotation) # For Varimax and other rotations
+```
+
+##1. Introduction to the Orthogonal Factor Model
+
+The purpose of factor analysis is to describe the covariance relationships among $p$ variables in terms of a few underlying, unobservable random quantities called **factors**.
+
+The model is:
+$$\boldsymbol{X}-\boldsymbol{\mu}=\mathbf{L F}+\boldsymbol\varepsilon$$
+
+Where:
+- $\mathbf{L}$ is the matrix of *factor loadings*.
+- $\mathbf{F}$ are the *common factors*.
+- $\boldsymbol\varepsilon$ are the *specific factors* (errors).
+
+### Covariance Structure
+Under the model assumptions ($Cov(F)=I$, $Cov(\varepsilon)=\Psi$):
+$$\operatorname{Cov}(\boldsymbol{X}) = \mathbf{L L}^{\prime} + \boldsymbol{\Psi}$$
+
+---
+
+## 2. Theoretical Example: Verifying Factorability
+
+Consider the covariance matrix $\boldsymbol{\Sigma}$:
+```{r}
+Sigma <- matrix(c(19, 30, 2, 12,
+                  30, 57, 5, 23,
+                  2, 5, 38, 47,
+                  12, 23, 47, 68), nrow = 4, byrow = TRUE)
+colnames(Sigma) <- rownames(Sigma) <- c("X1", "X2", "X3", "X4")
+Sigma
+```
+
+If we postulate two factors, we check if $\boldsymbol{\Sigma} \approx \mathbf{LL}' + \boldsymbol{\Psi}$.
+
+---
+
+## 3. Principal Component Solution
+
+In this method, we estimate loadings using eigenvalue-eigenvector pairs of $\mathbf{S}$ or $\mathbf{R}$.
+
+### Example: Consumer-Preference Data
+We use the correlation matrix provided in the notes.
+
+```{r}
+# Constructing the correlation matrix
+R_consumer <- matrix(c(1.00, 0.02, 0.96, 0.42, 0.01,
+                       0.02, 1.00, 0.13, 0.71, 0.85,
+                       0.96, 0.13, 1.00, 0.50, 0.11,
+                       0.42, 0.71, 0.50, 1.00, 0.79,
+                       0.01, 0.85, 0.11, 0.79, 1.00), nrow = 5)
+colnames(R_consumer) <- c("Taste", "Money", "Flavor", "Snack", "Energy")
+
+# Principal Component Method (nfactors = 2)
+pc_fit <- principal(R_consumer, nfactors = 2, rotate = "none")
+print(pc_fit)
+```
+
+---
+
+## 4. Factor Rotation (Varimax)
+
+Loadings are determined only up to an orthogonal matrix $\mathbf{T}$. *Varimax* rotation seeks to maximize the variance of the squared loadings to simplify interpretation.
+
+```{r}
+# Applying Varimax Rotation to the consumer data
+rotated_fit <- principal(R_consumer, nfactors = 2, rotate = "varimax")
+print(rotated_fit$loadings, cutoff = 0)
+```
+
+---
+
+## 5. Maximum Likelihood Method
+
+The ML method assumes multivariate normality and maximizes the likelihood function.
+
+### Example: Stock-Price Data
+Using the `factanal()` function (which defaults to Maximum Likelihood).
+
+```{r}
+# Example using built-in dataset or reconstructed R for stocks
+# factanal requires raw data or a covariance matrix + n
+# Here we demonstrate the function call structure:
+# ml_fit <- factanal(factors = 2, covmat = R_stocks, n.obs = 103, rotation = "varimax")
+```
+
+ 
+
+---
+
+## 6. Computing Factor Scores
+
+Factor scores are estimates of the values of $\mathbf{F}$ for each observation.
+
+### Weighted Least Squares (Bartlett) vs. Regression Method
+In R, we specify the `scores` argument in `factanal`.
+
+```{r, eval=FALSE}
+# Regression method
+fit_reg <- factanal(my_data, factors = 2, scores = "regression")
+
+# Bartlett (Weighted Least Squares) method
+fit_bart <- factanal(my_data, factors = 2, scores = "Bartlett")
+```
+
+ 
+### Key R Functions Used:
+* **`principal()`**: From the `psych` package; used for the Principal Component solution of the factor model.
+* **`factanal()`**: Built-in R function; performs Maximum Likelihood Factor Analysis.
+* **`rotate = "varimax"`**: Argument used to apply the Varimax criterion for simple structure.
+* **`scores = "regression"`**: Argument used to calculate factor scores based on the regression approach.

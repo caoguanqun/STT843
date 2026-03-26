@@ -1,0 +1,112 @@
+---
+title: "Lab09b: Canonical Correlation Analysis - Descriptive Measures and Inference"
+subtitle: "STT 843: Multivariate Analysis"
+author: "Dr. Guanqun Cao"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+ 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(CCA)       # For Canonical Correlation Analysis
+library(CCP)       # For Significance Testing
+```
+
+# 1. Theoretical Background: Matrices of Errors
+The purpose of using a subset ($r < p$) of canonical variates is to approximate the original covariance structure. The error of approximation for the cross-covariance matrix $\mathbf{S}_{12}$ using $r$ pairs is:
+
+$$\mathbf{S}_{12} - \sum_{i=1}^{r} \hat{\rho}_i^* \mathbf{\hat{a}}^{(i)} \mathbf{\hat{b}}^{(i)T}$$
+
+Where:
+- $\hat{\rho}_i^*$ is the $i$-th sample canonical correlation.
+- $\mathbf{\hat{a}}^{(i)}$ and $\mathbf{\hat{b}}^{(i)}$ are the $i$-th columns of $\hat{\mathbf{A}}^{-1}$ and $\hat{\mathbf{B}}^{-1}$.
+
+# 2. Example 10.6: Calculation of Approximation Errors
+Using the correlation matrix for head ($\mathbf{z}^{(1)}$) and leg ($\mathbf{z}^{(2)}$) measurements of white leghorn fowl.
+
+```{r example_10_6}
+# 1. Define the Correlation Matrix R
+R <- matrix(c(1.000, 0.505, 0.569, 0.602,
+              0.505, 1.000, 0.422, 0.467,
+              0.569, 0.422, 1.000, 0.926,
+              0.602, 0.467, 0.926, 1.000), nrow = 4, byrow = TRUE)
+
+R11 <- R[1:2, 1:2]
+R22 <- R[3:4, 3:4]
+R12 <- R[1:2, 3:4]
+
+# 2. Results from Example 10.4 (Canonical Correlations and Coefficients)
+rho_star <- c(0.631, 0.057)
+A_inv <- matrix(c(0.9548, -0.2974, 0.7388, 0.6739), nrow = 2, byrow = TRUE)
+B_inv <- matrix(c(0.9343, -0.3564, 0.9997, 0.0227), nrow = 2, byrow = TRUE)
+
+# 3. Error of approximation for R12 using ONLY the first canonical pair (r=1)
+# The residual is the part explained by the SECOND pair
+error_R12 <- rho_star[2] * (A_inv[,2] %*% t(B_inv[,2]))
+colnames(error_R12) <- c("Leg1", "Leg2")
+rownames(error_R12) <- c("Head1", "Head2")
+
+cat("Error Matrix for R12 (using first pair only):\n")
+print(round(error_R12, 3))
+```
+
+# 3. Proportions of Explained Sample Variance
+We define the proportion of variance in the first set explained by the first $r$ canonical variates $\hat{U}_1, \dots, \hat{U}_r$ as:
+
+$$R_{\mathbf{z}^{(1)} | \hat{U}_1, \dots, \hat{U}_r}^2 = \frac{\sum_{i=1}^{r} \sum_{k=1}^{p} r^2_{\hat{U}_i, z_k^{(1)}}}{p}$$
+
+### Example 10.7: Job Satisfaction Data
+```{r example_10_7}
+# Loadings (correlations between variables and canonical variates)
+# For Set 1 (Job Characteristics)
+loadings_U1 <- c(0.83, 0.74, 0.55, 0.78, 0.85) 
+expl_var_U1 <- sum(loadings_U1^2) / 5
+
+# For Set 2 (Job Satisfaction)
+loadings_V1 <- c(0.75, 0.65, 0.58, 0.44, 0.49, 0.52, 0.50)
+expl_var_V1 <- sum(loadings_V1^2) / 7
+
+cat("Variance in Set 1 explained by U1:", round(expl_var_U1, 2), "\n")
+cat("Variance in Set 2 explained by V1:", round(expl_var_V1, 2), "\n")
+```
+
+# 4. Large Sample Inferences
+To test if there is any statistical relationship between the two sets of variables ($H_0: \Sigma_{12} = \mathbf{0}$), we use Bartlett's test.
+
+
+
+### Hypothesis Testing Logic
+The test statistic is:
+$$-\left(n-1-\frac{1}{2}(p+q+1)\right) \ln \prod_{i=k+1}^{p}\left(1-\hat{\rho}_i^{*2}\right)$$
+which follows a $\chi^2$ distribution with $(p-k)(q-k)$ degrees of freedom.
+
+```{r inference_example}
+# Simulation of large sample inference
+n <- 100 # sample size
+p <- 2
+q <- 2
+# Canonical correlations squared
+rho_sq <- rho_star^2
+
+# Test H0: All correlations are zero (k=0)
+bartlett_stat <- -(n - 1 - 0.5*(p + q + 1)) * sum(log(1 - rho_sq))
+p_val <- pchisq(bartlett_stat, df = p*q, lower.tail = FALSE)
+
+cat("Bartlett Test Statistic:", round(bartlett_stat, 4), "\n")
+cat("P-value:", p_val, "\n")
+```
+
+# 5. Practical Strategy
+1. **Test Overall Significance**: Use Bartlett's test to see if at least one canonical correlation is non-zero.
+2. **Sequential Testing**: If $H_0$ is rejected, test if the remaining correlations are zero ($H_0^{(k)}$).
+3. **Descriptive Analysis**: Calculate the error matrices and proportion of explained variance to see if the first few pairs capture enough information for practical use.
+```
+
+### Instructor Notes:
+* **`CCA` package**: Used for extracting canonical loadings and correlations.
+* **`CCP` package**: Specifically designed for the `p.asym()` function, which automates the Bartlett and Wilks' Lambda tests for CCA.
+* **Interpretation**: Remind students that even if a canonical correlation ($\rho^*$) is high, the canonical variate may not explain a large percentage of the variance in its original set (as seen in Example 10.7).
