@@ -1,0 +1,119 @@
+---
+title: "Lab 10b: Discrimination and Classification"
+subtitle: "Multivariate Statistical Analysis"
+author: "Guanqun Cao"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+#  Setup and Data Preparation
+
+First, we will recreate the Riding Mower dataset. This is a classic "Two Populations" problem with two predictors: Income ($x_1$) and Lot Size ($x_2$).
+
+```{r setup}
+# Load necessary libraries
+
+library(MASS)    # For lda() and qda()
+library(ggplot2) # For visualization
+
+# Create the dataset from lecture notes
+
+mowers <- data.frame(
+  Income = c(90.0, 115.5, 94.8, 91.5, 117.0, 140.1, 138.0, 112.8, 99.0, 123.0, 81.0, 111.0,
+             105.0, 82.8, 94.8, 73.2, 114.0, 79.2, 89.4, 96.0, 77.4, 63.0, 81.0, 93.0),
+  LotSize = c(18.4, 16.8, 21.6, 20.8, 23.6, 19.2, 17.6, 22.4, 20.0, 20.8, 22.0, 20.0,
+              19.6, 20.8, 17.2, 20.4, 17.6, 17.6, 16.0, 18.4, 16.4, 18.8, 14.0, 14.8),
+  Owner = factor(c(rep("Owner", 12), rep("Nonowner", 12)))
+)
+
+# Visualizing the separation (Goal 1: Graphical Description)
+ggplot(mowers, aes(x=Income, y=LotSize, color=Owner, shape=Owner)) +
+  geom_point(size=3) +
+  theme_minimal() +
+  labs(title = "Riding Mower Owners vs. Nonowners")
+```
+#2. Linear Discriminant Analysis (LDA)
+
+LDA assumes $\Sigma_1 = \Sigma_2 = \Sigma$ (equal covariance matrices) and multivariate normality.
+
+```{r}
+# Fit the LDA model
+lda_model <- lda(Owner ~ Income + LotSize, data = mowers)
+
+
+# Display the coefficients (Fisher's linear combination)
+print(lda_model)
+
+
+# Calculate the Midpoint/Decision Boundary
+# Note: lda() in R uses a slightly different scaling than the â vector 
+# in the notes, but the decision rule remains equivalent.
+```
+## 3. Evaluating Performance: APER and Confusion Matrix
+We use the Confusion Matrix to calculate the Apparent Error Rate (APER).
+
+```{r}
+# Predictions on the training set
+lda_pred <- predict(lda_model, mowers)
+conf_matrix <- table(Actual = mowers$Owner, Predicted = lda_pred$class)
+
+print(conf_matrix)
+ 
+# Calculate APER
+ 
+aper <- (conf_matrix[1,2] + conf_matrix[2,1]) / sum(conf_matrix)
+cat("Apparent Error Rate (APER):", round(aper * 100, 2), "%\n")
+```
+
+4. Lachenbruch’s Holdout Procedure (Leave-One-Out CV)
+
+The lda() function has a built-in parameter CV = TRUE to perform the "holdout" procedure described in your notes.
+
+```{r}
+# Perform Leave-One-Out Cross-Validation
+lda_cv <- lda(Owner ~ Income + LotSize, data = mowers, CV = TRUE)
+
+# Confusion Matrix for Holdout Procedure
+cv_matrix <- table(Actual = mowers$Owner, Predicted = lda_cv$class)
+print(cv_matrix)
+
+# Estimated Actual Error Rate (AER)
+aer_hat <- (cv_matrix[1,2] + cv_matrix[2,1]) / sum(cv_matrix)
+cat("Estimated AER (Holdout):", round(aer_hat * 100, 2), "%\n")
+```
+
+5. Quadratic Discriminant Analysis (QDA)
+
+When the assumption $\Sigma_1 = \Sigma_2$ is violated, we use QDA.
+
+
+```{r}
+# Fit QDA model
+qda_model <- qda(Owner ~ Income + LotSize, data = mowers)
+
+# Predict for a new observation (e.g., Income=100, LotSize=19)
+ 
+new_obs <- data.frame(Income = 100, LotSize = 19)
+predict(qda_model, new_obs)
+```
+
+6. Fisher’s Method (Multi-class Example)
+For more than two populations, we can visualize the separation using the first two discriminants.
+```{r}
+# Using the built-in Iris dataset for multiple populations (3 species)
+
+data(iris)
+iris_lda <- lda(Species ~ ., data = iris)
+
+# Projecting data onto the first two discriminants (LD1 and LD2)
+```{r}
+lda_values <- predict(iris_lda)
+plot_data <- data.frame(lda_values$x, Species = iris$Species)
+
+ggplot(plot_data, aes(x=LD1, y=LD2, color=Species)) +
+  geom_point() +
+  theme_classic() +
+  labs(title = "Fisher's Discriminant Projection (Iris Data)")
+```

@@ -1,0 +1,125 @@
+---
+title: "Lab 10a: Fundamentals of Discrimination and Classification"
+subtitle: "Multivariate Statistical Analysis"
+author: "Guanqun Cao"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+ 
+---
+
+### 1. The Separation Concept
+The primary goal of discrimination is to find a rule (algebraic or graphical) that separates populations based on measured variables.
+
+```r
+# Load libraries
+library(MASS)
+library(ggplot2)
+
+# Recreating the Riding Mower data for visual separation (Goal 1)
+mowers <- data.frame(
+  Income = c(90, 115.5, 94.8, 91.5, 117, 140.1, 138, 112.8, 99, 123, 81, 111,
+             105, 82.8, 94.8, 73.2, 114, 79.2, 89.4, 96, 77.4, 63, 81, 93),
+  LotSize = c(18.4, 16.8, 21.6, 20.8, 23.6, 19.2, 17.6, 22.4, 20, 20.8, 22, 20,
+              19.6, 20.8, 17.2, 20.4, 17.6, 17.6, 16, 18.4, 16.4, 18.8, 14, 14.8),
+  Group = factor(c(rep("Owner", 12), rep("Non-owner", 12)))
+)
+
+# Graphical Separation
+ggplot(mowers, aes(x=Income, y=LotSize, color=Group)) +
+  geom_point(size=3) +
+  theme_minimal() +
+  labs(title="Visual Separation of Groups")
+```
+
+
+---
+
+### 2. Decision Rules: Density Ratios and Costs
+As per **Result 11.1**, the optimal region $R_1$ is defined by the density ratio compared to the cost and prior ratios.
+
+```r
+# Example: Using the density ratio for a new observation x0
+# f1(x0) = 0.3, f2(x0) = 0.4
+# Costs: c(2|1) = 5, c(1|2) = 10
+# Priors: p1 = 0.8, p2 = 0.2
+
+f1_x0 <- 0.3
+f2_x0 <- 0.4
+cost_ratio <- 10 / 5
+prior_ratio <- 0.2 / 0.8
+
+threshold <- cost_ratio * prior_ratio
+density_ratio <- f1_x0 / f2_x0
+
+if (density_ratio >= threshold) {
+  print("Classify as Population 1")
+} else {
+  print("Classify as Population 2")
+}
+```
+
+---
+
+### 3. LDA with the Hemophilia Example (Common $\Sigma$)
+For multivariate normal populations with a common covariance matrix, we use `lda()`.
+
+```r
+# Summary statistics from the Hemophilia A study
+mean1 <- c(-0.0065, -0.0390) # Normal
+mean2 <- c(-0.2483, 0.0262)  # Carriers
+S_pooled_inv <- matrix(c(131.158, -90.423, -90.423, 108.147), nrow=2)
+
+# Calculate Fisher's coefficients: a = S_inv * (mean1 - mean2)
+a_hat <- S_pooled_inv %*% (mean1 - mean2)
+cat("Discriminant Coefficients (a):\n", a_hat)
+
+# Midpoint calculation (m_hat)
+m_hat <- 0.5 * t(mean1 - mean2) %*% S_pooled_inv %*% (mean1 + mean2)
+cat("\nDecision Midpoint (m):", m_hat)
+
+# Classifying a new woman: x1 = -0.210, x2 = -0.044
+x0 <- c(-0.210, -0.044)
+y0 <- t(a_hat) %*% x0
+
+if (y0 >= m_hat) {
+  cat("\nResult: Classify as Normal")
+} else {
+  cat("\nResult: Classify as Carrier")
+}
+```
+
+---
+
+### 4. Quadratic Discriminant Analysis (QDA)
+When $\Sigma_1 \neq \Sigma_2$, the decision boundary is no longer a straight line (linear) but a curve (quadratic).
+
+```r
+# Simulation for unequal covariance matrices
+set.seed(123)
+pi1 <- mvrnorm(50, mu = c(0,0), Sigma = matrix(c(1, 0.5, 0.5, 1), 2))
+pi2 <- mvrnorm(50, mu = c(2,2), Sigma = matrix(c(2, -1.5, -1.5, 2), 2))
+
+df_quad <- data.frame(rbind(pi1, pi2), 
+                      Group = factor(c(rep("P1", 50), rep("P2", 50))))
+
+# Fit QDA
+qda_fit <- qda(Group ~ X1 + X2, data = df_quad)
+
+# Note the 'k' constant and quadratic terms in your notes are 
+# handled internally by the qda() function.
+```
+
+
+---
+
+### 5. Fisher's Discriminant Function (Separation)
+Fisher’s approach maximizes the ratio of between-group variance to within-group variance without assuming normality.
+
+```r
+# Computing D^2 (Squared distance between sample means)
+D2 <- t(mean1 - mean2) %*% S_pooled_inv %*% (mean1 - mean2)
+cat("Maximum Separation (D^2):", D2)
+```
+ 
